@@ -2,7 +2,7 @@ import { useAuth } from '@/providers/AuthProvider';
 import { setupTokenRefreshTimer } from '@/shared/api/instance';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { authActions } from '../../../shared/api/authAction';
+import { authActions } from '../api';
 
 /**
  * @interface IUseLogin

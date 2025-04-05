@@ -1,7 +1,7 @@
 import { useAuth } from '@/providers/AuthProvider';
 import { cleanup } from '@/shared/api/instance';
 import { useRouter } from 'next/navigation';
-import { authActions } from '../../../shared/api/authAction';
+import { authActions } from '../api';
 
 interface IUseLogout {
 	logout: () => Promise<void>;

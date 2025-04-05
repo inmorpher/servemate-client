@@ -1,23 +1,13 @@
 'use client';
 
-import { useAuth } from '@/providers/AuthProvider';
 import { api } from '@/shared/api/instance';
 import { useRouter } from 'next/navigation';
-import { useLogout } from '../(auth)/hooks/useLogout';
+import { useLogout } from '../../features/auth/hooks/useLogout';
 
 export default function Dashboard() {
 	const { logout } = useLogout();
-	const { isLoading } = useAuth();
 
 	const router = useRouter();
-
-	if (isLoading) {
-		return (
-			<div className='min-h-screen flex items-center justify-center bg-ctp-base'>
-				<div className='text-ctp-text'>Загрузка...</div>
-			</div>
-		);
-	}
 
 	const handleUsers = async () => {
 		const response = await api.get('/users');
@@ -25,7 +15,7 @@ export default function Dashboard() {
 	};
 
 	const navigateToAccount = () => {
-		router.push('/accaunt');
+		router.push('/account');
 	};
 
 	return (

@@ -3,7 +3,7 @@
 import { useGetMe } from '@/features/users/hooks/useGetMe';
 import { useAuth } from '@/providers/AuthProvider';
 import { useRouter } from 'next/navigation';
-import { useLogout } from '../(auth)/hooks/useLogout';
+import { useLogout } from '../../features/auth/hooks/useLogout';
 
 export default function AccountPage() {
 	const { user, isLoading: isUserLoading, error } = useGetMe();

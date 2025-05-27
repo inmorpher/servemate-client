@@ -1,12 +1,4 @@
-'use client';
-
-import { useAuth } from '@/providers/AuthProvider';
-
 export default function Home() {
-	const { isLoading } = useAuth();
-
-	console.log('isLoading', isLoading);
-	// Показываем загрузку, пока идет проверка авторизации
 	return (
 		<div className='min-h-screen flex items-center justify-center bg-ctp-base'>
 			<div className='text-center'>

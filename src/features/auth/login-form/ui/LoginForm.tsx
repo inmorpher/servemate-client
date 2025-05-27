@@ -1,9 +1,11 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { useLogin } from '../../hooks/useLogin';
+import { login } from '../../api/login';
 
-interface ILoginFormInputs {
+export interface ILoginFormInputs {
 	email: string;
 	password: string;
 }
@@ -14,12 +16,35 @@ const LoginForm = () => {
 		handleSubmit,
 		formState: { errors },
 	} = useForm<ILoginFormInputs>();
-	const { login, isLoading, error } = useLogin();
+
+	const searchParams = useSearchParams();
+	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+
+	// Получаем callbackUrl из URL параметров или используем значение по умолчанию
+	const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
 
 	const onSubmit: SubmitHandler<ILoginFormInputs> = async (data) => {
-		console.log('Form data:', data);
-		await login(data.email, data.password);
+		try {
+			setIsLoading(true);
+			setError(null);
+			console.log('Form data:', data);
+			console.log('Redirecting to:', callbackUrl);
+
+			// Вызываем серверную функцию, передавая данные формы как объект
+			await login(data);
+
+			// Если мы дошли до этой точки без ошибок и редиректа,
+			// выполним перенаправление вручную (обычно не выполняется из-за redirect() в серверной функции)
+			window.location.href = callbackUrl;
+		} catch (err) {
+			console.error('Login error:', err);
+			setError(err instanceof Error ? err.message : 'Произошла ошибка при входе');
+		} finally {
+			setIsLoading(false);
+		}
 	};
+
 	return (
 		<>
 			{error && (

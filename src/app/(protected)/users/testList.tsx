@@ -2,13 +2,14 @@
 
 import { getUsers } from '@/shared/api/users/users.api';
 import { UserListResult } from '@servemate/dto';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-export function TestList({ initialUsers }: { initialUsers: UserListResult }) {
-	const [data, setData] = useState<UserListResult | null>(initialUsers);
+export function TestList() {
+	const [data, setData] = useState<UserListResult | null>(null);
 
 	const fecthDataHandler = async (event) => {
 		event.preventDefault();
+		console.log('Fetching data...');
 		// const response = await fetch('/api/users?page=2');
 
 		// if (!response.ok) {
@@ -20,6 +21,19 @@ export function TestList({ initialUsers }: { initialUsers: UserListResult }) {
 
 		setData(response);
 	};
+
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const response = await getUsers({ page: 1 });
+				setData(response);
+			} catch (error) {
+				console.error('Ошибка при загрузке данных:', error);
+			}
+		};
+
+		fetchData();
+	}, []);
 
 	return (
 		<div>

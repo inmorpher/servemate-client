@@ -1,4 +1,4 @@
-'use';
+'use server';
 
 import { getSession } from '@/app/lib/session';
 import { refreshTokenAction } from './refreshToken';
@@ -32,14 +32,14 @@ export async function apiAction<T = unknown>({
 			throw new Error('Требуется авторизация');
 		}
 
-		// ИСПРАВЛЕНО: устраняем логическую ошибку
-		// const needsRefresh = session.needsRefresh || true; // Всегда true!
-		const needsRefresh = !!session.needsRefresh; // Более надежный способ проверки
+		const now = Date.now();
+		const tokenExpired = now >= session.expiresAt * 1000;
+		const needsRefresh = !!session.needsRefresh;
 
 		// Добавляем авторизацию по умолчанию
 		headers['Authorization'] = `Bearer ${session.accessToken}`;
 
-		if (needsRefresh) {
+		if (needsRefresh || tokenExpired) {
 			console.log('Токен требует обновления, запускаем обновление');
 			try {
 				// Обновляем токен с помощью server action

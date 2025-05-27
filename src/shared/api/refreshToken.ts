@@ -9,7 +9,7 @@ export async function refreshTokenAction(token: string): Promise<{
 	});
 	try {
 		console.log('[refreshTokenAction] Запрос на обновление токена:');
-		const response = await fetch('http://localhost:3000/api/refresh/', {
+		const response = await fetch('http://192.168.2.60:3002/api/auth/refresh-token', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

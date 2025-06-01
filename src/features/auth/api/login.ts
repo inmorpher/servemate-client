@@ -2,6 +2,7 @@
 
 import { getSession } from '@/app/lib/session';
 import { jwtDecode } from 'jwt-decode';
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { ILoginFormInputs } from '../login-form/ui/LoginForm';
 
@@ -61,9 +62,12 @@ export async function login(formData: ILoginFormInputs) {
 		// Save session
 		await session.save();
 
-		console.log('[loginAction] Сессия успешно обновлена:', session);
-
-		console.log('[loginAction] Сессия успешно сохранена');
+		const cookieStore = await cookies();
+		const savedCookie = cookieStore.get('servemate-session');
+		console.log('[loginAction] Кука после сохранения:', {
+			exists: !!savedCookie,
+			value: savedCookie?.value?.substring(0, 50) + '...',
+		});
 
 		//Redirect to dashboard
 		redirect('/account');

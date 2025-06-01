@@ -1,4 +1,5 @@
-import ClientToaster from '@/shared/components/toaster/ClientToaster';
+import { QueryProvider } from '@/providers/QueryProvider';
+import { Toaster } from '@/shared/components/toaster/ToasterProvider';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
@@ -26,8 +27,10 @@ export default function RootLayout({
 	return (
 		<html lang='en'>
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-ctp-base`}>
-				{children}
-				<ClientToaster />
+				<QueryProvider>
+					<Toaster />
+					{children}
+				</QueryProvider>
 			</body>
 		</html>
 	);

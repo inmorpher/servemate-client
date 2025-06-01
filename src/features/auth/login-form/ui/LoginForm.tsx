@@ -3,11 +3,38 @@
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { login } from '../../api/login';
 
 export interface ILoginFormInputs {
 	email: string;
 	password: string;
+}
+
+export async function login(formData: ILoginFormInputs) {
+	try {
+		const { email, password } = formData;
+
+		const response = await fetch('http://192.168.2.60:3000/api/auth/', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ email, password }),
+		});
+
+		if (!response.ok) {
+			const error = await response.json();
+			throw new Error(error.error || 'Ошибка авторизации');
+		}
+
+		const result = await response.json();
+		console.log('[Client Login] Успешная авторизация:', result);
+
+		// Редирект на клиенте
+		window.location.href = '/account';
+
+		return result;
+	} catch (error) {
+		console.error('[Client Login] Ошибка:', error);
+		throw error;
+	}
 }
 
 const LoginForm = () => {

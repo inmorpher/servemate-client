@@ -1,10 +1,8 @@
 'use client';
 
 import { useToaster } from '@/shared/components/toaster/ToasterProvider';
-import { UserListResult, UserSearchCriteria } from '@servemate/dto';
 import { useQuery } from '@tanstack/react-query';
-const test: UserListResult;
-const sort: UserSearchCriteria;
+
 export function TestList() {
 	const { toast } = useToaster();
 

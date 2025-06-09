@@ -30,7 +30,7 @@ const Toast: FC<ToastProps> = ({ message, type, index, onClose, isClosing }) => 
 			role='alert'
 			aria-live='polite'
 			className={cn(
-				'fixed right-4 py-2 px-4 rounded-lg shadow-lg min-w-[280px] max-w-[320px] flex justify-between items-center transform transition-all duration-300',
+				'fixed right-4 py-2 px-4 rounded-lg shadow-lg min-w-[280px] max-w-[320px] flex justify-between items-center transform transition-all duration-150',
 				isClosing ? 'animate-fadeOut' : 'animate-fadeIn',
 				bgColors[type],
 				textColors[type]

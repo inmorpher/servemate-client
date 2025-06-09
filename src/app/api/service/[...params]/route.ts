@@ -5,7 +5,10 @@ import { ApiError } from './errors';
 import { buildServiceRequest } from './request-utils';
 import { getValidatedTokenFromSession } from './token-utils';
 
-async function handler(request: NextRequest, { params }: { params: { params: string[] } }) {
+async function handler(
+	request: NextRequest,
+	{ params }: { params: Promise<{ params: string[] }> }
+) {
 	try {
 		const { accessToken } = await getValidatedTokenFromSession();
 		const resolvedParams = await params;
@@ -17,8 +20,6 @@ async function handler(request: NextRequest, { params }: { params: { params: str
 			accessToken
 		);
 
-		console.log(`🌐 [API] ${request.method} ${serviceUrl}`);
-
 		const response = await fetch(serviceUrl, {
 			method: request.method,
 			headers,
@@ -27,14 +28,17 @@ async function handler(request: NextRequest, { params }: { params: { params: str
 
 		const responseData = await response.text();
 
-		return new Response(responseData, {
+		const nextResponse = new Response(responseData, {
 			status: response.status,
 			statusText: response.statusText,
 			headers: response.headers,
 		});
+		nextResponse.headers.set(
+			'Set-Cookie',
+			'test_from_api=true; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400'
+		);
+		return nextResponse;
 	} catch (error) {
-		console.error('❌ [API] Ошибка обработки запроса:', error);
-
 		if (error instanceof ApiError) {
 			if (error.shouldRedirect) {
 				return NextResponse.redirect(new URL('/login', request.url));

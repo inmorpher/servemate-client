@@ -1,14 +1,8 @@
 'use client';
-import { useLogout } from '@/features/auth/hooks/useLogout';
 
 const LogoutButton = () => {
-	const { logout: handleLogout } = useLogout();
-
 	return (
-		<button
-			onClick={handleLogout}
-			className='w-full flex items-center p-3 text-ctp-red hover:bg-ctp-surface0 rounded-md transition-colors'
-		>
+		<button className='w-full flex items-center p-3 text-ctp-red hover:bg-ctp-surface0 rounded-md transition-colors'>
 			<svg
 				xmlns='http://www.w3.org/2000/svg'
 				className='h-5 w-5 mr-3'

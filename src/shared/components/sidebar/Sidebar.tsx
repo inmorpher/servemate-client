@@ -12,7 +12,7 @@ const Sidebar: FC<ISidebarProps> = ({ children }) => {
 		<>
 			<aside
 				className={cn(
-					'fixed top-0 left-0 h-full w-64 bg-ctp-base border-r border-ctp-surface0 shadow-lg p-4 z-40 transition-transform duration-300 lg:translate-x-0',
+					'fixed top-0  left-0 h-full w-64 bg-ctp-base/20 border-r  backdrop-blur-md border-ctp-surface0 shadow-lg p-4 z-40 transition-transform duration-150 lg:translate-x-0 ease-in-out',
 					isOpen ? 'translate-x-0' : '-translate-x-full'
 				)}
 			>

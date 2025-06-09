@@ -7,8 +7,6 @@ import { DecodedToken, SessionData, TokenResponse } from './types';
 let refreshTokenPromise: Promise<TokenResponse> | null = null;
 
 export async function getValidatedTokenFromSession(): Promise<TokenResponse> {
-	console.log('🔍 [API] Проверяем сессию...');
-
 	try {
 		const session = (await getSession()) as SessionData;
 
@@ -28,12 +26,6 @@ export async function getValidatedTokenFromSession(): Promise<TokenResponse> {
 		const refreshBuffer = Math.floor(tokenLifeTime * CONFIG.TOKEN_REFRESH_BUFFER_PERCENT);
 		const isTokenExpiringSoon = decodedToken.exp - refreshBuffer <= now;
 
-		console.log('tokenLifeTime:', tokenLifeTime);
-		console.log('refreshBuffer:', refreshBuffer);
-		console.log('now:', now);
-		console.log('decodedToken.exp:', decodedToken.exp);
-		console.log('isTokenExpiringSoon:', isTokenExpiringSoon);
-
 		if (isTokenExpiringSoon) {
 			return await handleTokenRefresh(session);
 		}
@@ -46,14 +38,13 @@ export async function getValidatedTokenFromSession(): Promise<TokenResponse> {
 		if (error instanceof ApiError) {
 			throw error;
 		}
-		console.error('❌ [API] Ошибка при валидации токена:', error);
+
 		throw new ApiError('Token validation failed', 500);
 	}
 }
 
 async function handleTokenRefresh(session: SessionData): Promise<TokenResponse> {
 	if (refreshTokenPromise) {
-		console.log('⏳ [API] Используем существующий промис обновления токена');
 		return await refreshTokenPromise;
 	}
 
@@ -68,15 +59,12 @@ async function handleTokenRefresh(session: SessionData): Promise<TokenResponse> 
 
 async function refreshTokenInternal(session: SessionData): Promise<TokenResponse> {
 	try {
-		console.log('🔄 [API] Обновляем токен...');
-
 		const tokenData = await refreshToken(session.refreshToken);
 
 		session.accessToken = tokenData.accessToken;
 		session.refreshToken = tokenData.refreshToken;
 		await session.save();
 
-		console.log('✅ [API] Токен успешно обновлен');
 		return tokenData;
 	} catch (error) {
 		console.error('❌ [API] Ошибка обновления токена:', error);

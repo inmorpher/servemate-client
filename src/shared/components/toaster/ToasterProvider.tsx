@@ -92,7 +92,7 @@ const Toaster = () => {
 	}, [addToast]);
 
 	return (
-		<div className={cn('fixed top-0 bottom-0 right-0 w-1 z-50 transition-all duration-300')}>
+		<div className={cn('fixed top-0 bottom-0 right-0 w-1 z-50 transition-all duration-50')}>
 			{toasts.map((toast, index) => {
 				return (
 					<Toast

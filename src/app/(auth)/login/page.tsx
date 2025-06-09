@@ -1,4 +1,5 @@
 import LoginForm from '@/features/auth/login-form/ui/LoginForm';
+import { Suspense } from 'react';
 
 export default function Login() {
 	return (
@@ -12,7 +13,9 @@ export default function Login() {
 						Enter your email and password to log in.
 					</p>
 				</div>
-				<LoginForm />
+				<Suspense fallback={<div>Загрузка...</div>}>
+					<LoginForm />
+				</Suspense>
 			</div>
 		</div>
 	);

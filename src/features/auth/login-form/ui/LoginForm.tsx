@@ -13,7 +13,7 @@ export async function login(formData: ILoginFormInputs) {
 	try {
 		const { email, password } = formData;
 
-		const response = await fetch('http://192.168.2.60:3000/api/auth/', {
+		const response = await fetch('/api/auth/', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ email, password }),

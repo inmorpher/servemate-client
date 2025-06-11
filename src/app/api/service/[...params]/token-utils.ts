@@ -8,6 +8,7 @@ let refreshTokenPromise: Promise<TokenResponse> | null = null;
 
 export async function getValidatedTokenFromSession(): Promise<TokenResponse> {
 	try {
+		console.log('🔍 [middleware] Проверка токена в сессии');
 		const session = (await getSession()) as SessionData;
 
 		if (!session?.refreshToken || !session?.accessToken) {

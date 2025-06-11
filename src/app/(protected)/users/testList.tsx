@@ -5,13 +5,21 @@ import UserCard from '@/features/users/components/UserCard';
 import UserSearchBar from '@/features/users/components/UserSearchBar';
 import { useUsers } from '@/features/users/hooks/useUsers';
 import Pagination from '@/shared/components/pagination/Paginations';
+import { UserListResult, UserSearchCriteria } from '@servemate/dto';
 
 // Компонент поиска и фильтров
 
 // Компонент пагинации
 
 // Основной компонент
-export function UsersPageContainer() {
+export function UsersPageContainer({
+	initialData,
+	searchParams,
+}: {
+	initialData?: UserListResult;
+	searchParams?: UserSearchCriteria;
+}) {
+	console.log('UsersPageContainer initialData:', initialData);
 	const {
 		isError,
 		isLoading,
@@ -22,7 +30,7 @@ export function UsersPageContainer() {
 		refetch,
 		userSearchCriteria,
 		setUserSearchCriteria,
-	} = useUsers();
+	} = useUsers({ initialData, searchParams });
 
 	if (isError) {
 		return <SearchError error='Failed to load users' refetch={refetch} />;
@@ -43,7 +51,9 @@ export function UsersPageContainer() {
 					<div>
 						<h1 className='font-bold text-ctp-text text-2xl'>Пользователи</h1>
 						{data && (
-							<p className='mt-1 text-ctp-subtext0'>Найдено пользователей: {data.totalCount}</p>
+							<p className='mt-1 text-ctp-subtext0'>
+								Найдено пользователей: {initialData?.totalCount}
+							</p>
 						)}
 					</div>
 

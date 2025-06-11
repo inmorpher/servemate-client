@@ -15,25 +15,67 @@ function UserSearchBar({
 }) {
 	const [searchValue, setSearchValue] = useState(criteria.name || '');
 
-	const debouncedOnSearchChange = useMemo(
+	// Shallow URL update БЕЗ серверного запроса
+	const updateUrlShallow = useCallback((newCriteria: UserSearchCriteria) => {
+		const url = new URL(window.location.href);
+		url.search = '';
+
+		Object.entries(newCriteria).forEach(([key, value]) => {
+			if (value !== undefined && value !== null && value !== '') {
+				url.searchParams.set(key, String(value));
+			}
+		});
+
+		window.history.replaceState({}, '', url.toString());
+	}, []);
+
+	// Debounced поиск БЕЗ серверного запроса
+	const debouncedSearch = useMemo(
 		() =>
 			debounce((value: string) => {
-				if (value.trim().length < 3) {
-					return onCriteriaChange({ ...criteria, name: '', page: 1 });
-				}
-				onCriteriaChange({ ...criteria, name: value, page: 1 });
+				const newCriteria = { ...criteria, name: value, page: 1 };
+
+				// Обновляем URL для шаринга/истории
+				updateUrlShallow(newCriteria);
+
+				// Тригерим клиентский поиск
+				onCriteriaChange(newCriteria);
 			}, 500),
-		[criteria, onCriteriaChange]
+		[criteria, updateUrlShallow, onCriteriaChange]
 	);
 
 	const handleOnInputChange = useCallback(
 		(event: React.ChangeEvent<HTMLInputElement>) => {
 			const value = event.target.value;
 			setSearchValue(value);
-			debouncedOnSearchChange(value);
+
+			if (value.trim().length < 3 && value.trim().length > 0) {
+				return; // Не ищем, если меньше 3 символов
+			}
+
+			debouncedSearch(value.trim());
 		},
-		[debouncedOnSearchChange]
+		[debouncedSearch]
 	);
+
+	// Для остальных фильтров - клиентское обновление
+	const handleCriteriaChange = useCallback(
+		(newCriteria: UserSearchCriteria) => {
+			// Обновляем URL БЕЗ серверного запроса
+			updateUrlShallow(newCriteria);
+
+			// Тригерим клиентский поиск/фильтрацию
+			onCriteriaChange(newCriteria);
+		},
+		[updateUrlShallow, onCriteriaChange]
+	);
+
+	// Обработчик для явного поиска (Enter или кнопка)
+	const handleExplicitSearch = useCallback(() => {
+		const newCriteria = { ...criteria, name: searchValue.trim(), page: 1 };
+		updateUrlShallow(newCriteria);
+		onCriteriaChange(newCriteria);
+	}, [criteria, searchValue, updateUrlShallow, onCriteriaChange]);
 
 	return (
 		<div className='bg-ctp-base/20 backdrop-blur-md border border-ctp-surface0/30 shadow-2xl drop-shadow-lg py-4 px-6  top-0 z-10 w-full mb-4 '>
@@ -45,10 +87,12 @@ function UserSearchBar({
 							type='text'
 							placeholder='Users search...'
 							value={searchValue}
-							onChange={(event) => handleOnInputChange(event)}
-							onKeyDown={(e) => e.key === 'Enter' && onSearch()}
-							onFocus={(event) => {
-								event.preventDefault();
+							onChange={handleOnInputChange}
+							onKeyDown={(e) => {
+								if (e.key === 'Enter') {
+									e.preventDefault();
+									handleExplicitSearch(); // БЕЗ серверного запроса
+								}
 							}}
 							className='w-full px-4 py-2 pl-10 text-sm bg-ctp-surface0 border border-ctp-surface1 rounded-lg text-ctp-text placeholder-ctp-subtext0 focus:outline-none focus:ring-2 focus:ring-ctp-blue focus:border-transparent'
 						/>
@@ -68,7 +112,7 @@ function UserSearchBar({
 					</div>
 
 					<button
-						onClick={onSearch}
+						onClick={handleExplicitSearch} // БЕЗ серверного запроса
 						disabled={isLoading}
 						className='px-4 py-2 bg-ctp-blue text-ctp-base text-sm font-medium rounded-lg hover:bg-ctp-sapphire disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2'
 					>
@@ -93,15 +137,17 @@ function UserSearchBar({
 					</button>
 				</div>
 
-				{/* Фильтры и сортировка */}
+				{/* Фильтры */}
 				<div className='flex flex-wrap items-center gap-3'>
 					{/* Role filter */}
 					<select
 						value={criteria.role || ''}
 						onChange={(e) =>
-							onCriteriaChange({
+							handleCriteriaChange({
+								// БЕЗ серверного запроса
 								...criteria,
 								role: e.target.value as UserRole,
+								page: 1,
 							})
 						}
 						className='px-3 py-1.5 text-sm bg-ctp-surface0 border border-ctp-surface1 rounded-md text-ctp-text focus:outline-none focus:ring-2 focus:ring-ctp-blue'
@@ -113,13 +159,15 @@ function UserSearchBar({
 						<option value='MANAGER'>Manager</option>
 					</select>
 
-					{/* Filter of activity */}
+					{/* Activity filter */}
 					<select
 						value={criteria.isActive === undefined ? '' : criteria.isActive.toString()}
 						onChange={(e) =>
-							onCriteriaChange({
+							handleCriteriaChange({
+								// БЕЗ серверного запроса
 								...criteria,
 								isActive: e.target.value === '' ? undefined : e.target.value === 'true',
+								page: 1,
 							})
 						}
 						className='px-3 py-1.5 text-sm bg-ctp-surface0 border border-ctp-surface1 rounded-md text-ctp-text focus:outline-none focus:ring-2 focus:ring-ctp-blue'
@@ -129,13 +177,15 @@ function UserSearchBar({
 						<option value='false'>Not active</option>
 					</select>
 
-					{/* Сортировка */}
+					{/* Sort field */}
 					<select
 						value={criteria.sortBy || 'name'}
 						onChange={(e) =>
-							onCriteriaChange({
+							handleCriteriaChange({
+								// БЕЗ серверного запроса
 								...criteria,
 								sortBy: e.target.value as UserSortColumn,
+								page: 1,
 							})
 						}
 						className='px-3 py-1.5 text-sm bg-ctp-surface0 border border-ctp-surface1 rounded-md text-ctp-text focus:outline-none focus:ring-2 focus:ring-ctp-blue'
@@ -151,9 +201,11 @@ function UserSearchBar({
 					{/* Sort order */}
 					<button
 						onClick={() =>
-							onCriteriaChange({
+							handleCriteriaChange({
+								// БЕЗ серверного запроса
 								...criteria,
 								sortOrder: criteria.sortOrder === 'asc' ? 'desc' : 'asc',
+								page: 1,
 							})
 						}
 						className='px-3 py-1.5 text-sm bg-ctp-surface0 border border-ctp-surface1 rounded-md text-ctp-text hover:bg-ctp-surface1 transition-colors flex items-center gap-1'
@@ -162,17 +214,19 @@ function UserSearchBar({
 						{criteria.sortOrder === 'desc' ? 'Desc.' : 'Asc.'}
 					</button>
 
-					{/* Сброс фильтров */}
+					{/* Reset */}
 					<button
-						onClick={() =>
-							onCriteriaChange({
+						onClick={() => {
+							const resetCriteria: UserSearchCriteria = {
 								name: '',
 								sortBy: 'name',
 								sortOrder: 'asc',
 								page: 1,
 								pageSize: 10,
-							})
-						}
+							};
+							setSearchValue('');
+							handleCriteriaChange(resetCriteria); // БЕЗ серверного запроса
+						}}
 						className='px-3 py-1.5 text-sm text-ctp-red hover:bg-ctp-red hover:bg-opacity-10 rounded-md transition-colors'
 					>
 						Reset

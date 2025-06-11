@@ -11,16 +11,24 @@ export type UseUsersReturn = UseQueryResult<UserListResult> & {
 	handlePageSizeChange: (pageSize: number) => void;
 };
 
-export function useUsers(): UseUsersReturn {
+export function useUsers({
+	initialData,
+	searchParams,
+}: {
+	initialData?: UserListResult;
+	searchParams?: UserSearchCriteria;
+}): UseUsersReturn {
 	const { toast } = useToaster();
 
-	const [userSearchCriteria, setUserSearchCriteria] = useState<UserSearchCriteria>({
-		name: '',
-		sortBy: 'name',
-		sortOrder: 'asc',
-		page: 1,
-		pageSize: 10,
-	});
+	const [userSearchCriteria, setUserSearchCriteria] = useState<UserSearchCriteria>(
+		searchParams || {
+			name: '',
+			sortBy: 'name',
+			sortOrder: 'asc',
+			page: 1,
+			pageSize: 10,
+		}
+	);
 
 	const scrollToTop = () => {
 		window.scrollTo({
@@ -51,6 +59,7 @@ export function useUsers(): UseUsersReturn {
 			const result = await response.json();
 			return result;
 		},
+		initialData: initialData || undefined,
 	});
 
 	const handleSearch = () => {

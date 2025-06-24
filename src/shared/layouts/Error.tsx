@@ -3,9 +3,18 @@ interface SearchErrorProps {
 	refetch: () => void;
 }
 
-function SearchError({ error, refetch }: SearchErrorProps) {
+/**
+ * Displays an error message with an option to retry the search operation.
+ *
+ * @param error - The error message to display. If not provided, only the generic error UI is shown.
+ * @param refetch - A callback function to retry the search or data fetching operation.
+ *
+ * @example
+ * <SearchError error="Failed to load users." refetch={fetchUsers} />
+ */
+export const SearchError = ({ error, refetch }: SearchErrorProps) => {
 	return (
-		<div className='flex justify-center items-center bg-ctp-base min-h-screen'>
+		<div className='flex justify-center items-center '>
 			<div className='text-center'>
 				<div className='mb-4 text-ctp-red'>
 					<svg className='mx-auto w-16 h-16' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -29,6 +38,4 @@ function SearchError({ error, refetch }: SearchErrorProps) {
 			</div>
 		</div>
 	);
-}
-
-export default SearchError;
+};

@@ -1,19 +1,23 @@
-function Pagination({
-	currentPage,
-	totalPages,
-	onPageChange,
-	pageSize,
-	onPageSizeChange,
-	totalCount,
-}: {
-	currentPage: number;
-	totalPages: number;
-	onPageChange: (page: number) => void;
-	pageSize: number;
-	onPageSizeChange: (size: number) => void;
-	totalCount: number;
-}) {
+'use client';
+
+import { UserListResult } from '@servemate/dto';
+
+interface PaginationProps {
+	data: {
+		totalCount?: number;
+		totalPages?: number;
+		page?: number;
+		pageSize?: number;
+	};
+	updateSearchCriteria: (newCriteria: Partial<UserListResult>) => void;
+}
+
+function Pagination({ data, updateSearchCriteria }: PaginationProps) {
+	const { totalCount = 0, totalPages = 1, page: currentPage = 1, pageSize = 10 } = data;
 	const getVisiblePages = () => {
+		if (totalPages <= 1) {
+			return [1];
+		}
 		const delta = 2;
 		const range = [];
 		const rangeWithDots = [];
@@ -46,8 +50,17 @@ function Pagination({
 	const startItem = (currentPage - 1) * pageSize + 1;
 	const endItem = Math.min(currentPage * pageSize, totalCount);
 
+	const onPageChange = (page: number) => {
+		if (page < 1 || page > totalPages) return;
+		updateSearchCriteria({ page: page });
+	};
+
+	const onPageSizeChange = (size: number) => {
+		updateSearchCriteria({ pageSize: size, page: 1 });
+	};
+
 	return (
-		<div className='z-10 bg-ctp-base px-6 py-4 border-ctp-surface0 border-t'>
+		<div className='z-10 bg-ctp-base px-6 py-4 '>
 			<div className='flex flex-wrap-reverse justify-center items-center gap-2'>
 				<div className='flex items-center gap-4'>
 					<span className='text-ctp-subtext0 text-sm'>

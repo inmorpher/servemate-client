@@ -10,7 +10,7 @@ const ProtectedLayout = async ({ children }: { children: ReactNode }) => {
 	// Проверяем аутентификацию с помощью NextAuth
 
 	return (
-		<div className='flex h-full'>
+		<div className='flex h-full relative bg-ctp-base'>
 			<SidebarProvider>
 				<SidebarOverlay />
 				<Sidebar.MobileToggle />
@@ -22,6 +22,7 @@ const ProtectedLayout = async ({ children }: { children: ReactNode }) => {
 						<Sidebar.NavItem href='/account' icon='file' label='Account' />
 
 						<Sidebar.NavItem href='/users' icon='file' label='Users' />
+						<Sidebar.NavItem href='/orders' icon='file' label='Orders' />
 					</Sidebar.Nav>
 
 					<Sidebar.Footer>
@@ -29,7 +30,7 @@ const ProtectedLayout = async ({ children }: { children: ReactNode }) => {
 					</Sidebar.Footer>
 				</Sidebar>
 			</SidebarProvider>
-			<main className='flex-1 overflow-auto p-0 py-0'>{children}</main>
+			<div className='flex-1 overflow-auto p-2 py-2  min-h-screen'>{children}</div>
 		</div>
 	);
 };

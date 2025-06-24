@@ -1,7 +1,9 @@
-function UserListSkeleton({ pageSize }: { pageSize?: number }) {
+function UserListSkeleton({ pageSize }: { pageSize: number }) {
+	console.log('UserListSkeleton rendered with pageSize:', pageSize);
+
 	return (
 		<div className='space-y-4'>
-			{[...Array(pageSize || 10)].map((_, index) => (
+			{[...Array(pageSize)].map((_, index) => (
 				<div
 					key={index}
 					className='bg-ctp-surface0 border border-ctp-surface1 rounded-lg p-4 animate-pulse'

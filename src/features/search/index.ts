@@ -1,4 +1,5 @@
 import { SearchSortToggler } from './ui/SearchButton';
+import { SearchChip } from './ui/SearchChip';
 import { SearchContainer } from './ui/SearchContainer';
 import { SearchInput } from './ui/SearchInput';
 import { SearchReset } from './ui/SearchReset';
@@ -34,4 +35,5 @@ export const Search = Object.assign(SearchContainer, {
 	Select: SearchSelect,
 	Button: SearchSortToggler,
 	Reset: SearchReset,
+	Chip: SearchChip,
 });

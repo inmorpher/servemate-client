@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function OrdersPage() {
 	return (
-		<div className='relative  bg-ctp-surface0 rounded-2xl h-full'>
+		<div className='relative rounded-2xl h-full bg-ctp-base'>
 			<Suspense fallback={<div className='p-4'>Loading...</div>}>
 				<OrdersListPage />
 			</Suspense>

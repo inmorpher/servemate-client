@@ -45,8 +45,8 @@ const getStatusIndicatorColor = (status: OrderStatus) => {
 };
 
 const formatDate = (date: Date | string) => {
-	return new Date(date).toLocaleDateString('ru-RU', {
-		year: 'numeric',
+	return new Date(date).toLocaleDateString('en-US', {
+		year: '2-digit',
 		month: 'short',
 		day: 'numeric',
 		hour: '2-digit',

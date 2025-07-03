@@ -1,18 +1,18 @@
 import { ReactNode } from 'react';
 
 interface ListPageLayoutProps {
-	header: ReactNode;
+	header?: ReactNode;
 	children: ReactNode;
 	footer?: ReactNode;
 }
 
 export const ListPageLayout = ({ header, children, footer }: ListPageLayoutProps) => {
 	return (
-		<div className='relative bg-ctp-base h-full flex flex-col'>
+		<div className='relative bg-ctp-base h-full flex flex-col flex-grow overflow-x-hidden'>
 			<header className='flex-shrink-0 bg-ctp-base' role='banner'>
 				{header}
 			</header>
-			<main className='flex-1 p-6 overflow-auto bg-ctp-surface1 rounded-2xl' role='main'>
+			<main className='flex-1 p-6 overflow-hidden bg-ctp-surface1 rounded-2xl' role='main'>
 				{children}
 			</main>
 

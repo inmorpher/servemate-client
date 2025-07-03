@@ -30,61 +30,68 @@ const OrderCard = memo(function OrderCard({ order }: { order: OrderListItem }) {
 	const formattedOrderTime = formatDate(order.orderTime);
 	const formattedUpdatedAt = formatDate(order.updatedAt);
 	const formattedCompletionTime = order.completionTime ? formatDate(order.completionTime) : null;
-	console.log('order allergies', order.allergies);
+
 	return (
 		<Card>
-			<Card.Wrapper>
-				<Card.ColorIndicator color={statusIndicatorColor} />
-				<div className='flex items-center gap-3 mb-2'>
-					<Card.Text type='heading'>Order #{order.id}</Card.Text>
-					<Card.Text className={`px-2 py-1 text-xs font-medium rounded-full ${statusColor}`}>
-						{order.status}
-					</Card.Text>
-					<Card.Text className='text-xs font-medium text-ctp-subtext1'>
-						Table {order.tableNumber}
-					</Card.Text>
-					<Card.Text className='text-xs font-medium text-ctp-subtext1'>
-						{order.guestsCount} guests
-					</Card.Text>
-				</div>
+			<Card.ColorIndicator color={statusIndicatorColor} />
+			<Card.Wrapper className='flex gap-6 xs:flex-col flex-row flex-wrap'>
+				{/* Left block shows order ID, status, and timestamps */}
+				<div className=' space-y-2'>
+					<div className='flex items-center gap-3'>
+						<Card.Text type='heading'>Order #{order.id}</Card.Text>
+						<Card.Text className={`px-2 py-1 text-xs font-medium rounded-full ${statusColor}`}>
+							{order.status}
+						</Card.Text>
+					</div>
 
-				<div className='mb-2'>
 					<Card.Text type='text'>Server: {order.server.name}</Card.Text>
+
+					<div className='space-y-1 text-ctp-subtext1 text-xs'>
+						<Card.Text className='block'>Ordered: {formattedOrderTime}</Card.Text>
+						<Card.Text className='sm:block'>Updated: {formattedUpdatedAt}</Card.Text>
+						{formattedCompletionTime && <Card.Text>Completed: {formattedCompletionTime}</Card.Text>}
+					</div>
 				</div>
 
-				<div className='flex items-center gap-4 mb-2'>
-					<Card.Text className='font-medium text-ctp-green'>
-						Total: {formatCurrency(order.totalAmount)}
-					</Card.Text>
+				{/* Right block shows guests, table, pricing, allergies */}
+				<div className=' space-y-2'>
+					<div className='flex items-center gap-4'>
+						<Card.Text className='text-xs font-medium text-ctp-subtext1'>
+							Table {order.tableNumber}
+						</Card.Text>
+						<Card.Text className='text-xs font-medium text-ctp-subtext1'>
+							{order.guestsCount} guests
+						</Card.Text>
+					</div>
+
+					<div className='flex items-center gap-4'>
+						<Card.Text className='font-medium text-ctp-green'>
+							Total: {formatCurrency(order.totalAmount)}
+						</Card.Text>
+					</div>
+
 					{order.discount > 0 && (
-						<Card.Text className='text-ctp-peach'>
+						<Card.Text className='text-ctp-peach block'>
 							Discount: {formatCurrency(order.discount)}
 						</Card.Text>
 					)}
 					{order.tip > 0 && (
-						<Card.Text className='text-ctp-blue'>Tip: {formatCurrency(order.tip)}</Card.Text>
+						<Card.Text className='text-ctp-blue block'>Tip: {formatCurrency(order.tip)}</Card.Text>
 					)}
-				</div>
-
-				{(order.allergies || order.comments) && (
-					<div className='mb-2 space-y-1'>
-						{order.allergies && order.allergies.length > 0 && (
-							<Card.Text className='text-ctp-red text-sm block'>
-								⚠️ Allergies: {order.allergies}
-							</Card.Text>
-						)}
-						{order.comments && (
-							<Card.Text className='text-ctp-subtext1 text-sm'>
-								💬 Comments: {order.comments}
-							</Card.Text>
-						)}
-					</div>
-				)}
-
-				<div className='flex flex-wrap gap-4 text-ctp-subtext1 text-xs'>
-					<Card.Text>Ordered: {formattedOrderTime}</Card.Text>
-					<Card.Text>Updated: {formattedUpdatedAt}</Card.Text>
-					{formattedCompletionTime && <Card.Text>Completed: {formattedCompletionTime}</Card.Text>}
+					{(order.allergies || order.comments) && (
+						<div>
+							{order.allergies && order.allergies.length > 0 && (
+								<Card.Text className='text-ctp-red text-sm block'>
+									⚠️ Allergies: {order.allergies.join(', ')}
+								</Card.Text>
+							)}
+							{order.comments && (
+								<Card.Text className='text-ctp-subtext1 text-sm'>
+									💬 Comments: {order.comments}
+								</Card.Text>
+							)}
+						</div>
+					)}
 				</div>
 			</Card.Wrapper>
 		</Card>

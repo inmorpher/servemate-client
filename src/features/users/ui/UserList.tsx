@@ -1,8 +1,8 @@
 'use client';
 
 import { UserListResult } from '@servemate/dto';
+import UserListSkeleton from '../../../shared/components/skeleton/ListSkeleton';
 import UserCard from './UserCard';
-import UserListSkeleton from './UserListSkeleton';
 
 interface UserListProps {
 	isLoading?: boolean;

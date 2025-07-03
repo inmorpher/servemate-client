@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 
 interface SearchContainerProps {
 	children: ReactNode;
-	onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+	onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
 }
 
 /**

@@ -3,7 +3,7 @@
 import { API_ENDPOINTS } from '@/consts';
 import { buildQueryParams } from '@/shared/utils/buildQueryParams';
 import { OrderSearchCriteria, OrderSearchListResult, OrderSearchSchema } from '@servemate/dto';
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
 
 type UseGetOrdersReturn = UseQueryResult<OrderSearchListResult> & {
@@ -34,9 +34,11 @@ export const useGetOrders = (): UseGetOrdersReturn => {
 			if (!response.ok) {
 				throw new Error('Failed to fetch orders');
 			}
+
 			return await response.json();
 		},
-
+		placeholderData: keepPreviousData,
+		notifyOnChangeProps: ['data', 'error', 'isLoading', 'isFetching'],
 		staleTime: 5 * 60 * 1000, // 5 minutes
 		refetchOnWindowFocus: false,
 	});

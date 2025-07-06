@@ -37,7 +37,7 @@ export const FilterGroup = ({
 				</label>
 				{description && <p className='text-xs text-ctp-subtext2'>{description}</p>}
 			</div>
-			<div className='space-y-1'>{children}</div>
+			<div className='flex flex-wrap gap-2 p-2'>{children}</div>
 		</div>
 	);
 };

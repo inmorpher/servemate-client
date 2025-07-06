@@ -4,7 +4,8 @@ import { API_ENDPOINTS } from '@/consts';
 import { buildQueryParams } from '@/shared/utils/buildQueryParams';
 import { OrderSearchCriteria, OrderSearchListResult, OrderSearchSchema } from '@servemate/dto';
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
-import { useCallback, useMemo, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useMemo } from 'react';
 
 type UseGetOrdersReturn = UseQueryResult<OrderSearchListResult> & {
 	orderSearchCriteria: OrderSearchCriteria;
@@ -12,19 +13,22 @@ type UseGetOrdersReturn = UseQueryResult<OrderSearchListResult> & {
 };
 
 export const useGetOrders = (): UseGetOrdersReturn => {
-	const ordersCriteria = useMemo(() => {
-		const base = OrderSearchSchema.parse({});
-		return {
-			...base,
-			page: base.page || 1,
-			pageSize: base.pageSize || 10,
-			sortBy: base.sortBy || 'createdAt',
-			sortOrder: base.sortOrder || 'desc',
-		};
-	}, []);
+	const router = useRouter();
+	const pathname = usePathname();
+	const searchParams = useSearchParams();
 
-	const [orderSearchCriteria, setOrderSearchCriteria] =
-		useState<OrderSearchCriteria>(ordersCriteria);
+	const orderSearchCriteria = useMemo(() => {
+		const params = Object.fromEntries(searchParams.entries());
+		const queryToParse = {
+			...params,
+			page: params.page ? Number(params.page) : undefined,
+			pageSize: params.pageSize ? Number(params.pageSize) : undefined,
+			id: params.id ? Number(params.id) : undefined,
+		};
+
+		const parsedResult = OrderSearchSchema.safeParse(queryToParse);
+		return parsedResult.success ? parsedResult.data : OrderSearchSchema.parse({});
+	}, [searchParams]);
 
 	const ordersData = useQuery({
 		queryKey: ['orders', orderSearchCriteria],
@@ -43,18 +47,14 @@ export const useGetOrders = (): UseGetOrdersReturn => {
 		refetchOnWindowFocus: false,
 	});
 
-	const updateSearchCriteria = useCallback((newCriteria: Partial<OrderSearchCriteria>) => {
-		setOrderSearchCriteria((prevCriteria) => {
-			const updatedCriteria = { ...prevCriteria, ...newCriteria };
-			const result = OrderSearchSchema.safeParse(updatedCriteria);
-			if (result.success) {
-				return result.data;
-			} else {
-				console.error('Invalid search criteria:', result.error);
-				return prevCriteria;
-			}
-		});
-	}, []);
+	const updateSearchCriteria = useCallback(
+		(newCriteria: Partial<OrderSearchCriteria>) => {
+			const updatedCriteria = { ...orderSearchCriteria, ...newCriteria };
+			const queryParams = buildQueryParams(updatedCriteria);
+			router.push(`${pathname}?${queryParams.toString()}`);
+		},
+		[orderSearchCriteria, router, pathname]
+	);
 
 	return {
 		...ordersData,

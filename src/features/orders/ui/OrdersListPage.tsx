@@ -8,6 +8,7 @@ import Pagination from '@/shared/components/pagination/Paginations';
 import AppSlider from '@/shared/components/slider/ui/Slider';
 import { SearchError } from '@/shared/layouts/Error';
 import { ListPageLayout } from '@/shared/layouts/ListPageLayput';
+import { useDebounce } from '@/shared/hooks/useDebounce';
 import { useEffect, useState } from 'react';
 import { useGetOrders } from '../hooks/useGetOrders';
 import { OrderList } from './OrderList';
@@ -24,7 +25,29 @@ export const OrdersListPage = () => {
 	} = useGetOrders();
 
 	const [searchValue, setSearchValue] = useState<string>('');
-	const [priceRange, setPriceRange] = useState([20, 80]);
+	const [priceRange, setPriceRange] = useState([0, 100]); // Default to 0-100 for initial range
+
+	const [minPriceInput, setMinPriceInput] = useState(priceRange[0].toString());
+	const [maxPriceInput, setMaxPriceInput] = useState(priceRange[1].toString());
+
+	const debouncedMinPrice = useDebounce(minPriceInput, 500);
+	const debouncedMaxPrice = useDebounce(maxPriceInput, 500);
+
+	useEffect(() => {
+		// Update priceRange when debounced input values change
+		const newMin = Number(debouncedMinPrice);
+		const newMax = Number(debouncedMaxPrice);
+
+		if (!isNaN(newMin) && !isNaN(newMax) && (newMin !== priceRange[0] || newMax !== priceRange[1])) {
+			setPriceRange([newMin, newMax]);
+		}
+	}, [debouncedMinPrice, debouncedMaxPrice]);
+
+	useEffect(() => {
+		// Update input fields when priceRange changes (e.g., from slider)
+		setMinPriceInput(priceRange[0].toString());
+		setMaxPriceInput(priceRange[1].toString());
+	}, [priceRange]);
 
 	useEffect(() => {
 		window.scrollTo({
@@ -68,12 +91,8 @@ export const OrdersListPage = () => {
 					/>
 				)}
 			</ListPageLayout>
+			{/* Filter Sidebar */}
 			<Filter title='Search Orders'>
-				{/* <OrderSearchBar
-					isLoading={isLoading}
-					updateCriteria={updateSearchCriteria}
-					criteria={orderSearchCriteria}
-				/> */}
 				<Search onSubmit={handleSubmit}>
 					<Search.Input
 						value={searchValue || ''}
@@ -84,32 +103,40 @@ export const OrdersListPage = () => {
 
 				<Filter.Group label='Allergies'>
 					{orderSearchOptions.allergies.map((option) => (
-						<SearchChip key={option.value} className='m-2'>
+						<SearchChip key={option.value}>
 							{option.value}
 						</SearchChip>
 					))}
 				</Filter.Group>
 
-				<Filter.Group label='Slider'>
-					<div className='px-2 py-4'>
-						<AppSlider
-							range
-							min={0}
-							max={100}
-							value={priceRange}
-							onChange={(value) => setPriceRange(value as number[])}
-							className='mb-4'
+				<Filter.Group label='Price Range'>
+					<AppSlider
+						range
+						min={0}
+						max={100}
+						value={priceRange}
+						onChange={(value) => setPriceRange(value as number[])}
+					/>
+					<div className='flex justify-between items-center mt-2'>
+						<input
+							type='number'
+							value={minPriceInput}
+							onChange={(e) => setMinPriceInput(e.target.value)}
+							className='w-20 p-1 border border-gray-300 rounded-md text-sm text-center'
 						/>
-						<div className='flex justify-between text-sm text-gray-500'>
-							<span>${priceRange[0]}</span>
-							<span>${priceRange[1]}</span>
-						</div>
+						<span className='mx-2 text-gray-500'>-</span>
+						<input
+							type='number'
+							value={maxPriceInput}
+							onChange={(e) => setMaxPriceInput(e.target.value)}
+							className='w-20 p-1 border border-gray-300 rounded-md text-sm text-center'
+						/>
 					</div>
 				</Filter.Group>
 
 				<Filter.Group label='Status'>
 					{orderSearchOptions.statuses.map((option) => (
-						<SearchChip key={option.value} className='m-2'>
+						<SearchChip key={option.value}>
 							{option.value}
 						</SearchChip>
 					))}

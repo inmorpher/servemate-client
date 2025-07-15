@@ -5,8 +5,7 @@ import { orderSearchOptions } from '@/features/search/model/ordersOptions';
 import { SearchChip } from '@/features/search/ui/SearchChip';
 import { Filter } from '@/shared/components/filter';
 import Pagination from '@/shared/components/pagination/Paginations';
-import AppSlider from '@/shared/components/slider/ui/Slider';
-import { useDebounce } from '@/shared/hooks/useDebounce';
+import RangeSlider from '@/shared/components/slider/ui/Slider';
 import { SearchError } from '@/shared/layouts/Error';
 import { ListPageLayout } from '@/shared/layouts/ListPageLayput';
 import { useEffect, useState } from 'react';
@@ -25,47 +24,14 @@ export const OrdersListPage = () => {
 	} = useGetOrders();
 
 	const [searchValue, setSearchValue] = useState<string>('');
-	const [priceRange, setPriceRange] = useState([0, 100]); // Default to 0-100 for initial range
 
-	const [minPriceInput, setMinPriceInput] = useState(0);
-	const [maxPriceInput, setMaxPriceInput] = useState(100);
-
-	// Получаем реальные границы из данных
-	const realMinPrice = ordersData?.priceRange?.min || 0;
-	const realMaxPrice = ordersData?.priceRange?.max || 100;
-
-	const debouncedMinPrice = useDebounce(minPriceInput, 500);
-	const debouncedMaxPrice = useDebounce(maxPriceInput, 500);
-
-	// Инициализируем значения когда данные загружены
-	useEffect(() => {
-		if (ordersData?.priceRange) {
-			const { min, max } = ordersData.priceRange;
-			setPriceRange([min, max]);
-			setMinPriceInput(min);
-			setMaxPriceInput(max);
-		}
-	}, [ordersData?.priceRange]);
-
-	useEffect(() => {
-		// Update priceRange when debounced input values change
-		const newMin = Number(debouncedMinPrice);
-		const newMax = Number(debouncedMaxPrice);
-
-		if (
-			!isNaN(newMin) &&
-			!isNaN(newMax) &&
-			(newMin !== priceRange[0] || newMax !== priceRange[1])
-		) {
-			setPriceRange([newMin, newMax]);
-		}
-	}, [debouncedMinPrice, debouncedMaxPrice]);
-
-	useEffect(() => {
-		// Update input fields when priceRange changes (e.g., from slider)
-		setMinPriceInput(priceRange[0]);
-		setMaxPriceInput(priceRange[1]);
-	}, [priceRange]);
+	const handlePriceRangeChange = (values: number[]) => {
+		const [minAmount, maxAmount] = values;
+		updateSearchCriteria({
+			minAmount,
+			maxAmount,
+		});
+	};
 
 	useEffect(() => {
 		window.scrollTo({
@@ -76,7 +42,6 @@ export const OrdersListPage = () => {
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		console.log('Search submitted with value:', searchValue);
 		if (searchValue.trim()) {
 			updateSearchCriteria({
 				...orderSearchCriteria,
@@ -84,7 +49,6 @@ export const OrdersListPage = () => {
 			});
 		}
 	};
-	console.log('isFetching', isFetching);
 
 	const { totalCount, pageSize, page, totalPages } = ordersData || {};
 	const effectivePageSize = pageSize ?? orderSearchCriteria.pageSize ?? 10;
@@ -120,6 +84,7 @@ export const OrdersListPage = () => {
 					/>
 				</Search>
 
+				{/* Order ID Filter */}
 				<Filter.Group label='Allergies'>
 					{orderSearchOptions.allergies
 						.filter((option) => option.value !== 'NONE')
@@ -139,45 +104,28 @@ export const OrdersListPage = () => {
 						))}
 				</Filter.Group>
 
-				<Filter.Group label='Price Range'>
-					<AppSlider
-						range
-						min={realMinPrice}
-						max={realMaxPrice}
-						value={priceRange}
-						onChange={(value) => setPriceRange(value as number[])}
-					/>
-					<div className='flex justify-between items-center mt-2'>
-						<input
-							type='number'
-							value={minPriceInput}
-							onChange={(e) => setMinPriceInput(Number(e.target.value))}
-							className='w-20 p-1 border border-gray-300 rounded-md text-sm text-center'
-							min={realMinPrice}
-							max={realMaxPrice}
+				{/* Price Range Filter */}
+				{ordersData?.priceRange && (
+					<Filter.Group label='Price Range'>
+						<RangeSlider
+							minValue={ordersData.priceRange.min}
+							maxValue={ordersData.priceRange.max}
+							handler={(values) => handlePriceRangeChange(values)}
 						/>
-						<span className='mx-2 text-gray-500'>-</span>
-						<input
-							type='number'
-							value={maxPriceInput}
-							onChange={(e) => setMaxPriceInput(Number(e.target.value))}
-							className='w-20 p-1 border border-gray-300 rounded-md text-sm text-center'
-							min={realMinPrice}
-							max={realMaxPrice}
-						/>
-					</div>
-				</Filter.Group>
+					</Filter.Group>
+				)}
 
+				{/* Status Filter */}
 				<Filter.Group label='Status'>
 					{orderSearchOptions.statuses.map((option) => (
 						<SearchChip
-							key={option.value}
-							isActive={orderSearchCriteria.status?.includes(option.value)}
+							key={option.label}
+							isActive={orderSearchCriteria.status === option.label}
 							onClick={() => {
-								const newStatuses = orderSearchCriteria.status?.includes(option.value)
-									? orderSearchCriteria.status.filter((s) => s !== option.value)
-									: [...(orderSearchCriteria.status || []), option.value];
-								updateSearchCriteria({ status: newStatuses });
+								// Если статус уже выбран, сбрасываем его, иначе устанавливаем новый
+								const newStatus =
+									orderSearchCriteria.status === option.value ? undefined : option.value;
+								updateSearchCriteria({ status: newStatus });
 							}}
 						>
 							{option.value}

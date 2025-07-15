@@ -1,27 +1,154 @@
 'use client';
-import Slider, { SliderProps } from 'rc-slider';
+import { cn } from '@/shared/lib/classNames';
+import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
+import { useEffect, useRef, useState } from 'react';
+import { SliderInputControls } from './SliderControls';
+
+interface RangeSlider {
+	debounce?: boolean;
+	handler?: (values: number[]) => void;
+	minValue?: number;
+	maxValue?: number;
+	inputs?: boolean;
+	step?: number;
+}
 
 /**
- * A customized slider component that wraps the base `Slider` and applies consistent styling and step value.
+ * RangeSlider is a React component that renders a customizable range slider with optional input controls.
  *
- * @param props - The properties to pass to the underlying `Slider` component.
- * @returns A styled slider component with predefined colors and a step of 0.01.
+ * @param {boolean} [debounce=true] - If true, the handler function is debounced by 300ms when the slider value changes.
+ * @param {number} minValue - The minimum value of the slider range.
+ * @param {number} maxValue - The maximum value of the slider range.
+ * @param {number} [step=0.1] - The step increment for the slider and input controls.
+ * @param {(value: number[]) => void} [handler] - Callback function invoked when the slider value changes. Receives the current value range as an array.
+ * @param {boolean} [inputs=true] - If true, renders input controls for manual value entry and increment/decrement buttons.
+ * @param {number[]} [defaultValue] - Initial value for the slider range.
+ *
+ * @returns {JSX.Element} The rendered range slider component with optional input controls.
  */
-const AppSlider = (props: SliderProps) => (
-	<Slider
-		{...props}
-		step={0.01}
-		styles={{
-			rail: { backgroundColor: '#45475a' },
-			track: { backgroundColor: '#89b4fa' },
-			handle: {
-				backgroundColor: '#89b4fa',
-				borderColor: '#89b4fa',
-				opacity: 1,
-			},
-		}}
-	/>
-);
+const RangeSlider = ({
+	debounce = true,
+	minValue = 0,
+	maxValue = 100,
+	step = 1,
+	handler,
+	inputs = true,
+}: RangeSlider) => {
+	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+	const [valueRange, setValueRange] = useState([minValue, maxValue]);
 
-export default AppSlider;
+	const callHandler = (values: number[]) => {
+		if (!handler) return;
+
+		if (debounce) {
+			if (timeoutRef.current) {
+				clearTimeout(timeoutRef.current);
+			}
+			timeoutRef.current = setTimeout(() => {
+				handler(values);
+			}, 300);
+		} else {
+			handler(values);
+		}
+	};
+
+	const handleInputChange = (index: 0 | 1, newValue: number) => {
+		setValueRange((currentRange) => {
+			let newRange: number[];
+			if (index === 0) {
+				if (newValue >= minValue && newValue <= currentRange[1]) {
+					newRange = [newValue, currentRange[1]];
+					callHandler(newRange);
+					return newRange;
+				}
+			} else {
+				if (newValue <= maxValue && newValue >= currentRange[0]) {
+					newRange = [currentRange[0], newValue];
+					callHandler(newRange);
+					return newRange;
+				}
+			}
+			return currentRange;
+		});
+	};
+
+	const handleSliderChange = (value: number | number[]) => {
+		const newRange = value as number[];
+		setValueRange(newRange);
+		callHandler(newRange);
+	};
+
+	useEffect(() => {
+		setValueRange([minValue, maxValue]);
+	}, [minValue, maxValue]);
+
+	return (
+		<>
+			<Slider
+				range
+				value={valueRange}
+				onChange={handleSliderChange}
+				min={minValue}
+				max={maxValue}
+				step={step}
+				styles={{
+					rail: { backgroundColor: 'var(--ctp-surface0)' },
+					track: { backgroundColor: 'var(--ctp-blue)' },
+					handle: {
+						backgroundColor: 'var(--ctp-blue)',
+						borderColor: 'var(--ctp-blue)',
+						opacity: 1,
+					},
+				}}
+			/>
+			{inputs && (
+				<div className='flex justify-between items-center mt-2'>
+					<SliderInputControls
+						onDecrement={() => handleInputChange(0, valueRange[0] - step)}
+						onIncrement={() => handleInputChange(0, valueRange[0] + step)}
+					>
+						<input
+							type='number'
+							step={step}
+							value={valueRange[0]}
+							onChange={(e) => {
+								const newMin = Number(e.target.value);
+								handleInputChange(0, newMin);
+							}}
+							className={cn(
+								'w-20 p-1 text-center bg-ctp-surface0 text-ctp-text border border-ctp-overlay0 rounded'
+							)}
+							min={minValue}
+							max={valueRange[1]}
+							aria-label='Minimal value'
+						/>
+					</SliderInputControls>
+					<span className='mx-2 text-gray-500'>-</span>
+					<SliderInputControls
+						onDecrement={() => handleInputChange(1, valueRange[1] - step)}
+						onIncrement={() => handleInputChange(1, valueRange[1] + step)}
+					>
+						<input
+							type='number'
+							value={valueRange[1]}
+							step={step}
+							onChange={(e) => {
+								const newMax = Number(e.target.value);
+								handleInputChange(1, newMax);
+							}}
+							className={cn(
+								'w-20 p-1 text-center bg-ctp-surface0 text-ctp-text border border-ctp-overlay0 rounded'
+							)}
+							min={valueRange[0]}
+							max={maxValue}
+							aria-label='Maximal value'
+						/>
+					</SliderInputControls>
+				</div>
+			)}
+		</>
+	);
+};
+
+export default RangeSlider;

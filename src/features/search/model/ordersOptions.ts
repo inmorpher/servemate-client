@@ -1,4 +1,4 @@
-import { Allergy, OrderSortOptions } from '@servemate/dto';
+import { Allergies, OrderSortOptions, OrderState } from '@servemate/dto';
 
 /**
  * Provides configuration options for searching orders.
@@ -9,17 +9,19 @@ import { Allergy, OrderSortOptions } from '@servemate/dto';
  */
 export const orderSearchOptions = {
 	allergies: [
-		...Object.entries(Allergy).map(([key, value]) => ({
+		...Object.entries(Allergies).map(([key, value]) => ({
 			label: key,
 			value: value,
 		})),
 	],
 	statuses: [
-		{ label: 'Pending', value: 'pending' },
-		{ label: 'Confirmed', value: 'confirmed' },
-		{ label: 'In Progress', value: 'in_progress' },
-		{ label: 'Completed', value: 'completed' },
-		{ label: 'Cancelled', value: 'cancelled' },
+		{ label: 'Awaiting', value: OrderState.AWAITING },
+		{ label: 'In Progress', value: OrderState.RECEIVED },
+		{ label: 'Ready', value: OrderState.SERVED },
+		{ label: 'Payment', value: OrderState.READY_TO_PAY },
+		{ label: 'Disputed', value: OrderState.DISPUTED },
+		{ label: 'Canceled', value: OrderState.CANCELED },
+		{ label: 'Completed', value: OrderState.COMPLETED },
 	],
 	sortOptions: [
 		...Object.entries(OrderSortOptions).map(([key, value]) => ({

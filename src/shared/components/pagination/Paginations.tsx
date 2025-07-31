@@ -1,63 +1,81 @@
 'use client';
 
-import { UserListResult } from '@servemate/dto';
-
 interface PaginationProps {
-	data: {
-		totalCount?: number;
-		totalPages?: number;
-		page?: number;
-		pageSize?: number;
-	};
-	updateSearchCriteria: (newCriteria: Partial<UserListResult>) => void;
+	totalCount: number;
+	totalPages: number;
+	currentPage: number;
+	pageSize: number;
+	onPageChange: (page: number) => void;
+	onPageSizeChange: (size: number) => void;
 }
 
-function Pagination({ data, updateSearchCriteria }: PaginationProps) {
-	const { totalCount = 0, totalPages = 1, page: currentPage = 1, pageSize = 10 } = data;
+function Pagination({ 
+	totalCount = 0, 
+	totalPages = 1, 
+	currentPage = 1, 
+	pageSize = 10, 
+	onPageChange, 
+	onPageSizeChange 
+}: PaginationProps) {
 	const getVisiblePages = () => {
 		if (totalPages <= 1) {
-			return [1];
+			return [];
 		}
 		const delta = 2;
 		const range = [];
-		const rangeWithDots = [];
+		const rangeWithDots: (number | string)[] = [];
 
-		for (
-			let i = Math.max(2, currentPage - delta);
-			i <= Math.min(totalPages - 1, currentPage + delta);
-			i++
-		) {
-			range.push(i);
-		}
-
+		// Add first page if not in direct range
 		if (currentPage - delta > 2) {
 			rangeWithDots.push(1, '...');
 		} else {
-			rangeWithDots.push(1);
+			for (let i = 1; i < currentPage - delta; i++) {
+				if (i < 2) rangeWithDots.push(i);
+			}
+		}
+
+		for (
+			let i = Math.max(1, currentPage - delta);
+			i <= Math.min(totalPages, currentPage + delta);
+			i++
+		) {
+			range.push(i);
 		}
 
 		rangeWithDots.push(...range);
 
 		if (currentPage + delta < totalPages - 1) {
 			rangeWithDots.push('...', totalPages);
-		} else {
+		} else if (currentPage + delta < totalPages) {
 			rangeWithDots.push(totalPages);
 		}
 
-		return rangeWithDots;
+		// Deduplicate and ensure first and last pages are included if necessary
+		const finalPages = Array.from(new Set(rangeWithDots));
+		if (!finalPages.includes(1) && totalPages > 0) finalPages.unshift(1);
+		if (!finalPages.includes(totalPages) && totalPages > 1) finalPages.push(totalPages);
+
+		// Correctly handle dots logic
+		const pagesWithCorrectDots: (string | number)[] = [];
+		let lastPage: number | string | null = null;
+		for (const page of finalPages) {
+			if (lastPage !== null && typeof page === 'number' && typeof lastPage === 'number' && page > lastPage + 1) {
+				pagesWithCorrectDots.push('...');
+			}
+			pagesWithCorrectDots.push(page);
+			lastPage = page;
+		}
+
+		// Filter out initial dots if page 1 is present
+		if (pagesWithCorrectDots[0] === 1 && pagesWithCorrectDots[1] === '...' && pagesWithCorrectDots[2] === 2) {
+			pagesWithCorrectDots.splice(1, 1);
+		}
+
+		return pagesWithCorrectDots.filter((p, i, arr) => p !== '...' || arr[i-1] !== p);
 	};
 
 	const startItem = (currentPage - 1) * pageSize + 1;
 	const endItem = Math.min(currentPage * pageSize, totalCount);
-
-	const onPageChange = (page: number) => {
-		if (page < 1 || page > totalPages) return;
-		updateSearchCriteria({ page: page });
-	};
-
-	const onPageSizeChange = (size: number) => {
-		updateSearchCriteria({ pageSize: size, page: 1 });
-	};
 
 	return (
 		<div className='z-10 bg-ctp-base px-6 py-4 '>

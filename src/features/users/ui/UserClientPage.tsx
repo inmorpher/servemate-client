@@ -1,10 +1,11 @@
 'use client';
 
 import Pagination from '@/shared/components/pagination/Paginations';
-import { ListPageLayout } from '@/shared/layouts/ListPageLayput';
+
 import { useEffect } from 'react';
 import { useGetUsers } from '../hooks/useUsers';
 
+import { ListPageLayout } from '@/shared/layouts/ListPageLayout';
 import { SearchError } from '../../../shared/layouts/Error';
 import { UserList } from './UserList';
 import UserSearchBar from './UserSearchBar';
@@ -28,12 +29,20 @@ export const UserClientPage = () => {
 		});
 	}, [userSearchCriteria]);
 
+	const handlePageChange = (newPage: number) => {
+		updateSearchCriteria({ page: newPage });
+	};
+
+	const handlePageSizeChange = (newSize: number) => {
+		updateSearchCriteria({ pageSize: newSize, page: 1 });
+	};
+
 	const { users, totalCount, totalPages, page, pageSize } = data || {};
 
 	const effectivePageSize = pageSize ?? userSearchCriteria.pageSize ?? 10;
 	return (
 		<ListPageLayout
-			header={
+			filters={
 				<UserSearchBar
 					isLoading={isLoading}
 					updateCriteria={updateSearchCriteria}
@@ -42,8 +51,12 @@ export const UserClientPage = () => {
 			}
 			footer={
 				<Pagination
-					data={{ totalCount, totalPages, page, pageSize }}
-					updateSearchCriteria={updateSearchCriteria}
+					totalCount={totalCount ?? 0}
+					totalPages={totalPages ?? 1}
+					currentPage={page ?? 1}
+					pageSize={pageSize ?? 10}
+					onPageChange={handlePageChange}
+					onPageSizeChange={handlePageSizeChange}
 				/>
 			}
 		>

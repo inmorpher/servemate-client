@@ -12,6 +12,7 @@ interface RangeSlider {
 	maxValue?: number;
 	inputs?: boolean;
 	step?: number;
+	defaultValue?: number[];
 }
 
 /**
@@ -34,6 +35,7 @@ const RangeSlider = ({
 	step = 1,
 	handler,
 	inputs = true,
+	defaultValue,
 }: RangeSlider) => {
 	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 	const [valueRange, setValueRange] = useState([minValue, maxValue]);
@@ -52,7 +54,9 @@ const RangeSlider = ({
 			handler(values);
 		}
 	};
-
+	console.log('defaultValue', defaultValue);
+	console.log('minValue', minValue);
+	console.log('maxValue', maxValue);
 	const handleInputChange = (index: 0 | 1, newValue: number) => {
 		setValueRange((currentRange) => {
 			let newRange: number[];

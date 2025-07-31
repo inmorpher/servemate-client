@@ -1,3 +1,4 @@
 {
-	"cSpell.words": ["refreshtoken", "Sonner"]
+	"cSpell.words": ["refreshtoken", "Sonner"],
+	"keyboard.dispatch": "keyCode"
 }

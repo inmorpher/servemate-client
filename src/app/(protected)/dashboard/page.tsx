@@ -1,20 +1,7 @@
-import { cookies } from 'next/headers';
+import { API_BASE_URL } from '@/consts';
 
 export default async function Dashboard() {
-	const cookieStore = await cookies();
-
-	// Читаем ТОЛЬКО свежий токен из middleware
-	const freshToken = cookieStore.get('fresh-access-token');
-
-	const response = await fetch('http://192.168.2.60:3002/api/users', {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${freshToken?.value || ''}`,
-		},
-	});
-
-	console.log('Response from API:', await response.json());
+	console.log(`${API_BASE_URL}`);
 
 	return (
 		<div className='flex flex-col items-center justify-center h-screen'>

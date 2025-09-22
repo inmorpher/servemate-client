@@ -27,16 +27,17 @@ ServeMate is a full-stack restaurant management system with:
 **Always use the API proxy pattern** - never direct fetch to backend URLs:
 
 ```typescript
-// ✅ Correct: Use buildApiUrl + /api/service proxy
+// ✅ Correct: Use buildApiUrl + /api/service proxy + API_ENDPOINTS
 import { buildApiUrl } from '@/shared/utils/buildApiUrl';
-const url = buildApiUrl('/orders', params);
+import { API_ENDPOINTS } from '@/consts';
+const url = buildApiUrl(API_ENDPOINTS.Orders, params);
 const response = await fetch(url); // Routes through /api/service/[...params]
 
 // ❌ Wrong: Direct backend calls
 const response = await fetch('http://localhost:8000/orders');
 ```
 
-The proxy at `src/app/api/service/[...params]/route.ts` automatically handles authentication tokens and request forwarding.
+The proxy at `src/app/api/service/[...params]/route.ts` automatically handles authentication tokens and request forwarding. Endpoints are centralized in `src/consts.ts` for maintainability.
 
 ### Hook Typing Pattern
 
@@ -55,6 +56,8 @@ export const useGetOrdersMeta = () => {
 export type UseGetOrdersMetaReturn = ReturnType<typeof useGetOrdersMeta>;
 ```
 
+Note: In current implementation, `useGetOrders` and `useGetOrdersMeta` have overlapping logic. Consider consolidating into a single `useOrderSearch` hook for better separation of concerns (as noted in TODO in OrderFilters.tsx).
+
 ### Search Criteria Pattern
 
 Use `useSearchCriteria` hook for URL-synced search state:
@@ -67,7 +70,7 @@ const searchCriteria = useSearchCriteria({
 });
 ```
 
-This automatically parses URL params and provides type-safe search state.
+This automatically parses URL params and provides type-safe search state. Ensure local state (e.g., search inputs) is synced with URL criteria to avoid desync (see OrderFilters.tsx for example).
 
 ### Backend Decorator Pattern
 
@@ -117,9 +120,19 @@ Organize by domain, not technical layers:
 ```
 src/features/orders/
 ├── api/           # client.ts, endpoints.ts
-├── hooks/         # useGetOrdersMeta.ts, useOrderFilters.ts
-├── ui/            # OrdersList.tsx, OrderCard.tsx
+├── hooks/         # useGetOrders.ts, useGetOrdersMeta.ts
+├── ui/            # OrderCard.tsx, OrderFilters.tsx, OrderList.tsx
 └── utils/         # orderHelpers.ts
+
+src/features/users/
+├── hooks/         # useUsers.ts
+├── ui/            # UserCard.tsx, UserList.tsx
+└── utils/         # userHelpers.ts
+
+src/features/auth/
+├── api/           # login.ts
+├── hooks/         # (if any)
+└── login-form/    # ui/
 ```
 
 Shared utilities go in `src/shared/[hooks|components|utils]/`.
@@ -147,11 +160,26 @@ className = 'bg-ctp-base text-ctp-text border-ctp-surface1';
 - ❌ Business logic in UI components (extract to hooks/services)
 - ❌ Missing TypeScript types from `@servemate/dto` package
 
+## Environment Variables and Constants
+
+Centralize API configuration in `src/consts.ts`:
+
+```typescript
+export const API_BASE_URL =
+	process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002/api';
+
+export const API_ENDPOINTS = { Users: `/api/service/users`, Orders: `/api/service/orders` };
+```
+
+- Use `API_URL` for server-side variables (recommended for proxy routes).
+- Use `NEXT_PUBLIC_API_URL` only if needed in client-side code (rare in this architecture).
+- Restart dev server after changing `.env` files.
+
 ## Architecture
 
 ### Authentication Flow
 
-Authentication is managed using a combination of `next-auth` and `iron-session`.
+Authentication is managed using `iron-session`.
 
 1.  **Login Process**: The user submits their credentials via the `LoginForm` component. The `login` server action in `src/features/auth/api/login.ts` sends a POST request to the external backend authentication endpoint (`/api/auth/login`).
 2.  **Session Management**: Upon successful authentication, the backend returns a JWT access token and a refresh token. These tokens, along with user information and token expiration time, are stored in a session managed by `iron-session`. The session data is stored in an encrypted cookie.
@@ -164,13 +192,13 @@ The application uses a generic API proxy to communicate with the backend service
 - **Proxy Route**: The route handler at `src/app/api/service/[...params]/route.ts` catches all requests made to `/api/service/*`.
 - **Request Forwarding**: It forwards the request to the corresponding backend service endpoint.
 - **Authentication**: Before forwarding, it retrieves the access token from the user's session and adds it to the `Authorization` header of the outgoing request. This ensures that all communication with the backend is authenticated.
-- **Configuration**: The `serviceConfig` object in `src/app/api/service/[...params]/config.ts` defines which query parameters are allowed for different HTTP methods, providing a layer of security.
+- **Configuration**: The `CONFIG` object in `src/app/api/service/[...params]/config.ts` defines which query parameters are allowed for different HTTP methods, providing a layer of security.
 
 ### Data Fetching
 
 Client-side data fetching is handled by `TanStack Query`.
 
-- **Custom Hooks**: Data fetching logic is encapsulated in custom hooks, such as `useGetOrders` in `src/features/orders/hooks/useGetOrders.ts`.
+- **Custom Hooks**: Data fetching logic is encapsulated in custom hooks, such as `useGetOrders` in `src/features/orders/hooks/useGetOrders.ts` and `useGetOrdersMeta` for metadata.
 - **Querying**: These hooks use `TanStack Query`'s `useQuery` to fetch data from the internal API proxy (`/api/service/...`). They construct a unique query key based on the current search and filter criteria.
 - **State Management**: The hooks also manage the component's state, such as search criteria, which are read from and written to the URL's query parameters. This allows for bookmarkable and shareable URLs.
 - **Declarative Approach**: This setup provides a clean, declarative way to fetch, cache, and manage server state in the application.

@@ -7,5 +7,7 @@ export const buildQueryParams = <T extends Record<string, unknown>>(criteria: T)
 		}
 	});
 
+	console.log('test buildQueryParams', params.toString());
+
 	return params.toString();
 };

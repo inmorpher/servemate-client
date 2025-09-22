@@ -93,8 +93,8 @@ const RangeSlider = ({
 				range
 				value={valueRange}
 				onChange={handleSliderChange}
-				min={minValue}
-				max={maxValue}
+				min={defaultValue ? defaultValue[0] : minValue}
+				max={defaultValue ? defaultValue[1] : maxValue}
 				step={step}
 				styles={{
 					rail: { backgroundColor: 'var(--ctp-surface0)' },

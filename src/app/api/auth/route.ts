@@ -1,4 +1,5 @@
 import { getSession } from '@/app/lib/session';
+import { API_BASE_URL } from '@/consts';
 import { jwtDecode } from 'jwt-decode';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -14,7 +15,7 @@ export async function POST(request: NextRequest) {
 		const { email, password } = await request.json();
 		console.log('[API Login] Данные формы:', { email, password: '***' });
 
-		const response = await fetch('http://192.168.2.60:3002/api/auth/login', {
+		const response = await fetch(`${API_BASE_URL}/auth/login`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ email, password }),

@@ -4,22 +4,32 @@ import Pagination from '@/shared/components/pagination/Paginations';
 import { SearchError } from '@/shared/layouts/Error';
 import { ListPageLayout } from '@/shared/layouts/ListPageLayout';
 import { useEffect } from 'react';
-import { useGetOrders } from '../hooks/useGetOrders';
+import { useOrdersSearch } from '../hooks/useOrdersSearch';
 import { OrderFilters } from './OrderFilters';
 import { OrderList } from './OrderList';
 
 export const OrdersListPage = () => {
+	// const {
+	// 	data: ordersData,
+	// 	isLoading,
+	// 	isFetching,
+	// 	error,
+	// 	isError,
+	// 	orderSearchCriteria,
+	// 	refetch,
+	// 	updateSearchCriteria,
+	// } = useGetOrders();
+
 	const {
-		data: ordersData,
+		ordersData,
 		isLoading,
 		isFetching,
 		error,
 		isError,
 		orderSearchCriteria,
-		refetch,
 		updateSearchCriteria,
-	} = useGetOrders();
-
+		refetch,
+	} = useOrdersSearch();
 	useEffect(() => {
 		window.scrollTo({
 			top: 0,
@@ -52,7 +62,7 @@ export const OrdersListPage = () => {
 			filters={<OrderFilters />}
 		>
 			{isError ? (
-				<SearchError error={error.message} refetch={refetch} />
+				<SearchError error={error?.message} refetch={refetch} />
 			) : (
 				<OrderList
 					isFetching={isFetching}

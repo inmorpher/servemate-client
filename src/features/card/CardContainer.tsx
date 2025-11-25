@@ -16,7 +16,7 @@ interface CardContainerProps {
  */
 export const CardContainer = ({ children }: CardContainerProps) => {
 	return (
-		<div className='relative bg-ctp-base hover:bg-ctp-surface0 px-6 py-2 rounded-lg overflow-y-hidden transition-colors hover:cursor-pointer'>
+		<div className='relative bg-ctp-base hover:bg-ctp-surface0 px-6 py-2 rounded-lg overflow-y-hidden transition-colors hover:cursor-pointer corner-squircle'>
 			{children}
 		</div>
 	);

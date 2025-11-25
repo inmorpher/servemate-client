@@ -39,22 +39,9 @@ const response = await fetch('http://localhost:8000/orders');
 
 The proxy at `src/app/api/service/[...params]/route.ts` automatically handles authentication tokens and request forwarding. Endpoints are centralized in `src/consts.ts` for maintainability.
 
-### Hook Typing Pattern
+### Type Safety Pattern
 
-Type React Query hooks using return type extraction:
-
-```typescript
-export const useGetOrdersMeta = () => {
-	const ordersMeta = useQuery({
-		queryKey: ['ordersMeta', criteria],
-		queryFn: () => orderApiClient.getOrders(criteria),
-	});
-	return ordersMeta;
-};
-
-// Export type for components
-export type UseGetOrdersMetaReturn = ReturnType<typeof useGetOrdersMeta>;
-```
+Avoid using `any` type at all costs. Prefer specific types, unions, generics, or `unknown` for truly unknown values to maintain type safety and catch errors at compile time. Use `as` casts sparingly and only when necessary.
 
 Note: In current implementation, `useGetOrders` and `useGetOrdersMeta` have overlapping logic. Consider consolidating into a single `useOrderSearch` hook for better separation of concerns (as noted in TODO in OrderFilters.tsx).
 

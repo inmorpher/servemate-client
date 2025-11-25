@@ -45,12 +45,6 @@ const OrderCard = memo(function OrderCard({ order }: { order: OrderListItem }) {
 					</div>
 
 					<Card.Text type='text'>Server: {order.server.name}</Card.Text>
-
-					<div className='space-y-1 text-ctp-subtext1 text-xs'>
-						<Card.Text className='block'>Ordered: {formattedOrderTime}</Card.Text>
-						<Card.Text className='sm:block'>Updated: {formattedUpdatedAt}</Card.Text>
-						{formattedCompletionTime && <Card.Text>Completed: {formattedCompletionTime}</Card.Text>}
-					</div>
 				</div>
 
 				{/* Right block shows guests, table, pricing, allergies */}
@@ -64,7 +58,7 @@ const OrderCard = memo(function OrderCard({ order }: { order: OrderListItem }) {
 						</Card.Text>
 					</div>
 
-					<div className='flex items-center gap-4'>
+					<div className='flex items-center gap-3'>
 						<Card.Text className='font-medium text-ctp-green'>
 							Total: {formatCurrency(order.totalAmount)}
 						</Card.Text>
@@ -78,6 +72,16 @@ const OrderCard = memo(function OrderCard({ order }: { order: OrderListItem }) {
 					{order.tip > 0 && (
 						<Card.Text className='text-ctp-blue block'>Tip: {formatCurrency(order.tip)}</Card.Text>
 					)}
+				</div>
+				<div className='space-y-2'>
+					{/* Timestamps */}
+					<div className='space-y-1 text-ctp-subtext1 text-xs'>
+						<Card.Text className='block'>Ordered: {formattedOrderTime}</Card.Text>
+						<Card.Text className='sm:block'>Updated: {formattedUpdatedAt}</Card.Text>
+						{formattedCompletionTime && <Card.Text>Completed: {formattedCompletionTime}</Card.Text>}
+					</div>
+				</div>
+				<div className='space-y-2'>
 					{(order.allergies || order.comments) && (
 						<div>
 							{order.allergies && order.allergies.length > 0 && (

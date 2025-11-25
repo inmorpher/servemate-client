@@ -1,9 +1,7 @@
-'use server';
-
 import { NextRequest, NextResponse } from 'next/server';
 import { ApiError } from './errors';
 import { buildServiceRequest } from './request-utils';
-import { getValidatedTokenFromSession } from './token-utils';
+import { forceRefreshToken, getValidatedTokenFromSession } from './token-utils';
 
 async function handler(
 	request: NextRequest,
@@ -26,6 +24,28 @@ async function handler(
 			body,
 		});
 
+		if (response.status === 401) {
+			const newTokens = await forceRefreshToken();
+
+			const retryResponse = await fetch(serviceUrl, {
+				method: request.method,
+				headers: {
+					...headers,
+					Authorization: `Bearer ${newTokens.accessToken}`,
+				},
+				body,
+			});
+
+			if (retryResponse.status === 401) {
+				return NextResponse.redirect(new URL('/login', request.url));
+			}
+
+			return new Response(await retryResponse.text(), {
+				status: retryResponse.status,
+				headers: retryResponse.headers,
+			});
+		}
+
 		const responseData = await response.text();
 
 		const nextResponse = new Response(responseData, {
@@ -33,10 +53,7 @@ async function handler(
 			statusText: response.statusText,
 			headers: response.headers,
 		});
-		nextResponse.headers.set(
-			'Set-Cookie',
-			'test_from_api=true; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400'
-		);
+
 		return nextResponse;
 	} catch (error) {
 		if (error instanceof ApiError) {

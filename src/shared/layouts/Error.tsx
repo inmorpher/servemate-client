@@ -1,23 +1,59 @@
-interface SearchErrorProps {
+import { cn } from '../utils/classNames';
+
+interface ListErrorProps {
 	error?: string;
 	refetch: () => void;
+	title?: string;
+	buttonText?: string;
+	isLoading?: boolean;
 }
 
 /**
- * Displays an error message with an option to retry the search operation.
+ * ListError
  *
- * @param error - The error message to display. If not provided, only the generic error UI is shown.
- * @param refetch - A callback function to retry the search or data fetching operation.
+ * Display a centered error state with an icon, title, optional error message,
+ * and a retry button. The button invokes the provided `refetch` callback and
+ * shows a loading spinner / disabled state when `isLoading` is true.
+ *
+ * @param props.error - Optional error message to display below the title. If falsy, the message is omitted.
+ * @param props.refetch - Callback invoked when the retry button is clicked.
+ * @param props.title - Optional heading text for the error state. Default: `'Loading error'`.
+ * @param props.buttonText - Optional label for the retry button. Default: `'Try again'`.
+ * @param props.isLoading - When true, disables the retry button and shows an inline spinner. Default: `false`.
+ *
+ * @returns JSX.Element - A section containing an icon, heading, optional message, and retry button.
+ *
+ * @remarks
+ * - The component uses `aria-live="assertive"` to announce changes to assistive technologies.
+ * - The retry button receives an `aria-label` that reflects the loading state.
+ * - Uses `role="alert"` to conform to ARIA specifications for error announcements.
  *
  * @example
- * <SearchError error="Failed to load users." refetch={fetchUsers} />
+ * <ListError
+ *   error="Failed to load items"
+ *   refetch={() => fetchItems()}
+ *   title="Could not load list"
+ *   buttonText="Retry"
+ * />
  */
-export const SearchError = ({ error, refetch }: SearchErrorProps) => {
+export const ListError = ({
+	error,
+	refetch,
+	title = 'Loading error',
+	buttonText = 'Try again',
+	isLoading = false,
+}: ListErrorProps) => {
 	return (
-		<div className='flex justify-center items-center '>
+		<section role='alert' aria-live='assertive' className='flex justify-center items-center'>
 			<div className='text-center'>
-				<div className='mb-4 text-ctp-red'>
-					<svg className='mx-auto w-16 h-16' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+				<div className='mb-4 text-ctp-red transition-all duration-200 hover:scale-105'>
+					<svg
+						className='mx-auto w-16 h-16'
+						fill='none'
+						stroke='currentColor'
+						viewBox='0 0 24 24'
+						aria-label='Error icon'
+					>
 						<path
 							strokeLinecap='round'
 							strokeLinejoin='round'
@@ -26,16 +62,44 @@ export const SearchError = ({ error, refetch }: SearchErrorProps) => {
 						/>
 					</svg>
 				</div>
-				<h2 className='mb-2 font-semibold text-ctp-text text-xl'>Loading error</h2>
+				<h2 className='mb-2 font-semibold text-ctp-text text-xl'>{title}</h2>
 				{error && <p className='mb-4 text-ctp-subtext0'>{error}</p>}
 
 				<button
-					onClick={() => refetch()}
-					className='bg-ctp-blue hover:bg-ctp-sapphire px-4 py-2 rounded-lg text-ctp-base transition-colors'
+					onClick={() => !isLoading && refetch()} // Disable button when loading
+					disabled={isLoading} // Disable button when loading
+					className={cn(
+						'px-4 py-2 rounded-lg text-ctp-base transition-all duration-200',
+						isLoading
+							? 'bg-ctp-surface1 cursor-not-allowed'
+							: 'bg-ctp-blue hover:bg-ctp-sapphire hover:scale-105 focus:ring-2 focus:ring-ctp-blue'
+					)}
+					aria-label={isLoading ? 'Retrying...' : 'Retry: Try again'}
 				>
-					Try again
+					{isLoading ? (
+						<span className='flex items-center'>
+							<svg className='animate-spin mr-2 w-4 h-4' fill='none' viewBox='0 0 24 24'>
+								<circle
+									className='opacity-25'
+									cx='12'
+									cy='12'
+									r='10'
+									stroke='currentColor'
+									strokeWidth='4'
+								></circle>
+								<path
+									className='opacity-75'
+									fill='currentColor'
+									d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+								></path>
+							</svg>
+							Retrying...
+						</span>
+					) : (
+						buttonText
+					)}
 				</button>
 			</div>
-		</div>
+		</section>
 	);
 };

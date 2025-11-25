@@ -1,7 +1,8 @@
 'use client';
 
 import { UserListResult } from '@servemate/dto';
-import UserListSkeleton from '../../../shared/components/skeleton/ListSkeleton';
+
+import { ListSkeleton } from '@/shared/components/skeleton/ListSkeleton';
 import UserCard from './UserCard';
 
 interface UserListProps {
@@ -12,7 +13,7 @@ interface UserListProps {
 
 export function UserList({ isLoading, users, pageSize }: UserListProps) {
 	if (isLoading) {
-		return <UserListSkeleton pageSize={pageSize} />;
+		return <ListSkeleton count={pageSize} />;
 	}
 	if (!users || users.length === 0) {
 		return <div className='text-center text-gray-500'>No users found</div>;

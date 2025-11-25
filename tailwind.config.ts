@@ -12,7 +12,6 @@ const config: Config = {
 	theme: {
 		extend: {
 			colors: {
-				// Catppuccin Mocha palette
 				ctp: {
 					// Base
 					rosewater: '#f5e0dc',
@@ -31,20 +30,20 @@ const config: Config = {
 					lavender: '#b4befe',
 
 					// Surface
-					text: '#cdd6f4',
-					subtext1: '#bac2de',
-					subtext0: '#a6adc8',
-					overlay2: '#9399b2',
-					overlay1: '#7f849c',
-					overlay0: '#6c7086',
-					surface2: '#585b70',
-					surface1: '#45475a',
-					surface0: '#313244',
+					text: '#f5f5ff',
+					subtext1: '#d0d4f8',
+					subtext0: '#b0b5db',
+					overlay2: '#8691af',
+					overlay1: '#6f7793',
+					overlay0: '#5a5e7a',
+					surface2: '#3f4155',
+					surface1: '#2d2d40',
+					surface0: '#1c1b2f',
 
 					// Background
-					base: '#1e1e2e',
-					mantle: '#181825',
-					crust: '#11111b',
+					base: '#080810',
+					mantle: '#05060f',
+					crust: '#020311',
 				},
 			},
 		},

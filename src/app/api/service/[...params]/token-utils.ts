@@ -60,8 +60,15 @@ async function handleTokenRefresh(session: SessionData): Promise<TokenResponse> 
 
 async function refreshTokenInternal(session: SessionData): Promise<TokenResponse> {
 	try {
-		const tokenData = await refreshToken(session.refreshToken);
+		const response = await fetch(`${CONFIG.API_BASE_URL}/auth/refresh-token`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ refreshToken: session.refreshToken }),
+		});
 
+		if (!response.ok) throw new Error(`Refresh failed: ${response.status}`);
+
+		const tokenData = await response.json();
 		session.accessToken = tokenData.accessToken;
 		session.refreshToken = tokenData.refreshToken;
 		await session.save();
@@ -73,22 +80,18 @@ async function refreshTokenInternal(session: SessionData): Promise<TokenResponse
 	}
 }
 
-async function refreshToken(refreshToken: string): Promise<TokenResponse> {
-	const response = await fetch(`${CONFIG.API_BASE_URL}/auth/refresh-token`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ refreshToken }),
-	});
+export async function forceRefreshToken(): Promise<TokenResponse> {
+	try {
+		const session = (await getSession()) as SessionData;
 
-	if (!response.ok) {
-		const errorText = await response.text();
-		console.error('❌ [API] Ошибка refresh token:', {
-			status: response.status,
-			statusText: response.statusText,
-			body: errorText,
-		});
-		throw new Error(`Token refresh failed: ${response.status} ${response.statusText}`);
+		if (!session?.refreshToken) {
+			throw new ApiError('No refresh token available', 401, true);
+		}
+
+		// ✅ Переиспользуем существующий метод
+		return await refreshTokenInternal(session);
+	} catch (error) {
+		if (error instanceof ApiError) throw error;
+		throw new ApiError('Force refresh failed', 401, true);
 	}
-
-	return await response.json();
 }

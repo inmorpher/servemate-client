@@ -2,8 +2,7 @@
 
 import { OrderSearchListResult } from '@servemate/dto';
 
-import UserListSkeleton from '@/shared/components/skeleton/ListSkeleton';
-import { cn } from '@/shared/lib/classNames';
+import { List } from '@/shared/layouts/List';
 import { OrderCard } from './OrderCard';
 
 interface OrderListProps {
@@ -22,23 +21,17 @@ interface OrderListProps {
  * @param {number} props.pageSize - The number of skeleton items to show while loading.
  * @returns {JSX.Element} The rendered order list, loading skeleton, or empty state message.
  */
-export function OrderList({ isLoading, orders, pageSize, isFetching }: OrderListProps) {
-	console.log(isLoading);
-	if (isLoading && !orders) {
-		return <UserListSkeleton pageSize={pageSize} />;
-	}
-	if (!isLoading && (!orders || orders.length === 0)) {
-		return <div className='text-center text-gray-500'>No orders found</div>;
-	}
 
+export const OrderList = ({ isLoading, orders, pageSize, isFetching }: OrderListProps) => {
+	console.log('pageSize', pageSize);
 	return (
-		<div
-			className={cn('space-y-4 ', isFetching && 'animate-pulse')}
-			style={{ minHeight: 'inherit' }}
-		>
-			{orders?.map((order) => (
-				<OrderCard key={order.id} order={order} />
-			))}
-		</div>
+		<List
+			items={orders}
+			ItemComponent={(order) => <OrderCard order={order} />}
+			isLoading={isLoading}
+			isFetching={isFetching}
+			skeletonCount={pageSize}
+			emptyMessage='No orders found'
+		/>
 	);
-}
+};

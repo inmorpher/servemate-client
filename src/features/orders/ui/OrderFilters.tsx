@@ -5,18 +5,17 @@ import { orderSearchOptions } from '@/features/search/model/ordersOptions';
 import { SearchChip } from '@/features/search/ui/SearchChip';
 import { Filter } from '@/shared/components/filter';
 import RangeSlider from '@/shared/components/slider/ui/Slider';
+import { OrderMetaDTO } from '@servemate/dto';
+import { UseQueryResult } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useOrdersSearch } from '../hooks/useOrdersSearch';
 
-export const OrderFilters = () => {
-	const { orderSearchCriteria, updateSearchCriteria, ordersMetaQuery, isSuccess } =
-		useOrdersSearch();
-	// const {
-	// 	// data: ordersData,
-	// 	orderSearchCriteria,
-	// 	updateSearchCriteria,
-	// } = useGetOrders();
-
+export const OrderFilters = ({
+	ordersMeta,
+	updateFilters,
+}: {
+	ordersMeta: UseQueryResult<OrderMetaDTO, unknown>;
+	updateFilters: (filters: Partial<OrderMetaDTO>) => void;
+}) => {
 	//TODO: убрать хук useGetOrders, если он не нужен,
 	// добавть логику получения orderSearchCriteria в useGetOrdersMeta
 	// сделать универсальную функцию для получения критериев из поиска и их изменений
@@ -42,19 +41,21 @@ export const OrderFilters = () => {
 	 */
 	const handlePriceRangeChange = (values: number[]) => {
 		const [minAmount, maxAmount] = values;
-		updateSearchCriteria({
-			minAmount,
-			maxAmount,
-		});
+		console.log('Price range changed:', { minAmount, maxAmount });
+		// updateFilters({
+		// 	minAmount,
+		// 	maxAmount,
+		// });
 	};
 
 	//
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		updateSearchCriteria({
-			id: searchValue.trim() ? Number(searchValue) : undefined,
-		});
+		console.log('Submitting search for Order ID:', searchValue);
+		// updateFilters({
+		// 	id: searchValue.trim() ? Number(searchValue) : undefined,
+		// });
 	};
 
 	return (
@@ -68,17 +69,17 @@ export const OrderFilters = () => {
 			</Search>
 
 			{/* Allergies Filter */}
-			{isSuccess && ordersMetaQuery?.allergies && (
+			{ordersMeta.isSuccess && ordersMeta.data?.allergies && (
 				<Filter.Group label='Allergies'>
 					{orderSearchOptions.allergies.map((option) => (
 						<SearchChip
 							key={option.value}
-							isActive={orderSearchCriteria.allergies?.includes(option.value)}
+							isActive={ordersMeta.data.allergies?.includes(option.value)}
 							onClick={() => {
-								const newAllergies = orderSearchCriteria.allergies?.includes(option.value)
-									? orderSearchCriteria.allergies.filter((a) => a !== option.value)
-									: [...(orderSearchCriteria.allergies || []), option.value];
-								updateSearchCriteria({ allergies: newAllergies });
+								const newAllergies = ordersMeta.data.allergies?.includes(option.value)
+									? ordersMeta.data.allergies.filter((a) => a !== option.value)
+									: [...(ordersMeta.data.allergies || []), option.value];
+								updateFilters({ allergies: newAllergies });
 							}}
 						>
 							{option.value}
@@ -88,13 +89,13 @@ export const OrderFilters = () => {
 			)}
 
 			{/* Price Range Filter */}
-			{ordersMetaQuery?.prices && (
+			{ordersMeta.isSuccess && ordersMeta.data?.prices && (
 				<Filter.Group label='Price Range'>
 					<RangeSlider
-						minValue={orderSearchCriteria.minAmount || ordersMetaQuery.filtered.prices.min}
-						maxValue={orderSearchCriteria.maxAmount || ordersMetaQuery.filtered.prices.max}
+						minValue={ordersMeta.data.prices.min}
+						maxValue={ordersMeta.data.prices.max}
 						handler={handlePriceRangeChange}
-						defaultValue={[ordersMetaQuery.prices.min, ordersMetaQuery.prices.max]}
+						defaultValue={[ordersMeta.data.prices.min, ordersMeta.data.prices.max]}
 					/>
 				</Filter.Group>
 			)}
@@ -104,11 +105,11 @@ export const OrderFilters = () => {
 				{orderSearchOptions.statuses.map((option) => (
 					<SearchChip
 						key={option.value}
-						isActive={orderSearchCriteria.status === option.value}
+						isActive={ordersMeta.data?.statuses?.includes(option.value)}
 						onClick={() => {
-							const newStatus =
-								orderSearchCriteria.status === option.value ? undefined : option.value;
-							updateSearchCriteria({ status: newStatus });
+							const isActive = ordersMeta.data?.statuses?.includes(option.value);
+							const newStatuses = isActive ? undefined : [option.value];
+							updateFilters({ statuses: newStatuses });
 						}}
 					>
 						{option.label}

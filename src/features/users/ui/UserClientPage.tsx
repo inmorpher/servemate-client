@@ -5,8 +5,8 @@ import Pagination from '@/shared/components/pagination/Paginations';
 import { useEffect } from 'react';
 import { useGetUsers } from '../hooks/useUsers';
 
+import { SessionDebug } from '@/features/auth/api/debugCookie';
 import { ListPageLayout } from '@/shared/layouts/ListPageLayout';
-import { SearchError } from '../../../shared/layouts/Error';
 import { UserList } from './UserList';
 import UserSearchBar from './UserSearchBar';
 
@@ -19,8 +19,7 @@ import UserSearchBar from './UserSearchBar';
  * @returns {JSX.Element} The user client page layout with search, pagination, and user list.
  */
 export const UserClientPage = () => {
-	const { isLoading, data, isError, error, refetch, updateSearchCriteria, userSearchCriteria } =
-		useGetUsers();
+	const { isLoading, data, updateSearchCriteria, userSearchCriteria } = useGetUsers();
 
 	useEffect(() => {
 		window.scrollTo({
@@ -41,30 +40,30 @@ export const UserClientPage = () => {
 
 	const effectivePageSize = pageSize ?? userSearchCriteria.pageSize ?? 10;
 	return (
-		<ListPageLayout
-			filters={
-				<UserSearchBar
-					isLoading={isLoading}
-					updateCriteria={updateSearchCriteria}
-					criteria={userSearchCriteria}
-				/>
-			}
-			footer={
-				<Pagination
-					totalCount={totalCount ?? 0}
-					totalPages={totalPages ?? 1}
-					currentPage={page ?? 1}
-					pageSize={pageSize ?? 10}
-					onPageChange={handlePageChange}
-					onPageSizeChange={handlePageSizeChange}
-				/>
-			}
-		>
-			{isError ? (
-				<SearchError error={error.message} refetch={refetch} />
-			) : (
-				<UserList isLoading={isLoading} users={users} pageSize={effectivePageSize} />
-			)}
-		</ListPageLayout>
+		<>
+			<SessionDebug />
+			<ListPageLayout
+				renderFilters={() => (
+					<UserSearchBar
+						isLoading={isLoading}
+						updateCriteria={updateSearchCriteria}
+						criteria={userSearchCriteria}
+					/>
+				)}
+				renderFooter={() => (
+					<Pagination
+						totalCount={totalCount ?? 0}
+						totalPages={totalPages ?? 1}
+						currentPage={page ?? 1}
+						pageSize={pageSize ?? 10}
+						onPageChange={handlePageChange}
+						onPageSizeChange={handlePageSizeChange}
+					/>
+				)}
+				renderContent={() => (
+					<UserList isLoading={isLoading} users={users} pageSize={effectivePageSize} />
+				)}
+			></ListPageLayout>
+		</>
 	);
 };

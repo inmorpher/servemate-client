@@ -12,10 +12,12 @@ export interface ISessionData {
 	role?: string;
 	needsRefresh?: boolean;
 	lastChecked?: number;
+	refreshCount?: number;
 }
 
 const defaultSession: ISessionData = {
 	isLoggedIn: false,
+	refreshCount: 0,
 };
 
 const sessionOptions: SessionOptions = {
@@ -45,6 +47,18 @@ export async function getSession(): Promise<IronSession<ISessionData>> {
 	return session;
 }
 
+export async function updateSession(data: Partial<ISessionData>): Promise<void> {
+	const session = await getSession();
+
+	Object.assign(session, data);
+
+	await session.save();
+}
+
+export async function destroySession(): Promise<void> {
+	const session = await getSession();
+	session.destroy();
+}
 export async function getSessionOptions(): Promise<SessionOptions> {
 	return {
 		...sessionOptions,

@@ -34,7 +34,7 @@ export const useGetOrders = (): UseGetOrdersReturn => {
 		queryKey: ['orders', orderSearchCriteria],
 		queryFn: async () => {
 			const queryParams = buildQueryParams(orderSearchCriteria);
-			const response = await fetch(`${API_ENDPOINTS.Orders}?${queryParams.toString()}`);
+			const response = await fetch(`${API_ENDPOINTS.OrdersActions.list}?${queryParams.toString()}`);
 			if (!response.ok) {
 				throw new Error('Failed to fetch orders');
 			}

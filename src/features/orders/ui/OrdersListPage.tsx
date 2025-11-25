@@ -1,76 +1,46 @@
 'use client';
 
 import Pagination from '@/shared/components/pagination/Paginations';
-import { SearchError } from '@/shared/layouts/Error';
+import { ListError } from '@/shared/layouts/Error';
 import { ListPageLayout } from '@/shared/layouts/ListPageLayout';
-import { useEffect } from 'react';
-import { useOrdersSearch } from '../hooks/useOrdersSearch';
+import { useGetOrdersAndMeta } from '../hooks/useGetOrdersAndMeta';
 import { OrderFilters } from './OrderFilters';
 import { OrderList } from './OrderList';
 
 export const OrdersListPage = () => {
-	// const {
-	// 	data: ordersData,
-	// 	isLoading,
-	// 	isFetching,
-	// 	error,
-	// 	isError,
-	// 	orderSearchCriteria,
-	// 	refetch,
-	// 	updateSearchCriteria,
-	// } = useGetOrders();
+	const { orders, ordersMeta, setPage, setPageSize, updateFilters } = useGetOrdersAndMeta();
 
-	const {
-		ordersData,
-		isLoading,
-		isFetching,
-		error,
-		isError,
-		orderSearchCriteria,
-		updateSearchCriteria,
-		refetch,
-	} = useOrdersSearch();
-	useEffect(() => {
-		window.scrollTo({
-			top: 0,
-			behavior: 'smooth',
-		});
-	}, [orderSearchCriteria]);
-
-	const { totalCount, pageSize, page, totalPages } = ordersData || {};
-
-	const handlePageChange = (newPage: number) => {
-		updateSearchCriteria({ page: newPage });
-	};
-
-	const handlePageSizeChange = (newSize: number) => {
-		updateSearchCriteria({ pageSize: newSize, page: 1 });
-	};
+	const { totalCount, pageSize, page, totalPages } = orders.data || {};
 
 	return (
 		<ListPageLayout
-			footer={
+			renderFooter={() => (
 				<Pagination
 					totalCount={totalCount ?? 0}
 					totalPages={totalPages ?? 1}
 					currentPage={page ?? 1}
 					pageSize={pageSize ?? 10}
-					onPageChange={handlePageChange}
-					onPageSizeChange={handlePageSizeChange}
-				/>
-			}
-			filters={<OrderFilters />}
-		>
-			{isError ? (
-				<SearchError error={error?.message} refetch={refetch} />
-			) : (
-				<OrderList
-					isFetching={isFetching}
-					isLoading={isLoading}
-					orders={ordersData?.orders}
-					pageSize={pageSize ?? 10}
+					onPageChange={setPage}
+					onPageSizeChange={setPageSize}
 				/>
 			)}
-		</ListPageLayout>
+			renderFilters={() => <OrderFilters ordersMeta={ordersMeta} updateFilters={updateFilters} />}
+			renderContent={() =>
+				orders.isError ? (
+					<ListError
+						error={orders.error?.message}
+						refetch={orders.refetch}
+						isLoading={orders.isLoading}
+					/>
+				) : (
+					<OrderList
+						isFetching={orders.isFetching}
+						isLoading={orders.isLoading}
+						orders={orders.data?.orders}
+						pageSize={pageSize ?? 10}
+					/>
+				)
+			}
+		></ListPageLayout>
 	);
 };

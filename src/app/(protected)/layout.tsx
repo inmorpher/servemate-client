@@ -1,3 +1,4 @@
+import { Tabs } from '@/features/tabs/ui/tabs';
 import { SidebarProvider } from '@/providers/SidebarProvider';
 
 import { Sidebar } from '@/shared/components/sidebar';
@@ -7,8 +8,6 @@ import SidebarOverlay from '@/shared/components/sidebar/SidebarOverlay';
 import { ReactNode } from 'react';
 
 const ProtectedLayout = async ({ children }: { children: ReactNode }) => {
-	// Проверяем аутентификацию с помощью NextAuth
-
 	return (
 		<div className='flex h-full relative bg-ctp-base'>
 			<SidebarProvider>
@@ -30,7 +29,11 @@ const ProtectedLayout = async ({ children }: { children: ReactNode }) => {
 					</Sidebar.Footer>
 				</Sidebar>
 			</SidebarProvider>
-			<div className='flex-1 overflow-auto p-2 py-2  min-h-screen'>{children}</div>
+
+			<div className='flex-1 overflow-auto p-2 py-2  min-h-screen'>
+				<Tabs />
+				{children}
+			</div>
 		</div>
 	);
 };

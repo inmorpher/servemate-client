@@ -20,6 +20,9 @@ const nextConfig: NextConfig = {
 			},
 		];
 	},
+	reactCompiler: {
+		compilationMode: 'all',
+	},
 };
 
 export default nextConfig;

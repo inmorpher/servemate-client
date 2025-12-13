@@ -81,7 +81,7 @@ export const useGetOrdersAndMeta = () => {
 	 */
 	const ordersQuery = useApiQuery<OrderSearchListResult>(
 		API_ENDPOINTS.OrdersActions.list,
-		orderSearchCriteria as OrderSearchCriteria
+		orderSearchCriteria as OrderSearchCriteria,
 	);
 
 	/**
@@ -106,10 +106,9 @@ export const useGetOrdersAndMeta = () => {
 	 * @see OrderMetaDTO
 	 * @see OrderSearchCriteria
 	 */
-	const orderMetaQuery = useApiQuery<OrderMetaDTO>(
-		API_ENDPOINTS.OrdersActions.meta,
-		orderSearchCriteria as OrderSearchCriteria
-	);
+	const orderMetaQuery = useApiQuery<OrderMetaDTO>(API_ENDPOINTS.OrdersActions.meta, undefined, {
+		staleTime: 5 * 60 * 1000,
+	});
 
 	return {
 		orders: ordersQuery,

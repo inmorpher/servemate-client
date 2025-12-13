@@ -1,4 +1,5 @@
 import { getSession } from '@/app/lib/session';
+import { updateSessionWithTokens } from '@/app/lib/session-update';
 import { jwtDecode } from 'jwt-decode';
 import { CONFIG } from './config';
 import { ApiError } from './errors';
@@ -69,9 +70,9 @@ async function refreshTokenInternal(session: SessionData): Promise<TokenResponse
 		if (!response.ok) throw new Error(`Refresh failed: ${response.status}`);
 
 		const tokenData = await response.json();
-		session.accessToken = tokenData.accessToken;
-		session.refreshToken = tokenData.refreshToken;
-		await session.save();
+
+		// ✅ Используем централизованную функцию вместо дублирования логики
+		await updateSessionWithTokens(tokenData as TokenResponse);
 
 		return tokenData;
 	} catch (error) {

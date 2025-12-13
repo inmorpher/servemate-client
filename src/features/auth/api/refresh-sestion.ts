@@ -1,7 +1,8 @@
 'use server';
 
 import { CONFIG } from '@/app/api/service/[...params]/config';
-import { getSession, updateSession } from '@/app/lib/session';
+import { getSession } from '@/app/lib/session';
+import { updateSessionWithTokens } from '@/app/lib/session-update';
 
 export async function refreshSessionAction() {
 	try {
@@ -23,10 +24,9 @@ export async function refreshSessionAction() {
 
 		const data = await response.json();
 		const currentCount = session.refreshCount || 0;
-		await updateSession({
-			accessToken: data.accessToken,
-			refreshToken: data.refreshToken,
-			expiresAt: data.expiresAt,
+
+		// ✅ Используем централизованную функцию вместо дублирования логики
+		await updateSessionWithTokens(data, {
 			refreshCount: currentCount + 1,
 		});
 

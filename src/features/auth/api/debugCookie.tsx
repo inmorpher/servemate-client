@@ -1,6 +1,6 @@
 'use client';
 
-import { refreshSessionAction } from '@/features/auth/api/refresg-sestion';
+import { refreshSessionAction } from '@/features/auth/api/refresh-sestion';
 import { useEffect, useState } from 'react';
 
 export function SessionDebug() {
@@ -39,19 +39,19 @@ export function SessionDebug() {
 	};
 
 	return (
-		<div className='p-4 border-2 border-ctp-mauve bg-ctp-surface0 rounded-lg'>
-			<h3 className='text-ctp-mauve font-bold mb-3'>🔧 Session Debug</h3>
+		<div className='border-ctp-mauve bg-ctp-surface0 rounded-lg border-2 p-4'>
+			<h3 className='text-ctp-mauve mb-3 font-bold'>🔧 Session Debug</h3>
 
 			<button
 				onClick={handleRefresh}
 				disabled={loading}
-				className='px-4 py-2 bg-ctp-blue text-ctp-base rounded hover:bg-ctp-mauve disabled:opacity-50'
+				className='bg-ctp-blue text-ctp-base hover:bg-ctp-mauve rounded px-4 py-2 disabled:opacity-50'
 			>
 				{loading ? 'Обновляю...' : 'Обновить Session'}
 			</button>
 
 			{refreshCount !== null && (
-				<div className='mt-3 p-2 bg-ctp-surface1 rounded text-ctp-text'>
+				<div className='bg-ctp-surface1 text-ctp-text mt-3 rounded p-2'>
 					<p>
 						Refresh Count: <strong>{refreshCount}</strong>
 					</p>
@@ -59,10 +59,12 @@ export function SessionDebug() {
 			)}
 
 			{message && (
-				<div className='mt-2 p-2 bg-ctp-surface1 rounded text-ctp-text text-sm'>{message}</div>
+				<div className='bg-ctp-surface1 text-ctp-text mt-2 rounded p-2 text-sm'>
+					{message}
+				</div>
 			)}
 
-			<div className='mt-3 text-xs text-ctp-subtext0'>
+			<div className='text-ctp-subtext0 mt-3 text-xs'>
 				<p>📍 Открой DevTools → Application → Cookies → servemate_session</p>
 				<p>🔍 Следи за изменением значения cookie при обновлении</p>
 			</div>

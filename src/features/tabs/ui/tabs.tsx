@@ -16,7 +16,7 @@ export const Tabs = () => {
 	}
 
 	return (
-		<div className='flex gap-0 bg-ctp-base  orverflow-x-auto corner-squircle '>
+		<div className='orverflow-x-auto flex w-full gap-1'>
 			{tabs.map((tab) => (
 				<TabItem
 					key={'tab-' + tab.id}

@@ -5,7 +5,7 @@ import { orderSearchOptions } from '@/features/search/model/ordersOptions';
 import { SearchChip } from '@/features/search/ui/SearchChip';
 import { Filter } from '@/shared/components/filter';
 import RangeSlider from '@/shared/components/slider/ui/Slider';
-import { OrderMetaDTO } from '@servemate/dto';
+import { OrderMetaDTO, OrderSearchCriteria } from '@servemate/dto';
 import { UseQueryResult } from '@tanstack/react-query';
 import { useState } from 'react';
 
@@ -14,52 +14,39 @@ export const OrderFilters = ({
 	updateFilters,
 }: {
 	ordersMeta: UseQueryResult<OrderMetaDTO, unknown>;
-	updateFilters: (filters: Partial<OrderMetaDTO>) => void;
+	updateFilters: (filters: Partial<OrderSearchCriteria>) => void;
 }) => {
-	//TODO: убрать хук useGetOrders, если он не нужен,
-	// добавть логику получения orderSearchCriteria в useGetOrdersMeta
-	// сделать универсальную функцию для получения критериев из поиска и их изменений
 	const [searchValue, setSearchValue] = useState('');
-
-	// const { minAmount, maxAmount } = useSearchCriteria({
-	// 	schema: OrderSearchSchema,
-	// 	numberFields: ['minAmount', 'maxAmount'],
-	// });
-
-	// const { data: ordersMeta, isSuccess } = useGetOrdersMeta();
-
-	// useEffect(() => {
-	// 	// Sync searchValue with URL state
-	// 	setSearchValue(ordersMeta.id?.toString() || '');
-	// }, [orderSearchCriteria.id]);
-
-	/**
-	 * Handles changes to the price range slider.
-	 * Updates the search criteria with the selected minimum and maximum amounts.
-	 *
-	 * @param values - An array containing the minimum and maximum price values.
-	 */
-	const handlePriceRangeChange = (values: number[]) => {
-		const [minAmount, maxAmount] = values;
-		console.log('Price range changed:', { minAmount, maxAmount });
-		// updateFilters({
-		// 	minAmount,
-		// 	maxAmount,
-		// });
-	};
-
-	//
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		console.log('Submitting search for Order ID:', searchValue);
-		// updateFilters({
-		// 	id: searchValue.trim() ? Number(searchValue) : undefined,
-		// });
+		const id = searchValue.trim() ? Number(searchValue) : undefined;
+		updateFilters({ id });
+	};
+
+	const handlePriceRangeChange = (values: number[]) => {
+		const [minAmount, maxAmount] = values;
+		updateFilters({ minAmount, maxAmount });
+	};
+
+	const handleAllergyToggle = (allergy: string) => {
+		const current = ordersMeta.data?.allergies || [];
+		const newAllergies = current.includes(allergy)
+			? current.filter((a) => a !== allergy)
+			: [...current, allergy];
+		updateFilters({ allergies: newAllergies });
+	};
+
+	const handleStatusToggle = (status: string) => {
+		const current = ordersMeta.data?.statuses || [];
+		const newStatuses = current.includes(status)
+			? current.filter((s) => s !== status)
+			: [...current, status];
+		updateFilters({ statuses: newStatuses });
 	};
 
 	return (
-		<Filter title='Search Orders'>
+		<Filter title='Search Orders' className='max-h-dvh'>
 			<Search onSubmit={handleSubmit}>
 				<Search.Input
 					value={searchValue}
@@ -75,12 +62,7 @@ export const OrderFilters = ({
 						<SearchChip
 							key={option.value}
 							isActive={ordersMeta.data.allergies?.includes(option.value)}
-							onClick={() => {
-								const newAllergies = ordersMeta.data.allergies?.includes(option.value)
-									? ordersMeta.data.allergies.filter((a) => a !== option.value)
-									: [...(ordersMeta.data.allergies || []), option.value];
-								updateFilters({ allergies: newAllergies });
-							}}
+							onClick={() => handleAllergyToggle(option.value)}
 						>
 							{option.value}
 						</SearchChip>
@@ -106,11 +88,7 @@ export const OrderFilters = ({
 					<SearchChip
 						key={option.value}
 						isActive={ordersMeta.data?.statuses?.includes(option.value)}
-						onClick={() => {
-							const isActive = ordersMeta.data?.statuses?.includes(option.value);
-							const newStatuses = isActive ? undefined : [option.value];
-							updateFilters({ statuses: newStatuses });
-						}}
+						onClick={() => handleStatusToggle(option.value)}
 					>
 						{option.label}
 					</SearchChip>

@@ -38,8 +38,6 @@ export const useTabs = create<TabsStore>()(
 					if (newTabs.length > 0) {
 						newActiveTabId = newTabs[newTabs.length - 1].id;
 					}
-				} else {
-					newActiveTabId = '';
 				}
 
 				set({
@@ -74,6 +72,6 @@ export const useTabs = create<TabsStore>()(
 		}),
 		{
 			name: 'tabs-storage',
-		}
-	)
+		},
+	),
 );

@@ -131,6 +131,7 @@
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-lg: var(--radius);
 	--radius-xl: calc(var(--radius) + 4px);
+	--tab-shadow: rgba(0, 0, 0, 0.6) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -1px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -140,7 +141,7 @@
 }
 
 body {
-	background: var(--color-ctp-mantle);
+	background: var(--color-ctp-surface1);
 }
 
 @keyframes fadeIn {
@@ -171,6 +172,10 @@ body {
 
 .animate-fadeOut {
 	animation: fadeOut 0.3s ease-in-out forwards;
+}
+
+.tab-shadow {
+	--inset-shadow-: var(--tab-shadow);
 }
 
 .dark {

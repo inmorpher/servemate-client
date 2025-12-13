@@ -37,17 +37,89 @@ const response = await fetch(url); // Routes through /api/service/[...params]
 const response = await fetch('http://localhost:8000/orders');
 ```
 
-The proxy at `src/app/api/service/[...params]/route.ts` automatically handles authentication tokens and request forwarding. Endpoints are centralized in `src/consts.ts` for maintainability.
+**Proxy Internals** - `src/app/api/service/[...params]/route.ts`:
 
-### Type Safety Pattern
+- Extracts access token from iron-session and adds it to `Authorization: Bearer {token}` header
+- Forwards requests to backend service URL (from `API_URL` env var)
+- Handles 401 responses by attempting automatic token refresh via `forceRefreshToken()`
+- If refresh fails, redirects to `/login`
+- Strips response to text and re-streams it (handles binary/streaming gracefully)
 
-Avoid using `any` type at all costs. Prefer specific types, unions, generics, or `unknown` for truly unknown values to maintain type safety and catch errors at compile time. Use `as` casts sparingly and only when necessary.
+**URL Parameter Building** - Use `buildQueryParams()` helper:
 
-Note: In current implementation, `useGetOrders` and `useGetOrdersMeta` have overlapping logic. Consider consolidating into a single `useOrderSearch` hook for better separation of concerns (as noted in TODO in OrderFilters.tsx).
+- Takes any object and converts it to URLSearchParams
+- Automatically filters out null, undefined, and empty string values
+- Used internally by data-fetching hooks; directly use only in advanced scenarios
 
-### Search Criteria Pattern
+**Endpoints Configuration** - All API routes centralized in `src/consts.ts`:
 
-Use `useSearchCriteria` hook for URL-synced search state:
+```typescript
+export const API_ENDPOINTS = {
+	Users: `/api/service/users`,
+	OrdersActions: {
+		create: '/orders',
+		update: '/orders/:id',
+		delete: '/orders/:id',
+		meta: '/orders/meta',
+		list: '/orders',
+	},
+};
+```
+
+### Type Safety & DTO Contracts
+
+Avoid using `any` type at all costs. Prefer specific types, unions, generics, or `unknown` for truly unknown values.
+
+**DTO Package** (`@servemate/dto`):
+
+- Centralized type contracts between frontend and backend
+- Contains Zod schemas for validation (e.g., `OrderSearchSchema`)
+- Export types directly from schemas: `z.infer<typeof OrderSearchSchema>` → `OrderSearchCriteria`
+- Always import types and schemas from `@servemate/dto`, never duplicate them in client
+- When backend adds new DTO properties, regenerate with backend's `npm run generate-dto` (creates new version), then bump version in client `package.json`
+
+**Common Imports**:
+
+```typescript
+import {
+	OrderSearchCriteria, // Parsed type from URL/form
+	OrderSearchListResult, // API response type
+	OrderSearchSchema, // Zod schema for validation
+	OrderMetaDTO, // Metadata response (min/max prices, allergies, etc.)
+} from '@servemate/dto';
+```
+
+### Search Criteria & Data Fetching Patterns
+
+#### Option 1: Full-featured hook with URL sync + React Query
+
+Use `useGetOrders` (or similar domain-specific hooks) for complete search functionality:
+
+```typescript
+const { data, isLoading, orderSearchCriteria, updateSearchCriteria } = useGetOrders();
+
+// updateSearchCriteria automatically:
+// 1. Merges new criteria with existing
+// 2. Builds query string via buildQueryParams()
+// 3. Updates URL via router.push()
+// 4. React Query re-fetches with new queryKey
+```
+
+Benefits: Syncs URL state, handles pagination, leverages React Query caching automatically.
+
+#### Option 2: Simple data fetch with React Query
+
+Use `useApiQuery` for straightforward GET requests without search state management:
+
+```typescript
+const { data } = useApiQuery<OrderMetaDTO>('/api/service/orders/meta', undefined, {
+	staleTime: 10 * 60 * 1000,
+});
+```
+
+#### Option 3: Parse URL-only without fetching
+
+Use `useSearchCriteria` to read URL params without triggering data fetches:
 
 ```typescript
 const searchCriteria = useSearchCriteria({
@@ -57,7 +129,21 @@ const searchCriteria = useSearchCriteria({
 });
 ```
 
-This automatically parses URL params and provides type-safe search state. Ensure local state (e.g., search inputs) is synced with URL criteria to avoid desync (see OrderFilters.tsx for example).
+**URL Sync Pattern**: When using form inputs (like search boxes), maintain two state layers:
+
+1. Local form state (`useState`) for instant UI feedback
+2. URL state for persistence/shareability
+3. Manual synchronization via `updateSearchCriteria()` on form submit or debounced onChange
+
+Example from `OrderFilters.tsx`:
+
+```typescript
+const [searchValue, setSearchValue] = useState(''); // Local input state
+const handleSubmit = (e) => {
+	e.preventDefault();
+	updateFilters({ id: Number(searchValue) }); // Updates URL
+};
+```
 
 ### Backend Decorator Pattern
 
@@ -82,6 +168,7 @@ export class OrdersController extends BaseController {
 ```bash
 npm run dev  # Development server with Turbopack at :3000
 npm run lint # TypeScript + ESLint checks
+npm run build # Production build
 ```
 
 ### Backend Service
@@ -99,6 +186,12 @@ npx prisma migrate dev --name "description"  # Create and apply migration
 npx prisma studio     # Visual database browser
 npx prisma generate   # Regenerate client after schema changes
 ```
+
+### Common Development Workflow
+
+1. **After Backend DTO Changes**: In backend project, run `npm run generate-dto`, then update `package.json` version in client
+2. **Type-Check Everything**: Run `npm run lint` before commits to catch TypeScript errors
+3. **Environment Variables**: Restart dev server after changing `.env` files
 
 ## Feature-Sliced Design Structure
 
@@ -124,28 +217,54 @@ src/features/auth/
 
 Shared utilities go in `src/shared/[hooks|components|utils]/`.
 
+### Hooks Best Practices
+
+**Custom Data Hooks** (e.g., `useGetOrders`):
+
+- Must be `'use client'` marked
+- Encapsulate React Query logic, URL state management, and domain-specific parsing
+- Return a spread of `UseQueryResult` + domain-specific utilities (e.g., `updateSearchCriteria`)
+- Parse URL params with Zod schemas for type safety
+- Use `keepPreviousData` to prevent UI flicker during refetches
+
+**Example Structure**:
+
+```typescript
+'use client';
+
+type UseGetOrdersReturn = UseQueryResult<OrderSearchListResult> & {
+	orderSearchCriteria: OrderSearchCriteria;
+	updateSearchCriteria: (newCriteria: Partial<OrderSearchCriteria>) => void;
+};
+
+export const useGetOrders = (): UseGetOrdersReturn => {
+	// 1. Parse URL params
+	// 2. Define query key with criteria
+	// 3. Return query result + utility functions
+};
+```
+
 ## Styling System (Catppuccin Mocha)
 
 Use design tokens from `tailwind.config.ts`:
 
 ```typescript
 className = 'bg-ctp-base text-ctp-text border-ctp-surface1';
-// Colors: ctp-blue, ctp-mauve, ctp-green, ctp-red, ctp-surface0/1/2
+// Colors: ctp-blue, ctp-mauve, ctp-green, ctp-red, ctp-sky, ctp-peach
+// Surfaces: ctp-surface0, ctp-surface1, ctp-surface2
+// Text: ctp-text, ctp-subtext0, ctp-subtext1
+// Extended palette: ctp-base, ctp-mantle, ctp-crust (backgrounds)
 ```
 
-## Authentication Flow Details
+**Reusable Card Components** in `src/features/card/`:
 
-1. Login via `features/auth/api/login.ts` → backend `/auth/login`
-2. JWT tokens stored in iron-session (encrypted cookie)
-3. `middleware.ts` validates tokens on protected routes (`/(protected)/*`)
-4. API proxy auto-includes `Authorization: Bearer {token}` headers
+- `CardContainer.tsx` - Wraps content with consistent styling
+- `CardBlock.tsx` - Grouping related content blocks
+- `CardText.tsx` - Semantic text elements (titles, descriptions)
+- `CardColorIndicator.tsx` - Visual status indicators
+- `CardWrapper.tsx` - Layout composition wrapper
 
-## Essential Anti-Patterns
-
-- ❌ Direct backend URLs (breaks auth + proxy benefits)
-- ❌ Manual URL param parsing (use `useSearchCriteria`)
-- ❌ Business logic in UI components (extract to hooks/services)
-- ❌ Missing TypeScript types from `@servemate/dto` package
+Use these for consistent UI patterns instead of creating custom styled divs.
 
 ## Environment Variables and Constants
 
@@ -162,30 +281,13 @@ export const API_ENDPOINTS = { Users: `/api/service/users`, Orders: `/api/servic
 - Use `NEXT_PUBLIC_API_URL` only if needed in client-side code (rare in this architecture).
 - Restart dev server after changing `.env` files.
 
-## Architecture
+## Essential Anti-Patterns
 
-### Authentication Flow
-
-Authentication is managed using `iron-session`.
-
-1.  **Login Process**: The user submits their credentials via the `LoginForm` component. The `login` server action in `src/features/auth/api/login.ts` sends a POST request to the external backend authentication endpoint (`/api/auth/login`).
-2.  **Session Management**: Upon successful authentication, the backend returns a JWT access token and a refresh token. These tokens, along with user information and token expiration time, are stored in a session managed by `iron-session`. The session data is stored in an encrypted cookie.
-3.  **Route Protection**: The `middleware.ts` file intercepts requests to protected routes. It checks for the existence of a valid session and ensures the access token is not expired. If the user is not authenticated or the token is expired, they are redirected to the `/login` page.
-
-### API Proxy
-
-The application uses a generic API proxy to communicate with the backend service.
-
-- **Proxy Route**: The route handler at `src/app/api/service/[...params]/route.ts` catches all requests made to `/api/service/*`.
-- **Request Forwarding**: It forwards the request to the corresponding backend service endpoint.
-- **Authentication**: Before forwarding, it retrieves the access token from the user's session and adds it to the `Authorization` header of the outgoing request. This ensures that all communication with the backend is authenticated.
-- **Configuration**: The `CONFIG` object in `src/app/api/service/[...params]/config.ts` defines which query parameters are allowed for different HTTP methods, providing a layer of security.
-
-### Data Fetching
-
-Client-side data fetching is handled by `TanStack Query`.
-
-- **Custom Hooks**: Data fetching logic is encapsulated in custom hooks, such as `useGetOrders` in `src/features/orders/hooks/useGetOrders.ts` and `useGetOrdersMeta` for metadata.
-- **Querying**: These hooks use `TanStack Query`'s `useQuery` to fetch data from the internal API proxy (`/api/service/...`). They construct a unique query key based on the current search and filter criteria.
-- **State Management**: The hooks also manage the component's state, such as search criteria, which are read from and written to the URL's query parameters. This allows for bookmarkable and shareable URLs.
-- **Declarative Approach**: This setup provides a clean, declarative way to fetch, cache, and manage server state in the application.
+- ❌ **Direct backend URLs**: `fetch('http://localhost:8000/orders')` breaks auth + proxy benefits, use `buildApiUrl(API_ENDPOINTS.Orders)` instead
+- ❌ **Manual URL param parsing**: Don't parse `searchParams` manually, use `useSearchCriteria()` hook with Zod schema
+- ❌ **Business logic in UI components**: Extract to custom hooks (like `useGetOrders`) or API services
+- ❌ **Missing TypeScript types from `@servemate/dto`**: Always import types from the shared package, never duplicate type definitions
+- ❌ **Using `any` type**: Use specific types, unions, generics, or `unknown` instead
+- ❌ **Desynchronized local state and URL**: If you use `useState()` for form inputs, sync them to URL via `updateSearchCriteria()` on submit
+- ❌ **Mixing query hooks**: Don't use both `useGetOrders()` and `useApiQuery()` for the same data, choose one pattern
+- ❌ **Forgetting React Query's query key structure**: When search criteria change, the hook must re-fetch (handled automatically if queryKey includes criteria)

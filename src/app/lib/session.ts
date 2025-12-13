@@ -59,6 +59,7 @@ export async function destroySession(): Promise<void> {
 	const session = await getSession();
 	session.destroy();
 }
+
 export async function getSessionOptions(): Promise<SessionOptions> {
 	return {
 		...sessionOptions,

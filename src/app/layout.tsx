@@ -30,7 +30,7 @@ export default function RootLayout({
 				name='viewport'
 				content='width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no'
 			></meta>
-			<body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-ctp-base`}>
+			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
 				<QueryProvider>
 					<Toaster />
 					{children}

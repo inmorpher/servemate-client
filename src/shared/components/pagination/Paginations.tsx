@@ -9,13 +9,13 @@ interface PaginationProps {
 	onPageSizeChange: (size: number) => void;
 }
 
-function Pagination({ 
-	totalCount = 0, 
-	totalPages = 1, 
-	currentPage = 1, 
-	pageSize = 10, 
-	onPageChange, 
-	onPageSizeChange 
+function Pagination({
+	totalCount = 0,
+	totalPages = 1,
+	currentPage = 1,
+	pageSize = 10,
+	onPageChange,
+	onPageSizeChange,
 }: PaginationProps) {
 	const getVisiblePages = () => {
 		if (totalPages <= 1) {
@@ -59,7 +59,12 @@ function Pagination({
 		const pagesWithCorrectDots: (string | number)[] = [];
 		let lastPage: number | string | null = null;
 		for (const page of finalPages) {
-			if (lastPage !== null && typeof page === 'number' && typeof lastPage === 'number' && page > lastPage + 1) {
+			if (
+				lastPage !== null &&
+				typeof page === 'number' &&
+				typeof lastPage === 'number' &&
+				page > lastPage + 1
+			) {
 				pagesWithCorrectDots.push('...');
 			}
 			pagesWithCorrectDots.push(page);
@@ -67,19 +72,23 @@ function Pagination({
 		}
 
 		// Filter out initial dots if page 1 is present
-		if (pagesWithCorrectDots[0] === 1 && pagesWithCorrectDots[1] === '...' && pagesWithCorrectDots[2] === 2) {
+		if (
+			pagesWithCorrectDots[0] === 1 &&
+			pagesWithCorrectDots[1] === '...' &&
+			pagesWithCorrectDots[2] === 2
+		) {
 			pagesWithCorrectDots.splice(1, 1);
 		}
 
-		return pagesWithCorrectDots.filter((p, i, arr) => p !== '...' || arr[i-1] !== p);
+		return pagesWithCorrectDots.filter((p, i, arr) => p !== '...' || arr[i - 1] !== p);
 	};
 
 	const startItem = (currentPage - 1) * pageSize + 1;
 	const endItem = Math.min(currentPage * pageSize, totalCount);
 
 	return (
-		<div className='z-10 bg-ctp-base px-6 py-4 '>
-			<div className='flex flex-wrap-reverse justify-center items-center gap-2'>
+		<div className='bg-ctp-base z-10 px-6 py-4'>
+			<div className='flex flex-wrap-reverse items-center justify-center gap-2'>
 				<div className='flex items-center gap-4'>
 					<span className='text-ctp-subtext0 text-sm'>
 						Shown {startItem}-{endItem} from {totalCount}
@@ -88,7 +97,7 @@ function Pagination({
 					<select
 						value={pageSize}
 						onChange={(e) => onPageSizeChange(Number(e.target.value))}
-						className='bg-ctp-surface0 px-2 py-1 border border-ctp-surface1 rounded focus:outline-none focus:ring-2 focus:ring-ctp-blue text-ctp-text text-sm'
+						className='bg-ctp-surface0 border-ctp-surface1 focus:ring-ctp-blue text-ctp-text rounded border px-2 py-1 text-sm focus:ring-2 focus:outline-none'
 					>
 						<option value={5}>5</option>
 						<option value={10}>10</option>
@@ -98,20 +107,21 @@ function Pagination({
 				</div>
 
 				<div className='flex items-center gap-1'>
+					{/* Previous Page Button */}
 					<button
 						onClick={() => onPageChange(currentPage - 1)}
 						disabled={currentPage <= 1}
-						className='bg-ctp-surface0 hover:bg-ctp-surface1 disabled:opacity-50 px-3 py-1 border border-ctp-surface1 rounded text-ctp-text text-sm transition-colors disabled:cursor-not-allowed'
+						className='bg-ctp-surface0 hover:bg-ctp-surface1 border-ctp-surface1 text-ctp-text corner-squircle rounded-lg border px-3 py-1 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50'
 					>
 						←
 					</button>
-
+					{/* Page Numbers */}
 					{getVisiblePages().map((page, index) => (
 						<button
 							key={index}
 							onClick={() => typeof page === 'number' && onPageChange(page)}
 							disabled={page === '...'}
-							className={`px-3 py-1 text-sm border rounded transition-colors ${
+							className={`corner-squircle rounded-2xl border px-3 py-1 text-sm transition-colors ${
 								page === currentPage
 									? 'bg-ctp-blue text-ctp-base border-ctp-blue'
 									: 'bg-ctp-surface0 text-ctp-text border-ctp-surface1 hover:bg-ctp-surface1'
@@ -120,11 +130,11 @@ function Pagination({
 							{page}
 						</button>
 					))}
-
+					{/* Next Page Button */}
 					<button
 						onClick={() => onPageChange(currentPage + 1)}
 						disabled={currentPage >= totalPages}
-						className='bg-ctp-surface0 hover:bg-ctp-surface1 disabled:opacity-50 px-3 py-1 border border-ctp-surface1 rounded text-ctp-text text-sm transition-colors disabled:cursor-not-allowed'
+						className='bg-ctp-surface0 hover:bg-ctp-surface1 border-ctp-surface1 text-ctp-text corner-squircle rounded-lg border px-3 py-1 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50'
 					>
 						→
 					</button>

@@ -21,8 +21,8 @@ export const FilterContainer = ({ children, title, className }: FilterContainerP
 	return (
 		<aside
 			className={cn(
-				'p-6 bg-ctp-base text-white w-1/4  top-0 right-0 bottom-0 hidden lg:block transition-transform duration-200 ease-in-out',
-				className
+				'bg-ctp-base rounded-2xlc sticky top-[calc(3.5625rem+1.5rem)] h-fit max-h-[calc(100vh-3.5625rem-3rem)] w-100 shrink-0 self-start overflow-y-auto rounded-2xl p-2',
+				className,
 			)}
 		>
 			{title && <h3 className='text-lg font-semibold'>{title}</h3>}

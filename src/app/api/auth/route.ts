@@ -1,4 +1,4 @@
-import { getSession } from '@/app/lib/session';
+import { updateSessionWithTokens } from '@/app/lib/session-update';
 import { API_BASE_URL } from '@/consts';
 import { jwtDecode } from 'jwt-decode';
 import { NextRequest, NextResponse } from 'next/server';
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 			console.error('[API Login] Ошибка авторизации:', error);
 			return NextResponse.json(
 				{ error: error.message || 'Ошибка авторизации' },
-				{ status: response.status }
+				{ status: response.status },
 			);
 		}
 
@@ -36,25 +36,25 @@ export async function POST(request: NextRequest) {
 
 		// Decode the access token to get expiration time and user ID
 		const decodedToken = jwtDecode<JwtPayload>(accessToken);
-		const expiresAt = decodedToken.exp * 1000; // ✅ Умножаем на 1000
 		const userId = decodedToken.id;
 		const role = decodedToken.role || 'user';
 
 		console.log('[API Login] Декодированный токен:', decodedToken);
-		console.log('[API Login] Время истечения:', new Date(expiresAt).toLocaleString());
+		console.log(
+			'[API Login] Время истечения:',
+			new Date(decodedToken.exp * 1000).toLocaleString(),
+		);
 
-		// Get session and update it
-		const session = await getSession();
-		session.accessToken = accessToken;
-		session.refreshToken = refreshToken;
-		session.expiresAt = expiresAt;
-		session.isLoggedIn = true;
-		session.userId = userId;
-		session.role = role;
-		session.lastChecked = Date.now();
-
-		// Save session
-		await session.save();
+		// ✅ Используем централизованную функцию вместо ручного сохранения
+		await updateSessionWithTokens(
+			{ accessToken, refreshToken },
+			{
+				isLoggedIn: true,
+				userId,
+				role,
+				lastChecked: Date.now(),
+			},
+		);
 
 		console.log('[API Login] Сессия сохранена успешно');
 

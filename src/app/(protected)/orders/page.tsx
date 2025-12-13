@@ -6,5 +6,5 @@ export const metadata = {
 };
 
 export default async function OrdersPage() {
-	return <div className='relative rounded-2xl h-full bg-ctp-base'>{<OrdersListPage />}</div>;
+	return <div className='relative h-full rounded-2xl'>{<OrdersListPage />}</div>;
 }

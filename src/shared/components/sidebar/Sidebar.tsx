@@ -9,18 +9,14 @@ const Sidebar: FC<ISidebarProps> = ({ children }) => {
 	const { isOpen } = useSidebar();
 
 	return (
-		<>
-			<aside
-				className={cn(
-					'fixed top-0  left-0 h-full w-64 bg-ctp-base   p-4 z-40 transition-transform duration-150 lg:translate-x-0 ease-in-out',
-					isOpen ? 'translate-x-0' : '-translate-x-full'
-				)}
-			>
-				<div className='flex flex-col h-full'>{children}</div>
-			</aside>
-
-			<div className='lg:ml-64 transition-all duration-300'></div>
-		</>
+		<aside
+			className={cn(
+				'bg-ctp-base sticky top-14.25 left-0 z-10 h-[calc(100vh-3.5625rem)] w-64 shrink-0 self-start overflow-y-auto p-4 transition-transform duration-150 ease-in-out lg:translate-x-0',
+				isOpen ? 'translate-x-0' : '-translate-x-full',
+			)}
+		>
+			<div className='flex h-full flex-col'>{children}</div>
+		</aside>
 	);
 };
 

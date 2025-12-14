@@ -114,6 +114,7 @@ export const useGetOrdersAndMeta = () => {
 		orders: ordersQuery,
 		ordersMeta: orderMetaQuery,
 		updateSearchCriteria,
+		orderSearchCriteria,
 		setPage,
 		setPageSize,
 		updateFilters,

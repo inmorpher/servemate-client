@@ -26,16 +26,16 @@ export default async function Proxy(request: NextRequest) {
 	if (!session || !session.isLoggedIn) {
 		return NextResponse.redirect(new URL('/login', request.url));
 	}
-	if (
-		isAccessTokenExpired(session) &&
-		pathname !== '/' &&
-		pathname !== '/login' &&
-		pathname !== '/refresh'
-	) {
-		const refreshUrl = new URL('/refresh', request.url);
-		refreshUrl.searchParams.set('returnUrl', pathname + request.nextUrl.search);
-		return NextResponse.redirect(refreshUrl);
-	}
+	// if (
+	// 	isAccessTokenExpired(session) &&
+	// 	pathname !== '/' &&
+	// 	pathname !== '/login' &&
+	// 	pathname !== '/refresh'
+	// ) {о
+	// 	const refreshUrl = new URL('/refresh', request.url);
+	// 	refreshUrl.searchParams.set('returnUrl', pathname + request.nextUrl.search);
+	// 	return NextResponse.redirect(refreshUrl);
+	// }
 	return NextResponse.next();
 }
 

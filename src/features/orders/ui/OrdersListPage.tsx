@@ -8,7 +8,8 @@ import { OrderFilters } from './OrderFilters';
 import { OrderList } from './OrderList';
 
 export const OrdersListPage = () => {
-	const { orders, ordersMeta, setPage, setPageSize, updateFilters } = useGetOrdersAndMeta();
+	const { orders, ordersMeta, orderSearchCriteria, setPage, setPageSize, updateFilters } =
+		useGetOrdersAndMeta();
 
 	const { totalCount, pageSize, page, totalPages } = orders.data || {};
 
@@ -24,7 +25,13 @@ export const OrdersListPage = () => {
 					onPageSizeChange={setPageSize}
 				/>
 			)}
-			renderFilters={() => <OrderFilters ordersMeta={ordersMeta} updateFilters={updateFilters} />}
+			renderFilters={() => (
+				<OrderFilters
+					ordersMeta={ordersMeta}
+					orderSearchCriteria={orderSearchCriteria}
+					updateFilters={updateFilters}
+				/>
+			)}
 			renderContent={() =>
 				orders.isError ? (
 					<ListError

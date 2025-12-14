@@ -11,9 +11,11 @@ import { useState } from 'react';
 
 export const OrderFilters = ({
 	ordersMeta,
+	orderSearchCriteria,
 	updateFilters,
 }: {
 	ordersMeta: UseQueryResult<OrderMetaDTO, unknown>;
+	orderSearchCriteria: OrderSearchCriteria;
 	updateFilters: (filters: Partial<OrderSearchCriteria>) => void;
 }) => {
 	const [searchValue, setSearchValue] = useState('');
@@ -30,7 +32,7 @@ export const OrderFilters = ({
 	};
 
 	const handleAllergyToggle = (allergy: string) => {
-		const current = ordersMeta.data?.allergies || [];
+		const current = orderSearchCriteria.allergies || [];
 		const newAllergies = current.includes(allergy)
 			? current.filter((a) => a !== allergy)
 			: [...current, allergy];
@@ -38,7 +40,7 @@ export const OrderFilters = ({
 	};
 
 	const handleStatusToggle = (status: string) => {
-		const current = ordersMeta.data?.statuses || [];
+		const current = orderSearchCriteria.statuses || [];
 		const newStatuses = current.includes(status)
 			? current.filter((s) => s !== status)
 			: [...current, status];
@@ -87,7 +89,7 @@ export const OrderFilters = ({
 				{orderSearchOptions.statuses.map((option) => (
 					<SearchChip
 						key={option.value}
-						isActive={ordersMeta.data?.statuses?.includes(option.value)}
+						isActive={orderSearchCriteria.statuses?.includes(option.value)}
 						onClick={() => handleStatusToggle(option.value)}
 					>
 						{option.label}

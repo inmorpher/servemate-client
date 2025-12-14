@@ -5,8 +5,8 @@ interface PaginationProps {
 	totalPages: number;
 	currentPage: number;
 	pageSize: number;
-	onPageChange: (page: number) => void;
-	onPageSizeChange: (size: number) => void;
+	onPageChange?: (page: number) => void;
+	onPageSizeChange?: (size: number) => void;
 }
 
 function Pagination({
@@ -14,8 +14,8 @@ function Pagination({
 	totalPages = 1,
 	currentPage = 1,
 	pageSize = 10,
-	onPageChange,
-	onPageSizeChange,
+	onPageChange = () => {},
+	onPageSizeChange = () => {},
 }: PaginationProps) {
 	const getVisiblePages = () => {
 		if (totalPages <= 1) {

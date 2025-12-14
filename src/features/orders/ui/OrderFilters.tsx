@@ -9,40 +9,45 @@ import { OrderMetaDTO, OrderSearchCriteria } from '@servemate/dto';
 import { UseQueryResult } from '@tanstack/react-query';
 import { useState } from 'react';
 
+type OrderFiltersProps = {
+	ordersMeta: UseQueryResult<OrderMetaDTO, unknown>;
+	updateFilters?: (filters: Partial<OrderSearchCriteria>) => void;
+};
+
 export const OrderFilters = ({
 	ordersMeta,
 	updateFilters,
 }: {
 	ordersMeta: UseQueryResult<OrderMetaDTO, unknown>;
-	updateFilters: (filters: Partial<OrderSearchCriteria>) => void;
+	updateFilters?: (filters: Partial<OrderSearchCriteria>) => void;
 }) => {
 	const [searchValue, setSearchValue] = useState('');
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		const id = searchValue.trim() ? Number(searchValue) : undefined;
-		updateFilters({ id });
+		// const id = searchValue.trim() ? Number(searchValue) : undefined;
+		// updateFilters({ id });
 	};
 
 	const handlePriceRangeChange = (values: number[]) => {
 		const [minAmount, maxAmount] = values;
-		updateFilters({ minAmount, maxAmount });
+		// updateFilters({ minAmount, maxAmount });
 	};
 
 	const handleAllergyToggle = (allergy: string) => {
 		const current = ordersMeta.data?.allergies || [];
-		const newAllergies = current.includes(allergy)
-			? current.filter((a) => a !== allergy)
-			: [...current, allergy];
-		updateFilters({ allergies: newAllergies });
+		// const newAllergies = current.includes(allergy)
+		// 	? current.filter((a) => a !== allergy)
+		// 	: [...current, allergy];
+		// updateFilters({ allergies: newAllergies });
 	};
 
 	const handleStatusToggle = (status: string) => {
 		const current = ordersMeta.data?.statuses || [];
-		const newStatuses = current.includes(status)
-			? current.filter((s) => s !== status)
-			: [...current, status];
-		updateFilters({ statuses: newStatuses });
+		// const newStatuses = current.includes(status)
+		// 	? current.filter((s) => s !== status)
+		// 	: [...current, status];
+		// updateFilters({ statuses: newStatuses });
 	};
 
 	return (

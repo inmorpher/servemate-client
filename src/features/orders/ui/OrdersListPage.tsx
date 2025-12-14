@@ -24,7 +24,9 @@ export const OrdersListPage = () => {
 					onPageSizeChange={setPageSize}
 				/>
 			)}
-			renderFilters={() => <OrderFilters ordersMeta={ordersMeta} updateFilters={updateFilters} />}
+			renderFilters={() => (
+				<OrderFilters ordersMeta={ordersMeta} updateFilters={updateFilters} />
+			)}
 			renderContent={() =>
 				orders.isError ? (
 					<ListError

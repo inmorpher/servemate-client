@@ -1,8 +1,10 @@
+'use client';
+
 import { cn } from '../utils/classNames';
 
 interface ListErrorProps {
 	error?: string;
-	refetch: () => void;
+	refetch?: () => void;
 	title?: string;
 	buttonText?: string;
 	isLoading?: boolean;
@@ -38,17 +40,17 @@ interface ListErrorProps {
  */
 export const ListError = ({
 	error,
-	refetch,
+	refetch = () => {},
 	title = 'Loading error',
 	buttonText = 'Try again',
 	isLoading = false,
 }: ListErrorProps) => {
 	return (
-		<section role='alert' aria-live='assertive' className='flex justify-center items-center'>
+		<section role='alert' aria-live='assertive' className='flex items-center justify-center'>
 			<div className='text-center'>
-				<div className='mb-4 text-ctp-red transition-all duration-200 hover:scale-105'>
+				<div className='text-ctp-red mb-4 transition-all duration-200 hover:scale-105'>
 					<svg
-						className='mx-auto w-16 h-16'
+						className='mx-auto h-16 w-16'
 						fill='none'
 						stroke='currentColor'
 						viewBox='0 0 24 24'
@@ -62,23 +64,27 @@ export const ListError = ({
 						/>
 					</svg>
 				</div>
-				<h2 className='mb-2 font-semibold text-ctp-text text-xl'>{title}</h2>
-				{error && <p className='mb-4 text-ctp-subtext0'>{error}</p>}
+				<h2 className='text-ctp-text mb-2 text-xl font-semibold'>{title}</h2>
+				{error && <p className='text-ctp-subtext0 mb-4'>{error}</p>}
 
 				<button
 					onClick={() => !isLoading && refetch()} // Disable button when loading
 					disabled={isLoading} // Disable button when loading
 					className={cn(
-						'px-4 py-2 rounded-lg text-ctp-base transition-all duration-200',
+						'text-ctp-base rounded-lg px-4 py-2 transition-all duration-200',
 						isLoading
 							? 'bg-ctp-surface1 cursor-not-allowed'
-							: 'bg-ctp-blue hover:bg-ctp-sapphire hover:scale-105 focus:ring-2 focus:ring-ctp-blue'
+							: 'bg-ctp-blue hover:bg-ctp-sapphire focus:ring-ctp-blue hover:scale-105 focus:ring-2',
 					)}
 					aria-label={isLoading ? 'Retrying...' : 'Retry: Try again'}
 				>
 					{isLoading ? (
 						<span className='flex items-center'>
-							<svg className='animate-spin mr-2 w-4 h-4' fill='none' viewBox='0 0 24 24'>
+							<svg
+								className='mr-2 h-4 w-4 animate-spin'
+								fill='none'
+								viewBox='0 0 24 24'
+							>
 								<circle
 									className='opacity-25'
 									cx='12'

@@ -1,4 +1,9 @@
-import { OrdersListPage } from '@/features/orders/ui/OrdersListPage';
+import { OrderFilters } from '@/features/orders/ui/OrderFilters';
+import { OrderList } from '@/features/orders/ui/OrderList';
+import Pagination from '@/shared/components/pagination/Paginations';
+import { ListError } from '@/shared/layouts/Error';
+import { ListPageLayout } from '@/shared/layouts/ListPageLayout';
+import { fetchWithAuth } from '@/shared/utils/fecthWithAuth';
 import { OrderSearchCriteria } from '@servemate/dto';
 
 export const metadata = {
@@ -8,8 +13,52 @@ export const metadata = {
 
 export default async function OrdersPage({ searchParams }: { searchParams: OrderSearchCriteria }) {
 	console.log('Search params:', await searchParams);
+	const query = await searchParams;
 
-	return <div className='relative h-full rounded-2xl'>{<OrdersListPage />}</div>;
+	const ordersData = await fetchWithAuth('http://192.168.2.71:3002/api/orders', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(query),
+	});
+
+	const ordersMeta = await fetchWithAuth('http://192.168.2.71:3002/api/orders/meta', {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	});
+
+	console.log('Orders Data:', ordersData);
+
+	return (
+		<div className='relative h-full rounded-2xl'>
+			<ListPageLayout
+				renderFooter={() => (
+					<Pagination
+						totalCount={ordersData.totalCount ?? 0}
+						totalPages={ordersData.totalPages ?? 1}
+						currentPage={ordersData.page ?? 1}
+						pageSize={ordersData.pageSize ?? 10}
+					/>
+				)}
+				renderFilters={() => <OrderFilters ordersMeta={ordersMeta} />}
+				renderContent={() =>
+					ordersData ? (
+						<ListError error={'smthg wrong'} isLoading={false} />
+					) : (
+						<OrderList
+							isFetching={ordersData.isFetching}
+							isLoading={false}
+							orders={ordersData.orders}
+							pageSize={ordersData.pageSize ?? 10}
+						/>
+					)
+				}
+			></ListPageLayout>
+		</div>
+	);
 }
 
 ///nenen rfrfsfjksdjflksdjflksjdklfsdf

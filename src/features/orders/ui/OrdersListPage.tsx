@@ -3,11 +3,12 @@
 import Pagination from '@/shared/components/pagination/Paginations';
 import { ListError } from '@/shared/layouts/Error';
 import { ListPageLayout } from '@/shared/layouts/ListPageLayout';
+import { OrderMetaDTO } from '@servemate/dto';
 import { useGetOrdersAndMeta } from '../hooks/useGetOrdersAndMeta';
 import { OrderFilters } from './OrderFilters';
 import { OrderList } from './OrderList';
 
-export const OrdersListPage = () => {
+export const OrdersListPage = ({ meta }: { meta: OrderMetaDTO }) => {
 	const { orders, ordersMeta, orderSearchCriteria, setPage, setPageSize, updateFilters } =
 		useGetOrdersAndMeta();
 

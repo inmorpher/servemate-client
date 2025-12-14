@@ -9,13 +9,13 @@ export default async function Proxy(request: NextRequest) {
 	const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
 	console.log('Proxy middleware triggered for:', pathname);
 
-	if (pathname === '/login') {
-		return NextResponse.redirect(new URL('/dashboard', request.url));
-	}
+	// if (pathname === '/login') {
+	// 	return NextResponse.redirect(new URL('/dashboard', request.url));
+	// }
 
-	if (pathname === '/') {
-		return NextResponse.redirect(new URL('/dashboard', request.url));
-	}
+	// if (pathname === '/') {
+	// 	return NextResponse.redirect(new URL('/dashboard', request.url));
+	// }
 
 	if (!isProtectedRoute) {
 		return NextResponse.next();

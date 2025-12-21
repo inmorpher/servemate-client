@@ -3,8 +3,9 @@ import { OrderList } from '@/features/orders/ui/OrderList';
 import Pagination from '@/shared/components/pagination/Paginations';
 import { ListError } from '@/shared/layouts/Error';
 import { ListPageLayout } from '@/shared/layouts/ListPageLayout';
+import { buildApiUrl } from '@/shared/utils/buildApiUrl';
 import { fetchWithAuth } from '@/shared/utils/fecthWithAuth';
-import { OrderSearchCriteria } from '@servemate/dto';
+import { OrderSearchCriteria, OrderSearchSchema } from '@servemate/dto';
 
 export const metadata = {
 	title: 'Orders',
@@ -15,15 +16,18 @@ export default async function OrdersPage({ searchParams }: { searchParams: Order
 	console.log('Search params:', await searchParams);
 	const query = await searchParams;
 
-	const ordersData = await fetchWithAuth('http://192.168.2.71:3002/api/orders', {
-		method: 'POST',
+	const parsedQuery = OrderSearchSchema.safeParse(query);
+	console.log('Parsed query:', parsedQuery);
+	const url = buildApiUrl('/orders', parsedQuery.data);
+
+	const ordersData = await fetchWithAuth(url, {
+		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify(query),
 	});
 
-	const ordersMeta = await fetchWithAuth('http://192.168.2.71:3002/api/orders/meta', {
+	const ordersMeta = await fetchWithAuth('http://192.168.2.80:3002/api/orders/meta', {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
@@ -37,22 +41,22 @@ export default async function OrdersPage({ searchParams }: { searchParams: Order
 			<ListPageLayout
 				renderFooter={() => (
 					<Pagination
-						totalCount={ordersData.totalCount ?? 0}
-						totalPages={ordersData.totalPages ?? 1}
-						currentPage={ordersData.page ?? 1}
-						pageSize={ordersData.pageSize ?? 10}
+						totalCount={ordersData?.totalCount ?? 0}
+						totalPages={ordersData?.totalPages ?? 1}
+						currentPage={ordersData?.page ?? 1}
+						pageSize={ordersData?.pageSize ?? 10}
 					/>
 				)}
 				renderFilters={() => <OrderFilters ordersMeta={ordersMeta} />}
 				renderContent={() =>
-					ordersData ? (
+					!ordersData ? (
 						<ListError error={'smthg wrong'} isLoading={false} />
 					) : (
 						<OrderList
-							isFetching={ordersData.isFetching}
+							isFetching={false}
 							isLoading={false}
 							orders={ordersData.orders}
-							pageSize={ordersData.pageSize ?? 10}
+							pageSize={ordersData?.pageSize ?? 10}
 						/>
 					)
 				}

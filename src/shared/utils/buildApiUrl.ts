@@ -1,4 +1,6 @@
-const BASE_URL = '/api/service';
+import { API_BASE_URL } from '@/consts';
+
+const BASE_URL = `${API_BASE_URL}/`;
 
 export const buildApiUrl = (endpoint: string, params: Record<string, unknown> = {}): string => {
 	const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;

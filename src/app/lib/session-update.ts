@@ -48,6 +48,9 @@ export async function updateSessionWithTokens(
 		}
 
 		await session.save();
+		console.log('✅ [Session Update] Сессия успешно обновлена:', {
+			session,
+		});
 	} catch (error) {
 		console.error('❌ [Session Update] Ошибка при обновлении сессии:', error);
 		throw error;

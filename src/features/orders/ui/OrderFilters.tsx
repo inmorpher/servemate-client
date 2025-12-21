@@ -18,7 +18,7 @@ export const OrderFilters = ({
 	ordersMeta,
 	updateFilters,
 }: {
-	ordersMeta: UseQueryResult<OrderMetaDTO, unknown>;
+	ordersMeta: OrderMetaDTO;
 	updateFilters?: (filters: Partial<OrderSearchCriteria>) => void;
 }) => {
 	const [searchValue, setSearchValue] = useState('');
@@ -35,7 +35,7 @@ export const OrderFilters = ({
 	};
 
 	const handleAllergyToggle = (allergy: string) => {
-		const current = ordersMeta.data?.allergies || [];
+		const current = ordersMeta?.allergies || [];
 		// const newAllergies = current.includes(allergy)
 		// 	? current.filter((a) => a !== allergy)
 		// 	: [...current, allergy];
@@ -43,7 +43,7 @@ export const OrderFilters = ({
 	};
 
 	const handleStatusToggle = (status: string) => {
-		const current = ordersMeta.data?.statuses || [];
+		const current = ordersMeta?.statuses || [];
 		// const newStatuses = current.includes(status)
 		// 	? current.filter((s) => s !== status)
 		// 	: [...current, status];
@@ -54,19 +54,19 @@ export const OrderFilters = ({
 		<Filter title='Search Orders' className='max-h-dvh'>
 			<Search onSubmit={handleSubmit}>
 				<Search.Input
-					value={searchValue}
+					value={'1233'}
 					onChange={(e) => setSearchValue(e.target.value)}
 					placeholder='Search by Order ID...'
 				/>
 			</Search>
 
 			{/* Allergies Filter */}
-			{ordersMeta.isSuccess && ordersMeta.data?.allergies && (
+			{ordersMeta.allergies && (
 				<Filter.Group label='Allergies'>
 					{orderSearchOptions.allergies.map((option) => (
 						<SearchChip
 							key={option.value}
-							isActive={ordersMeta.data.allergies?.includes(option.value)}
+							isActive={ordersMeta.allergies?.includes(option.value)}
 							onClick={() => handleAllergyToggle(option.value)}
 						>
 							{option.value}
@@ -76,13 +76,13 @@ export const OrderFilters = ({
 			)}
 
 			{/* Price Range Filter */}
-			{ordersMeta.isSuccess && ordersMeta.data?.prices && (
+			{ordersMeta?.prices && (
 				<Filter.Group label='Price Range'>
 					<RangeSlider
-						minValue={ordersMeta.data.prices.min}
-						maxValue={ordersMeta.data.prices.max}
+						minValue={ordersMeta.prices.min}
+						maxValue={ordersMeta.prices.max}
 						handler={handlePriceRangeChange}
-						defaultValue={[ordersMeta.data.prices.min, ordersMeta.data.prices.max]}
+						defaultValue={[ordersMeta.prices.min, ordersMeta.prices.max]}
 					/>
 				</Filter.Group>
 			)}
@@ -92,7 +92,7 @@ export const OrderFilters = ({
 				{orderSearchOptions.statuses.map((option) => (
 					<SearchChip
 						key={option.value}
-						isActive={ordersMeta.data?.statuses?.includes(option.value)}
+						isActive={ordersMeta?.statuses?.includes(option.value)}
 						onClick={() => handleStatusToggle(option.value)}
 					>
 						{option.label}

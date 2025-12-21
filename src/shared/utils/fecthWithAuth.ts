@@ -1,12 +1,11 @@
 import { getSession } from '@/app/lib/session';
 
-const session = await getSession();
-
-if (!session?.accessToken) {
-	throw new Error('No access token found');
-}
-
 export const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
+	const session = await getSession();
+
+	if (!session?.accessToken) {
+		throw new Error('No access token found');
+	}
 	try {
 		const response = fetch(url, {
 			...options,
@@ -18,6 +17,6 @@ export const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
 
 		return (await response).json();
 	} catch (error) {
-		throw new Error('Error fetching data with auth', error as any);
+		console.log('Error fetching data with auth:', error);
 	}
 };

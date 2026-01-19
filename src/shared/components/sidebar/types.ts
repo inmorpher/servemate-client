@@ -23,7 +23,7 @@ export interface ISidebarNavProps {
 }
 
 export interface ISidebarNavItemProps {
-	href: string;
+	entity: string;
 	icon?: string;
 	label: string;
 }

@@ -1,15 +1,12 @@
 'use client';
 
-import { useTabNavigation } from '../hooks/useTabNavigation';
-import { useTabsSync } from '../hooks/useTabsSync';
+import { startTransition } from 'react';
 import { useTabs } from '../store/useTabs';
 import { TabItem } from './tab.item';
 
 export const Tabs = () => {
-	const { tabs, activeTabId } = useTabs();
-	const { navigateToTab, closeTab } = useTabNavigation();
-
-	useTabsSync();
+	const { tabs, activeTabId, setActiveTab, removeTab } = useTabs();
+	// useTabsSync();
 
 	if (tabs.length === 0) {
 		return null;
@@ -22,8 +19,12 @@ export const Tabs = () => {
 					key={'tab-' + tab.id}
 					tab={tab}
 					isActive={tab.id === activeTabId}
-					onSelect={() => navigateToTab(tab.id, tab.path)}
-					onClose={() => closeTab(tab.id)}
+					onSelect={() => {
+						startTransition(() => {
+							setActiveTab(tab.id);
+						});
+					}}
+					onClose={() => removeTab(tab.id)}
 				/>
 			))}
 		</div>

@@ -1,5 +1,5 @@
 import { cn } from '@/shared/lib/classNames';
-import { ReactNode } from 'react';
+import { ReactNode, startTransition } from 'react';
 
 interface ChipProps {
 	children: ReactNode;
@@ -42,27 +42,33 @@ export const SearchChip = ({
 	variant = 'default',
 	className,
 }: ChipProps) => {
+	const handleClick = () => {
+		startTransition(() => {
+			if (onClick) {
+				onClick();
+			}
+		});
+	};
 	return (
 		<div
-			onClick={onClick}
+			onClick={handleClick}
 			className={cn(
-				'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer hover:shadow-sm',
+				'inline-flex min-w-6 cursor-pointer items-center gap-2 rounded-lg px-1.5 py-0.5 text-center text-sm font-medium transition-all duration-200 hover:shadow-sm',
 				{ 'opacity-40 hover:opacity-100': !isActive }, // Less visible when not active
 				variant === 'default' &&
-					'bg-ctp-blue/10 text-ctp-blue border border-ctp-blue/20 hover:bg-ctp-blue/15 hover:border-ctp-blue/30',
+					'bg-ctp-blue/10 text-ctp-blue border-ctp-blue/20 hover:bg-ctp-blue/15 hover:border-ctp-blue/30 border',
 				variant === 'secondary' &&
-					'bg-ctp-surface1 text-ctp-text border border-ctp-surface2 hover:bg-ctp-surface2 hover:border-ctp-overlay0',
+					'bg-ctp-surface1 text-ctp-text border-ctp-surface2 hover:bg-ctp-surface2 hover:border-ctp-overlay0 border',
 				variant === 'success' &&
-					'bg-ctp-green/10 text-ctp-green border border-ctp-green/20 hover:bg-ctp-green/15 hover:border-ctp-green/30',
+					'bg-ctp-green/10 text-ctp-green border-ctp-green/20 hover:bg-ctp-green/15 hover:border-ctp-green/30 border',
 				variant === 'warning' &&
-					'bg-ctp-yellow/10 text-ctp-yellow border border-ctp-yellow/20 hover:bg-ctp-yellow/15 hover:border-ctp-yellow/30',
+					'bg-ctp-yellow/10 text-ctp-yellow border-ctp-yellow/20 hover:bg-ctp-yellow/15 hover:border-ctp-yellow/30 border',
 				variant === 'danger' &&
-					'bg-ctp-red/10 text-ctp-red border border-ctp-red/20 hover:bg-ctp-red/15 hover:border-ctp-red/30',
-				className
+					'bg-ctp-red/10 text-ctp-red border-ctp-red/20 hover:bg-ctp-red/15 hover:border-ctp-red/30 border',
+				className,
 			)}
 		>
 			<span>{children}</span>
 		</div>
 	);
 };
-

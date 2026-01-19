@@ -241,3 +241,20 @@ button {
 .corner-squircle {
 	corner-shape: squircle;
 }
+
+/* Date picker styling */
+input[type='date'] {
+	position: relative;
+	z-index: 50;
+}
+
+/* Ensure date picker appears above filter container */
+input[type='date']::-webkit-calendar-picker-indicator {
+	cursor: pointer;
+	z-index: 50;
+}
+
+/* Chrome/Safari date picker */
+input[type='date']::-webkit-calendar-picker-indicator {
+	filter: invert(0.8);
+}

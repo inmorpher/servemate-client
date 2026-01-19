@@ -30,7 +30,7 @@ const config: Config = {
 					lavender: '#b4befe',
 
 					// Surface
-					text: '#f5f5ff',
+					text: 'red',
 					subtext1: '#d0d4f8',
 					subtext0: '#b0b5db',
 					overlay2: '#8691af',

@@ -3,7 +3,6 @@ import { cn } from '@/shared/lib/classNames';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { useEffect, useRef, useState } from 'react';
-import { SliderInputControls } from './SliderControls';
 
 interface RangeSlider {
 	debounce?: boolean;
@@ -49,14 +48,13 @@ const RangeSlider = ({
 			}
 			timeoutRef.current = setTimeout(() => {
 				handler(values);
+				timeoutRef.current = null;
 			}, 300);
 		} else {
 			handler(values);
 		}
 	};
-	console.log('defaultValue', defaultValue);
-	console.log('minValue', minValue);
-	console.log('maxValue', maxValue);
+
 	const handleInputChange = (index: 0 | 1, newValue: number) => {
 		setValueRange((currentRange) => {
 			let newRange: number[];
@@ -87,6 +85,13 @@ const RangeSlider = ({
 		setValueRange([minValue, maxValue]);
 	}, [minValue, maxValue]);
 
+	useEffect(() => {
+		return () => {
+			if (timeoutRef.current) {
+				clearTimeout(timeoutRef.current);
+			}
+		};
+	}, []);
 	return (
 		<>
 			<Slider
@@ -107,48 +112,42 @@ const RangeSlider = ({
 				}}
 			/>
 			{inputs && (
-				<div className='flex justify-between items-center mt-2'>
-					<SliderInputControls
-						onDecrement={() => handleInputChange(0, valueRange[0] - step)}
-						onIncrement={() => handleInputChange(0, valueRange[0] + step)}
-					>
-						<input
-							type='number'
-							step={step}
-							value={valueRange[0]}
-							onChange={(e) => {
-								const newMin = Number(e.target.value);
-								handleInputChange(0, newMin);
-							}}
-							className={cn(
-								'w-20 p-1 text-center bg-ctp-surface0 text-ctp-text border border-ctp-overlay0 rounded'
-							)}
-							min={minValue}
-							max={valueRange[1]}
-							aria-label='Minimal value'
-						/>
-					</SliderInputControls>
+				<div className='mt-2 flex items-center justify-between'>
+					<input
+						disabled={false}
+						type='number'
+						step={step}
+						value={valueRange[0]}
+						onChange={(e) => {
+							const newMin = Number(e.target.value);
+							handleInputChange(0, newMin);
+						}}
+						className={cn(
+							'bg-ctp-surface0 text-ctp-text border-ctp-overlay0 w-20 rounded border p-1 text-center',
+						)}
+						min={minValue}
+						max={valueRange[1]}
+						aria-label='Minimal value'
+					/>
+
 					<span className='mx-2 text-gray-500'>-</span>
-					<SliderInputControls
-						onDecrement={() => handleInputChange(1, valueRange[1] - step)}
-						onIncrement={() => handleInputChange(1, valueRange[1] + step)}
-					>
-						<input
-							type='number'
-							value={valueRange[1]}
-							step={step}
-							onChange={(e) => {
-								const newMax = Number(e.target.value);
-								handleInputChange(1, newMax);
-							}}
-							className={cn(
-								'w-20 p-1 text-center bg-ctp-surface0 text-ctp-text border border-ctp-overlay0 rounded'
-							)}
-							min={valueRange[0]}
-							max={maxValue}
-							aria-label='Maximal value'
-						/>
-					</SliderInputControls>
+
+					<input
+						disabled={false}
+						type='number'
+						value={valueRange[1]}
+						step={step}
+						onChange={(e) => {
+							const newMax = Number(e.target.value);
+							handleInputChange(1, newMax);
+						}}
+						className={cn(
+							'bg-ctp-surface0 text-ctp-text border-ctp-overlay0 w-20 rounded border p-1 text-center',
+						)}
+						min={valueRange[0]}
+						max={maxValue}
+						aria-label='Maximal value'
+					/>
 				</div>
 			)}
 		</>

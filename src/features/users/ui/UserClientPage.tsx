@@ -2,13 +2,12 @@
 
 import Pagination from '@/shared/components/pagination/Paginations';
 
-import { useEffect } from 'react';
 import { useGetUsers } from '../hooks/useUsers';
 
-import { SessionDebug } from '@/features/auth/api/debugCookie';
+import { Tab } from '@/features/tabs/types/tabs.type';
 import { ListPageLayout } from '@/shared/layouts/ListPageLayout';
+import { ViewTransition } from 'react';
 import { UserList } from './UserList';
-import UserSearchBar from './UserSearchBar';
 
 /**
  * Renders the user management page for clients, including search, pagination, and user list.
@@ -18,15 +17,15 @@ import UserSearchBar from './UserSearchBar';
  *
  * @returns {JSX.Element} The user client page layout with search, pagination, and user list.
  */
-export const UserClientPage = () => {
+export const UserClientPage = ({ tabId }: { tabId: Tab['id'] }) => {
 	const { isLoading, data, updateSearchCriteria, userSearchCriteria } = useGetUsers();
 
-	useEffect(() => {
-		window.scrollTo({
-			top: 0,
-			behavior: 'smooth',
-		});
-	}, [userSearchCriteria]);
+	// useEffect(() => {
+	// 	window.scrollTo({
+	// 		top: 0,
+	// 		behavior: 'smooth',
+	// 	});
+	// }, [userSearchCriteria]);
 
 	const handlePageChange = (newPage: number) => {
 		updateSearchCriteria({ page: newPage });
@@ -40,16 +39,20 @@ export const UserClientPage = () => {
 
 	const effectivePageSize = pageSize ?? userSearchCriteria.pageSize ?? 10;
 	return (
-		<>
-			<SessionDebug />
+		<ViewTransition>
+			<input
+				type='text'
+				placeholder='Search users...'
+				className='mb-4 w-full rounded border p-2'
+			/>
 			<ListPageLayout
-				renderFilters={() => (
-					<UserSearchBar
-						isLoading={isLoading}
-						updateCriteria={updateSearchCriteria}
-						criteria={userSearchCriteria}
-					/>
-				)}
+				// renderFilters={() => (
+				// 	<UserSearchBar
+				// 		isLoading={isLoading}
+				// 		updateCriteria={updateSearchCriteria}
+				// 		criteria={userSearchCriteria}
+				// 	/>
+				// )}
 				renderFooter={() => (
 					<Pagination
 						totalCount={totalCount ?? 0}
@@ -64,6 +67,6 @@ export const UserClientPage = () => {
 					<UserList isLoading={isLoading} users={users} pageSize={effectivePageSize} />
 				)}
 			></ListPageLayout>
-		</>
+		</ViewTransition>
 	);
 };

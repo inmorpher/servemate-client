@@ -20,14 +20,14 @@ const ProtectedLayout = async ({ children }: { children: ReactNode }) => {
 			<Sidebar.MobileToggle />
 
 			{/* Контейнер для sticky sidebar */}
-			<div className='flex pt-14.25'>
+			<div className='mt-14.25 flex'>
 				{/* Sidebar — sticky слева */}
 				<Sidebar>
 					<Sidebar.Nav>
-						<Sidebar.NavItem href='/dashboard' icon='window' label='Dashboard' />
-						<Sidebar.NavItem href='/account' icon='file' label='Account' />
-						<Sidebar.NavItem href='/users' icon='file' label='Users' />
-						<Sidebar.NavItem href='/orders' icon='file' label='Orders' />
+						<Sidebar.NavItem entity='dashboard' icon='window' label='Dashboard' />
+						<Sidebar.NavItem entity='orders' icon='file' label='cPanel' />
+						<Sidebar.NavItem entity='users' icon='file' label='Users' />
+						<Sidebar.NavItem entity='account' icon='file' label='Orders' />
 					</Sidebar.Nav>
 					<Sidebar.Footer>
 						<SidebarLogout />
@@ -35,9 +35,7 @@ const ProtectedLayout = async ({ children }: { children: ReactNode }) => {
 				</Sidebar>
 
 				{/* Main — растягивается на оставшееся пространство */}
-				<main className='min-h-screen flex-1'>
-					<div className='p-6'>{children}</div>
-				</main>
+				<main className='flex-1'>{children}</main>
 			</div>
 		</SidebarProvider>
 	);

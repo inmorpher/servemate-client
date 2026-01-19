@@ -21,7 +21,7 @@ export const FilterContainer = ({ children, title, className }: FilterContainerP
 	return (
 		<aside
 			className={cn(
-				'bg-ctp-base rounded-2xlc sticky top-[calc(3.5625rem+1.5rem)] h-fit max-h-[calc(100vh-3.5625rem-3rem)] w-100 shrink-0 self-start overflow-y-auto rounded-2xl p-2',
+				'bg-ctp-surface0 sticky top-14.25 h-[calc(100vh-3.5625rem)] overflow-x-hidden overflow-y-auto p-2 lg:w-64',
 				className,
 			)}
 		>

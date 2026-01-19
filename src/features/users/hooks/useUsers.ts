@@ -47,13 +47,7 @@ export type UseUsersReturn = UseQueryResult<UserListResult> & {
 export function useGetUsers(): UseUsersReturn {
 	const userCriteria = useMemo(() => {
 		const base = UserParamSchema.parse({});
-		return {
-			...base,
-			page: base.page || 1,
-			pageSize: base.pageSize || 10,
-			sortBy: base.sortBy || 'name',
-			sortOrder: base.sortOrder || 'asc',
-		};
+		return base;
 	}, []);
 
 	// State to hold user search criteria
@@ -75,6 +69,10 @@ export function useGetUsers(): UseUsersReturn {
 
 			return result;
 		},
+		refetchIntervalInBackground: true,
+		refetchInterval: 1000 * 60 * 1, // 1
+		refetchOnMount: true,
+
 		refetchOnWindowFocus: false,
 		staleTime: 5 * 60 * 1000,
 	});

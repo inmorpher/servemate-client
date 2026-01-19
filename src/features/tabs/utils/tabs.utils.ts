@@ -10,3 +10,20 @@ export const getTabTitle = (path: string): string => {
 
 	return parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
 };
+
+export const buildTabLink = (entity: string, filters?: Record<string, string>): string => {
+	const params = new URLSearchParams();
+
+	params.set('activeTab', entity);
+	if (filters) {
+		for (const key of Object.keys(filters).sort()) {
+			const value = filters[key];
+			if (value === null || value === undefined || value === '') {
+				continue;
+			}
+			params.append(key, value);
+		}
+	}
+
+	return `/cpanel?${params.toString()}`;
+};

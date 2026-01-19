@@ -1,41 +1,53 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
-import { useEffect } from 'react';
+import { nanoid } from 'nanoid';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useRef } from 'react';
 import { useTabs } from '../store/useTabs';
-import { getTabTitle } from '../utils/tabs.utils';
 
 export const useTabsSync = () => {
 	const pathname = usePathname();
-	const { tabs, addTab, activeTabId, setActiveTab } = useTabs();
+	const searchParams = useSearchParams();
+	const { addTab, setActiveTab } = useTabs();
+	const hasReplacedRef = useRef(false);
+	const router = useRouter();
 
 	useEffect(() => {
-		// Skip adding tabs for login and dashboard
+		if (pathname.toLowerCase() !== '/cpanel') return;
 
-		if (pathname === '/login' || pathname === '/dashboard') {
+		const entity = searchParams.get('entity') || 'overview';
+		let tid = searchParams.get('tabId');
+		const tabFilters = Object.fromEntries(
+			Array.from(searchParams.entries()).filter(([key]) => key !== 'tabId'),
+		);
+
+		if (!tid) {
+			tid = nanoid(8);
+
+			if (!hasReplacedRef.current) {
+				hasReplacedRef.current = true;
+				const newSearchParams = new URLSearchParams(searchParams.toString());
+				newSearchParams.set('tabId', tid);
+				router.replace(`/cpanel?${newSearchParams.toString()}`);
+			}
+
 			return;
 		}
 
-		// Check if tab already exists
-		const existingTab = tabs.find((t) => t.path === pathname);
-
-		if (existingTab) {
-			// Tab exists, set it as active
-			if (existingTab.id !== activeTabId) {
-				setActiveTab(existingTab.id);
-			}
-		} else {
-			// Tab doesn't exist, create a new one
-			const newTab = {
-				id: pathname,
-				path: pathname,
-				title: getTabTitle(pathname),
-				timestamp: Date.now(),
-				pinned: false,
-			};
-
-			addTab(newTab);
+		if (tid === searchParams.get('tid')) {
+			hasReplacedRef.current = false;
 		}
-		console.log('Current tabs:', tabs, activeTabId);
-	}, [pathname, tabs, addTab, activeTabId, setActiveTab]);
+
+		addTab({
+			id: tid,
+			entity,
+			filters: tabFilters,
+			title: entity,
+		});
+
+		setActiveTab(tid);
+	}, [pathname, searchParams, addTab, setActiveTab, router]);
 };
+
+// https://docs.google.com/spreadsheets/d/1e04fVhi2LKvrY4smYAdX-V6eXyCmD5cu_QvKe_TQzsA/edit?hl=ru&gid=0#gid=0
+// https://docs.google.com/spreadsheets/d/1e04fVhi2LKvrY4smYAdX-V6eXyCmD5cu_QvKe_TQzsA/edit?hl=ru&gid=1436534956#gid=1436534956

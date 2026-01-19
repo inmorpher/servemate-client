@@ -1,64 +1,12 @@
 import { API_ENDPOINTS } from '@/consts';
+import { useTabs } from '@/features/tabs/store/useTabs';
 import { useApiQuery } from '@/shared/hooks/useApiQuery';
-import { useResourceSearchCriteria } from '@/shared/hooks/useResourceSearchCriteria';
-import {
-	OrderMetaDTO,
-	OrderSearchCriteria,
-	OrderSearchListResult,
-	OrderSearchSchema,
-} from '@servemate/dto';
+import { OrderMetaDTO, OrderSearchCriteria, OrderSearchListResult } from '@servemate/dto';
 
 export const useGetOrdersAndMeta = () => {
-	/**
-	 * Manages search criteria, pagination and filter updates for orders.
-	 *
-	 * Returns an object with the following properties:
-	 * - searchCriteria: OrderSearchCriteria
-	 *   The current, validated search criteria used to query the orders resource.
-	 *
-	 * - updateSearchCriteria(changes: Partial<OrderSearchCriteria>): void
-	 *   Merge-updates arbitrary fields on the search criteria. Provided values will
-	 *   be validated/normalized against the configured schema.
-	 *
-	 * - setPage(page: number): void
-	 *   Set the current page number used for paginated requests.
-	 *
-	 * - setPageSize(size: number): void
-	 *   Set the number of items per page used for paginated requests.
-	 *
-	 * - updateFilters(filterChanges: Partial<OrderSearchCriteria>): void
-	 *   Update filter fields specifically. Because resetPageOnFilters is enabled,
-	 *   calling this will also reset pagination to the first page to ensure results
-	 *   reflect the new filter set.
-	 *
-	 * Configuration details (used by the underlying hook):
-	 * - schema: OrderSearchSchema — validation/normalization schema for the criteria.
-	 * - numberFields: ['id', 'page', 'pageSize', 'guestsCount', 'minAmount', 'maxAmount']
-	 *   Fields that will be coerced/treated as numbers.
-	 * - arrayFields: ['status']
-	 *   Fields that will be coerced/treated as arrays.
-	 * - resetPageOnFilters: true
-	 *   Automatically reset pagination when filters are updated.
-	 *
-	 * Notes:
-	 * - Updater functions generally accept partial criteria objects and perform
-	 *   schema-aware coercion of numeric/array fields.
-	 * - Prefer updateFilters when changing filter-related fields to guarantee a
-	 *   pagination reset and consistent UX.
-	 */
-	const {
-		searchCriteria: orderSearchCriteria,
-		setPage,
-		setPageSize,
-		updateFilters,
-		updateSearchCriteria,
-	} = useResourceSearchCriteria<OrderSearchCriteria>({
-		schema: OrderSearchSchema,
-		numberFields: ['id', 'page', 'pageSize', 'guestsCount', 'minAmount', 'maxAmount'],
-		arrayFields: ['statuses', 'allergies'],
-		resetPageOnFilters: true,
-	});
+	const { tabs } = useTabs();
 
+	// console.log('Current Order Search Criteria:', orderSearchCriteria);
 	/**
 	 * Query result for fetching a list of orders using the current search criteria.
 	 *

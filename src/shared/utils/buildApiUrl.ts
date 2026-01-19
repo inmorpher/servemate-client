@@ -1,11 +1,11 @@
 import { API_BASE_URL } from '@/consts';
 
-const BASE_URL = `${API_BASE_URL}/`;
+const BASE_URL = `${API_BASE_URL}`;
 
 export const buildApiUrl = (endpoint: string, params: Record<string, unknown> = {}): string => {
 	const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
 
-	let url = `${BASE_URL}${normalizedEndpoint}`;
+	let url = `api/service${normalizedEndpoint}`;
 
 	if (params && Object.keys(params).length > 0) {
 		const queryParams = new URLSearchParams();

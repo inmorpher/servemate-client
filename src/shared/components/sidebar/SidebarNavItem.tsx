@@ -1,29 +1,39 @@
 'use client';
+import { useTabs } from '@/features/tabs/store/useTabs';
 import Image from 'next/image';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { FC } from 'react';
 import { ISidebarNavItemProps } from './types';
 
-const SidebarNavItem: FC<ISidebarNavItemProps> = ({ href, icon, label }) => {
-	const pathname = usePathname();
-	const isActive = pathname === href;
+const SidebarNavItem: FC<ISidebarNavItemProps> = ({ entity, icon, label }) => {
+	const { addTab } = useTabs();
+	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+		event.preventDefault();
+		console.time('SidebarNavItem Clicked');
+		addTab({ title: entity, entity: entity });
+		console.timeEnd('SidebarNavItem Clicked');
+	};
 
 	return (
-		<Link href={href} className='block'>
+		<button className='block' onClick={handleClick}>
 			<div
-				className={`flex items-center p-3 mb-2 rounded-md transition-colors transition-all-3s ${
-					isActive ? 'bg-ctp-surface1 text-ctp-mauve' : 'hover:bg-ctp-surface0 text-ctp-text'
-				}`}
+				className={`transition-all-3s mb-2 flex items-center rounded-md p-3 transition-colors`}
 			>
 				{
 					//conditionally render the icon if it exists
 				}
-				{icon && <Image src={`/${icon}.svg`} alt={label} width={20} height={20} className='mr-3' />}
+				{icon && (
+					<Image
+						src={`/${icon}.svg`}
+						alt={label}
+						width={20}
+						height={20}
+						className='mr-3'
+					/>
+				)}
 
-				<span className='font-medium'>{label}</span>
+				<span className='text-ctp-text font-medium'>{label}</span>
 			</div>
-		</Link>
+		</button>
 	);
 };
 export default SidebarNavItem;

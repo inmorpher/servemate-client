@@ -2,22 +2,14 @@ import { IronSession } from 'iron-session';
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession, ISessionData } from './app/lib/session';
 
-const protectedRoutes = ['/orders', '/dashboard', '/products', '/users'];
-
 export default async function Proxy(request: NextRequest) {
 	const pathname = request.nextUrl.pathname;
-	const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
+
 	console.log('Proxy middleware triggered for:', pathname);
 
-	// if (pathname === '/login') {
-	// 	return NextResponse.redirect(new URL('/dashboard', request.url));
-	// }
+	const publicRoutes = ['/', '/login', '/refresh'];
 
-	// if (pathname === '/') {
-	// 	return NextResponse.redirect(new URL('/dashboard', request.url));
-	// }
-
-	if (!isProtectedRoute) {
+	if (publicRoutes.includes(pathname)) {
 		return NextResponse.next();
 	}
 
@@ -26,16 +18,17 @@ export default async function Proxy(request: NextRequest) {
 	if (!session || !session.isLoggedIn) {
 		return NextResponse.redirect(new URL('/login', request.url));
 	}
-	if (
-		isAccessTokenExpired(session) &&
-		pathname !== '/' &&
-		pathname !== '/login' &&
-		pathname !== '/refresh'
-	) {
+	if (isAccessTokenExpired(session)) {
+		console.log('Access token expired, redirecting to refresh endpoint');
 		const refreshUrl = new URL('/refresh', request.url);
 		refreshUrl.searchParams.set('returnUrl', pathname + request.nextUrl.search);
 		return NextResponse.redirect(refreshUrl);
 	}
+
+	if (pathname === '/') {
+		return NextResponse.redirect(new URL('/cpanel', request.url));
+	}
+
 	return NextResponse.next();
 }
 

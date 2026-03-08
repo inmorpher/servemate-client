@@ -4,7 +4,7 @@ import { getSession } from '@/app/lib/session';
 import { jwtDecode } from 'jwt-decode';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { ILoginFormInputs } from '../login-form/ui/LoginForm';
+import { ILoginFormInputs } from '../actions/login';
 
 interface JwtPayload {
 	exp: number;
@@ -18,7 +18,7 @@ export async function login(formData: ILoginFormInputs) {
 		const { email, password } = formData;
 		console.log('[loginAction] Данные формы:', { email, password: '***' });
 
-		const response = await fetch('http://192.168.2.60:3002/api/auth/login', {
+		const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ email, password }),
@@ -42,11 +42,11 @@ export async function login(formData: ILoginFormInputs) {
 
 		console.log('[loginAction] Декодированный токен:', decodedToken);
 		console.log('[loginAction] Время истечения токена:', expiresAt);
-		console.log('[loginAction] , expiresAt:', expiresAt.toLocaleString());
+		console.log('[loginAction] , expiresAt:', new Date(expiresAt * 1000).toLocaleString());
 
 		console.log(
 			'[loginAction] Токен успешно получен, срок действия до:',
-			new Date(expiresAt).toLocaleString()
+			new Date(expiresAt * 1000).toLocaleString(),
 		);
 
 		// Get session and update it

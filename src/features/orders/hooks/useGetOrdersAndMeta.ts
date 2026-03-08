@@ -1,7 +1,7 @@
 import { API_ENDPOINTS } from '@/consts';
-import { useTabs } from '@/features/tabs/store/useTabs';
+import { useTabs } from '@/shared/components/tabs/store/useTabs';
 import { useApiQuery } from '@/shared/hooks/useApiQuery';
-import { OrderMetaDTO, OrderSearchCriteria, OrderSearchListResult } from '@servemate/dto';
+import { OrderMetaDTO, OrderSearchListResult } from '@servemate/dto';
 
 export const useGetOrdersAndMeta = () => {
 	const { tabs } = useTabs();
@@ -27,10 +27,7 @@ export const useGetOrdersAndMeta = () => {
 	 * @see OrderSearchListResult
 	 * @see useApiQuery
 	 */
-	const ordersQuery = useApiQuery<OrderSearchListResult>(
-		API_ENDPOINTS.OrdersActions.list,
-		orderSearchCriteria as OrderSearchCriteria,
-	);
+	const ordersQuery = useApiQuery<OrderSearchListResult>(API_ENDPOINTS.OrdersActions.list);
 
 	/**
 	 * Query result for fetching order metadata (OrderMetaDTO) from the OrdersActions.meta endpoint
@@ -61,9 +58,5 @@ export const useGetOrdersAndMeta = () => {
 	return {
 		orders: ordersQuery,
 		ordersMeta: orderMetaQuery,
-		updateSearchCriteria,
-		setPage,
-		setPageSize,
-		updateFilters,
 	};
 };

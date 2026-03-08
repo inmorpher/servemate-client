@@ -1,16 +1,20 @@
 'use client';
 
-import { Activity, Suspense, ViewTransition } from 'react';
-import { OrdersListPage } from '../orders/ui/OrdersListPage';
-import { useTabs } from '../tabs/store/useTabs';
-import { UserClientPage } from '../users/ui/UserClientPage';
+import { TabEntities } from '@/shared/components/tabs/types/tabs.type';
+import React, { Activity, Fragment, JSX, Suspense } from 'react';
+import { useTabs } from '../../shared/components/tabs/store/useTabs';
 
-enum CPanelTabs {
-	USERS = 'users',
-	ACCAUNT = 'accaunt',
-	DASHBOARD = 'dashboard',
-	ORDERS = 'orders',
-}
+type TabComponentProps = {
+	tabId: string;
+};
+
+const tabComponentMap: Record<
+	TabEntities,
+	React.LazyExoticComponent<(props: TabComponentProps) => JSX.Element>
+> = {
+	['users']: React.lazy(() => import('../users/ui/UserClientPage')),
+	['orders']: React.lazy(() => import('../orders/ui/OrdersListPage')),
+};
 
 const CPanelIndex = () => {
 	const { tabs, activeTabId } = useTabs();
@@ -18,35 +22,18 @@ const CPanelIndex = () => {
 	return (
 		<>
 			<Suspense fallback={<div className='p-4'>Loading...</div>}>
-				<ViewTransition>
-					{tabs.map((tab) => {
-						const isActive = activeTabId === tab.id;
-						return (
-							<Activity
-								// если tab.id пока = "orders", тогда лучше сделать key уникальным через path
-								key={tab.id}
-								mode={activeTabId === tab.id ? 'visible' : 'hidden'}
-							>
-								<div
-									style={{
-										height: '100%',
-										width: '100%',
-										viewTransitionName: isActive
-											? 'active-tab-cointent'
-											: 'none',
-									}}
-								>
-									{tab.entity === CPanelTabs.ORDERS && (
-										<OrdersListPage tabId={tab.id} filters={tab.filters} />
-									)}
-									{tab.entity === CPanelTabs.USERS && (
-										<UserClientPage tabId={tab.id} />
-									)}
-								</div>
+				{tabs.map((tab) => {
+					const isActive = activeTabId === tab.id;
+					const Component = tabComponentMap[tab.entity];
+
+					return Component ? (
+						<Fragment key={tab.id}>
+							<Activity mode={isActive ? 'visible' : 'hidden'}>
+								<Component tabId={tab.id} />
 							</Activity>
-						);
-					})}
-				</ViewTransition>
+						</Fragment>
+					) : null;
+				})}
 			</Suspense>
 		</>
 	);

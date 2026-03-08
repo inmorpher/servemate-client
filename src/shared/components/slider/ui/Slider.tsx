@@ -81,9 +81,9 @@ const RangeSlider = ({
 		callHandler(newRange);
 	};
 
-	useEffect(() => {
-		setValueRange([minValue, maxValue]);
-	}, [minValue, maxValue]);
+	// useEffect(() => {
+	// 	setValueRange([minValue, maxValue]);
+	// }, [minValue, maxValue]);
 
 	useEffect(() => {
 		return () => {
@@ -92,6 +92,7 @@ const RangeSlider = ({
 			}
 		};
 	}, []);
+
 	return (
 		<>
 			<Slider
@@ -102,7 +103,7 @@ const RangeSlider = ({
 				max={defaultValue ? defaultValue[1] : maxValue}
 				step={step}
 				styles={{
-					rail: { backgroundColor: 'var(--ctp-surface0)' },
+					rail: { backgroundColor: 'var(--ctp-surface1)' },
 					track: { backgroundColor: 'var(--ctp-blue)' },
 					handle: {
 						backgroundColor: 'var(--ctp-blue)',

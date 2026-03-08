@@ -4,10 +4,11 @@ import Pagination from '@/shared/components/pagination/Paginations';
 
 import { useGetUsers } from '../hooks/useUsers';
 
-import { Tab } from '@/features/tabs/types/tabs.type';
+import { Tab } from '@/shared/components/tabs/types/tabs.type';
 import { ListPageLayout } from '@/shared/layouts/ListPageLayout';
 import { ViewTransition } from 'react';
 import { UserList } from './UserList';
+import UserSearchBar from './UserSearchBar';
 
 /**
  * Renders the user management page for clients, including search, pagination, and user list.
@@ -17,7 +18,7 @@ import { UserList } from './UserList';
  *
  * @returns {JSX.Element} The user client page layout with search, pagination, and user list.
  */
-export const UserClientPage = ({ tabId }: { tabId: Tab['id'] }) => {
+const UserClientPage = ({ tabId }: { tabId: Tab['id'] }) => {
 	const { isLoading, data, updateSearchCriteria, userSearchCriteria } = useGetUsers();
 
 	// useEffect(() => {
@@ -46,14 +47,14 @@ export const UserClientPage = ({ tabId }: { tabId: Tab['id'] }) => {
 				className='mb-4 w-full rounded border p-2'
 			/>
 			<ListPageLayout
-				// renderFilters={() => (
-				// 	<UserSearchBar
-				// 		isLoading={isLoading}
-				// 		updateCriteria={updateSearchCriteria}
-				// 		criteria={userSearchCriteria}
-				// 	/>
-				// )}
-				renderFooter={() => (
+				Filters={
+					<UserSearchBar
+						isLoading={isLoading}
+						updateCriteria={updateSearchCriteria}
+						criteria={userSearchCriteria}
+					/>
+				}
+				Footer={
 					<Pagination
 						totalCount={totalCount ?? 0}
 						totalPages={totalPages ?? 1}
@@ -62,11 +63,13 @@ export const UserClientPage = ({ tabId }: { tabId: Tab['id'] }) => {
 						onPageChange={handlePageChange}
 						onPageSizeChange={handlePageSizeChange}
 					/>
-				)}
-				renderContent={() => (
+				}
+				Content={
 					<UserList isLoading={isLoading} users={users} pageSize={effectivePageSize} />
-				)}
+				}
 			></ListPageLayout>
 		</ViewTransition>
 	);
 };
+
+export default UserClientPage;

@@ -1,4 +1,4 @@
-import { cn } from '@/shared/lib/classNames';
+import { cn } from '@/shared/utils/classNames';
 import { ReactNode } from 'react';
 
 interface FilterGroupProps {
@@ -31,11 +31,11 @@ export const FilterGroup = ({
 	return (
 		<div className={cn('space-y-2', className)}>
 			<div className='space-y-1'>
-				<label className='block text-sm font-medium text-ctp-subtext1'>
+				<label className='text-ctp-subtext1 block text-sm font-medium'>
 					{label}
 					{required && <span className='text-ctp-red'>*</span>}
 				</label>
-				{description && <p className='text-xs text-ctp-subtext2'>{description}</p>}
+				{description && <p className='text-ctp-subtext2 text-xs'>{description}</p>}
 			</div>
 			<div className='flex flex-wrap gap-2 p-2'>{children}</div>
 		</div>

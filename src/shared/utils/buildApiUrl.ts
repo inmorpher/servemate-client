@@ -18,7 +18,5 @@ export const buildApiUrl = (endpoint: string, params: Record<string, unknown> = 
 		url += `?${queryParams.toString()}`;
 	}
 
-	console.log('test buildApiUrl', url);
-
 	return url;
 };

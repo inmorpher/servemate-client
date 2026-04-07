@@ -9,7 +9,6 @@ type TabsHorizontalProps = {
 
 export const TabsHorizontal = ({ isMobile = false }: TabsHorizontalProps) => {
 	const { tabs, activeTabId, setActiveTab, removeTab } = useTabs();
-	// useTabsSync();
 
 	if (tabs.length === 0) {
 		return null;
@@ -21,7 +20,7 @@ export const TabsHorizontal = ({ isMobile = false }: TabsHorizontalProps) => {
 
 	return (
 		<div
-			className={`w-full gap-1 overflow-x-auto p-1 lg:flex ${isMobile ? 'lg:flex' : 'hidden'}`}
+			className={`ml-1.5 gap-2 self-end overflow-x-auto p-1 lg:flex ${isMobile ? 'lg:flex' : 'hidden'}`}
 		>
 			{tabs.map((tab) => (
 				<TabItem

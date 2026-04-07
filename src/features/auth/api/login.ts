@@ -16,7 +16,6 @@ interface JwtPayload {
 export async function login(formData: ILoginFormInputs) {
 	try {
 		const { email, password } = formData;
-		console.log('[loginAction] Данные формы:', { email, password: '***' });
 
 		const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
 			method: 'POST',
@@ -40,15 +39,6 @@ export async function login(formData: ILoginFormInputs) {
 		const userId = decodedToken.id;
 		const role = decodedToken.role || 'user';
 
-		console.log('[loginAction] Декодированный токен:', decodedToken);
-		console.log('[loginAction] Время истечения токена:', expiresAt);
-		console.log('[loginAction] , expiresAt:', new Date(expiresAt * 1000).toLocaleString());
-
-		console.log(
-			'[loginAction] Токен успешно получен, срок действия до:',
-			new Date(expiresAt * 1000).toLocaleString(),
-		);
-
 		// Get session and update it
 		const session = await getSession();
 		session.accessToken = accessToken;
@@ -64,10 +54,6 @@ export async function login(formData: ILoginFormInputs) {
 
 		const cookieStore = await cookies();
 		const savedCookie = cookieStore.get('servemate-session');
-		console.log('[loginAction] Кука после сохранения:', {
-			exists: !!savedCookie,
-			value: savedCookie?.value?.substring(0, 50) + '...',
-		});
 
 		//Redirect to dashboard
 		redirect('/account');

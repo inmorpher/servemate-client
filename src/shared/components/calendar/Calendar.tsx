@@ -5,7 +5,7 @@ import * as React from 'react';
 import { DayButton, DayPicker, getDefaultClassNames } from 'react-day-picker';
 
 import { Button, buttonVariants } from '@/shared/components/button';
-import { cn } from '@/shared/lib/classNames';
+import { cn } from '@/shared/utils/classNames';
 
 function Calendar({
 	className,
@@ -20,7 +20,7 @@ function Calendar({
 	buttonVariant?: React.ComponentProps<typeof Button>['variant'];
 }) {
 	const defaultClassNames = getDefaultClassNames();
-	console.log('classNames', classNames);
+
 	return (
 		<DayPicker
 			showOutsideDays={showOutsideDays}

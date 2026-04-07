@@ -5,6 +5,8 @@ import { SearchChip } from '@/features/search/ui/SearchChip';
 import { DateRangePicker } from '@/shared/components/date-range-picker';
 import { Filter } from '@/shared/components/filter/index';
 import RangeSlider from '@/shared/components/slider/ui/Slider';
+
+import FilterReset from '@/shared/components/filter/ui/FilterReset';
 import { useOrderFilters } from '../hooks/useOrderFilters';
 
 const OrderFilters = () => {
@@ -18,15 +20,22 @@ const OrderFilters = () => {
 		handleRangeChange,
 	} = useOrderFilters();
 
+	console.log('filters', filters);
+
 	return (
 		<Filter className='max-h-dvh'>
+			<FilterReset filters={filters} />
 			{/* Date Range Filter */}
 			{metaData?.dates && (
 				<Filter.Group label='Order Date'>
 					<DateRangePicker
 						dates={{
-							startDate: metaData.dates.min,
-							endDate: metaData.dates.max,
+							startDate: filters?.dateFrom
+								? new Date(filters.dateFrom).toDateString()
+								: metaData.dates.min,
+							endDate: filters?.dateTo
+								? new Date(filters.dateTo).toDateString()
+								: metaData.dates.max,
 						}}
 						onRangeChange={handleRangeChange}
 					/>
@@ -50,10 +59,15 @@ const OrderFilters = () => {
 			{metaData?.prices && (
 				<Filter.Group label='Price Range'>
 					<RangeSlider
+						key={filters?.minAmount && filters?.maxAmount ? 'active' : 'reset'}
 						minValue={metaData.prices.min}
 						maxValue={metaData.prices.max}
-						handler={handlePriceRangeChange}
-						defaultValue={[metaData.prices.min, metaData.prices.max]}
+						onChange={handlePriceRangeChange}
+						value={
+							filters?.minAmount && filters?.maxAmount
+								? [filters.minAmount, filters.maxAmount]
+								: [metaData.prices.min, metaData.prices.max]
+						}
 					/>
 				</Filter.Group>
 			)}

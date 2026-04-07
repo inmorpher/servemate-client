@@ -33,7 +33,7 @@ export const List = <T extends { id: number }>({
 		return <div className='text-center text-gray-500'>{emptyMessage}</div>;
 	}
 
-	const containerClass = gridClassName ? gridClassName : cn('space-y-4', className);
+	const containerClass = gridClassName ? gridClassName : cn('space-y-4 min-h-full', className);
 
 	return (
 		<div className={containerClass} style={{ minHeight: 'inherit' }}>

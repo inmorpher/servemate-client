@@ -5,8 +5,6 @@ import { getSession, ISessionData } from './app/lib/session';
 export default async function Proxy(request: NextRequest) {
 	const pathname = request.nextUrl.pathname;
 
-	console.log('Proxy middleware triggered for:', pathname);
-
 	const publicRoutes = ['/', '/login', '/refresh'];
 
 	if (publicRoutes.includes(pathname)) {
@@ -19,7 +17,6 @@ export default async function Proxy(request: NextRequest) {
 		return NextResponse.redirect(new URL('/login', request.url));
 	}
 	if (isAccessTokenExpired(session)) {
-		console.log('Access token expired, redirecting to refresh endpoint');
 		const refreshUrl = new URL('/refresh', request.url);
 		refreshUrl.searchParams.set('returnUrl', pathname + request.nextUrl.search);
 		return NextResponse.redirect(refreshUrl);

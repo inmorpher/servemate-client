@@ -5,7 +5,7 @@ import { orderEndpoints } from './endpoints';
 export const orderApiClient = {
 	getOrders: async (params?: OrderSearchCriteria) => {
 		const url = buildApiUrl(orderEndpoints.list, params);
-		console.log('test orderApiClient getOrders url', url);
+
 		const response = await fetch(url);
 
 		if (!response.ok) {

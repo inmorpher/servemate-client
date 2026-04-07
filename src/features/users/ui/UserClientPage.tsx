@@ -6,10 +6,23 @@ import { useGetUsers } from '../hooks/useUsers';
 
 import { Tab } from '@/shared/components/tabs/types/tabs.type';
 import { ListPageLayout } from '@/shared/layouts/ListPageLayout';
+import { buildQueryParams } from '@/shared/utils/buildQueryParams';
+import { UserSearchCriteria } from '@servemate/dto';
+import { useQueryClient } from '@tanstack/react-query';
 import { ViewTransition } from 'react';
 import { UserList } from './UserList';
 import UserSearchBar from './UserSearchBar';
 
+const fetchWithQuery = async (entity: string, filters: UserSearchCriteria) => {
+	const queryClient = useQueryClient();
+	const queryString = buildQueryParams(filters);
+	await queryClient.prefetchQuery({
+		queryKey: [entity, filters],
+		queryFn: () => {
+			fetch(`/api/service/${entity}?${queryString}`).then((res) => res.json());
+		},
+	});
+};
 /**
  * Renders the user management page for clients, including search, pagination, and user list.
  *

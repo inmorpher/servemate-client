@@ -17,6 +17,6 @@ export const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
 
 		return (await response).json();
 	} catch (error) {
-		console.log('Error fetching data with auth:', error);
+		console.error('Error fetching data with auth:', error);
 	}
 };

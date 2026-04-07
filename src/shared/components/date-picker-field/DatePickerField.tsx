@@ -2,7 +2,7 @@ import { Button } from '@/shared/components/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/components/popover';
 
 import { Calendar, calendarStyles } from '@/shared/components/calendar';
-import { cn } from '@/shared/lib/classNames';
+import { cn } from '@/shared/utils/classNames';
 import { ChevronDownIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Matcher } from 'react-day-picker';
@@ -55,7 +55,7 @@ export const DatePickerField = ({
 
 	return (
 		<div>
-			<label htmlFor={label} className='text-ctp-subtext mb-2 block text-sm font-medium'>
+			<label htmlFor={label} className='text-ctp-subtext1 mb-2 block text-sm font-medium'>
 				{label}
 			</label>
 			<Popover open={open} onOpenChange={setOpen}>

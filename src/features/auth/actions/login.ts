@@ -20,7 +20,6 @@ interface JwtPayload {
 export async function loginAction(formData: ILoginFormInputs, callbackUrl: string) {
 	try {
 		const { email, password } = formData;
-		console.log('[loginAction] Данные формы:', { email, password: '***' });
 
 		const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
 			method: 'POST',
@@ -44,15 +43,6 @@ export async function loginAction(formData: ILoginFormInputs, callbackUrl: strin
 		const userId = decodedToken.id;
 		const role = decodedToken.role || 'user';
 
-		console.log('[loginAction] Декодированный токен:', decodedToken);
-		console.log('[loginAction] Время истечения токена:', expiresAt);
-		console.log('[loginAction] , expiresAt:', new Date(expiresAt * 1000).toLocaleString());
-
-		console.log(
-			'[loginAction] Токен успешно получен, срок действия до:',
-			new Date(expiresAt * 1000).toLocaleString(),
-		);
-
 		// Get session and update it
 		const session = await getSession();
 		session.accessToken = accessToken;
@@ -68,15 +58,11 @@ export async function loginAction(formData: ILoginFormInputs, callbackUrl: strin
 
 		const cookieStore = await cookies();
 		const savedCookie = cookieStore.get('servemate-session');
-		console.log('[loginAction] Кука после сохранения:', {
-			exists: !!savedCookie,
-			value: savedCookie?.value?.substring(0, 50) + '...',
-		});
 
 		//Redirect to dashboard
 		redirect(callbackUrl);
 	} catch (error) {
-		console.error('[loginAction] Ошибка:', error);
-		throw error instanceof Error ? error : new Error('Неизвестная ошибка при входе');
+		console.error('[loginAction] Error:', error);
+		throw error instanceof Error ? error : new Error('Unknonw error while logging in');
 	}
 }

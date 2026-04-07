@@ -33,7 +33,7 @@ export const useApiQuery = <TData = unknown>(
 	options?: Omit<UseQueryOptions<TData>, 'queryKey' | 'queryFn'>,
 ) => {
 	return useQuery({
-		queryKey: [endpoint, params],
+		queryKey: [endpoint, params ? JSON.stringify(params) : null],
 		queryFn: async () => {
 			const url = buildApiUrl(endpoint, params);
 

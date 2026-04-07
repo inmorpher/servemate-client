@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/shared/lib/classNames';
+import { cn } from '@/shared/utils/classNames';
 import { createContext, useCallback, useEffect, useState } from 'react';
 import Toast from './Toast';
 
@@ -21,7 +21,7 @@ interface IToasterContext {
 	addToast: (
 		message: string,
 		type: keyof typeof TOASTER_TYPE,
-		duration?: keyof typeof TOASTER_DURATION
+		duration?: keyof typeof TOASTER_DURATION,
 	) => void;
 	removeToast: (id: number | string) => void;
 }
@@ -74,7 +74,7 @@ const Toaster = () => {
 	const removeToast = (id: number | string) => {
 		// mark the toast as closing
 		setToasts((prevToasts) =>
-			prevToasts.map((toast) => (toast.id === id ? { ...toast, isClosing: true } : toast))
+			prevToasts.map((toast) => (toast.id === id ? { ...toast, isClosing: true } : toast)),
 		);
 
 		// Then remove it after the animation duration
@@ -92,7 +92,7 @@ const Toaster = () => {
 	}, [addToast]);
 
 	return (
-		<div className={cn('fixed top-0 bottom-0 right-0 w-1 z-50 transition-all duration-50')}>
+		<div className={cn('fixed top-0 right-0 bottom-0 z-50 w-1 transition-all duration-50')}>
 			{toasts.map((toast, index) => {
 				return (
 					<Toast

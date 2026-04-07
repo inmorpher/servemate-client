@@ -8,7 +8,7 @@ import { OrderCard } from './OrderCard';
 interface OrderListProps {
 	isLoading?: boolean;
 	orders: OrderSearchListResult['orders'] | undefined;
-	pageSize: number;
+
 	totalCount?: number;
 	isFetching?: boolean;
 }
@@ -21,7 +21,7 @@ interface OrderListProps {
 export const OrderList = ({
 	isLoading,
 	orders,
-	pageSize,
+
 	totalCount,
 	isFetching,
 }: OrderListProps) => {
@@ -44,7 +44,7 @@ export const OrderList = ({
 				)}
 
 				{/* View Mode Toggle */}
-				<div className='bg-ctp-surface0 mb-5 flex items-center gap-2 rounded-lg p-1'>
+				{/* <div className='bg-ctp-surface0 mb-5 flex items-center gap-2 rounded-lg p-1'>
 					<button
 						onClick={() => toggleHandler()}
 						className={`flex items-center gap-2 rounded px-3 py-1.5 text-sm font-medium transition-colors ${
@@ -74,14 +74,14 @@ export const OrderList = ({
 						</svg>
 						Grid
 					</button>
-				</div>
+				</div> */}
 			</div>
 			<List
 				items={orders}
 				ItemComponent={(order) => <OrderCard order={order} />}
 				isLoading={isLoading}
 				isFetching={isFetching}
-				skeletonCount={pageSize}
+				skeletonCount={10}
 				emptyMessage='No orders found'
 				gridClassName={
 					viewMode === 'grid'

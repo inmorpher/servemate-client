@@ -25,5 +25,6 @@ export type TabsStore = {
 	pinTab: (tabId: string) => void;
 	unpinTab: (tabId: string) => void;
 	updateTab: (tabId: string, fields: Partial<Tab>) => void;
+	clearFilters: (tabId: string) => void;
 	clearTabs: () => void;
 };

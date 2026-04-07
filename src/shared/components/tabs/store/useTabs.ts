@@ -74,11 +74,18 @@ export const useTabs = create<TabsStore>()(
 					const tab = tabs.find((t) => t.id === tabId);
 
 					if (tab) {
+						if (document.startViewTransition) {
+							document.startViewTransition(() => {
+								set({ activeTabId: tabId });
+							});
+						} else {
+							set({ activeTabId: tabId });
+						}
 						set({ activeTabId: tabId });
 					}
 				},
 				// Get tab by ID
-				getTabById: (tabId: string) => {
+				getTabById: (tabId: string): Tab | undefined => {
 					const { tabs } = get();
 					return tabs.find((t) => t.id === tabId);
 				},
@@ -101,6 +108,21 @@ export const useTabs = create<TabsStore>()(
 					const cleanFields = Object.fromEntries(
 						Object.entries(fields).filter(([_, value]) => value !== undefined),
 					);
+
+					if (cleanFields.filters) {
+						cleanFields.filters = Object.fromEntries(
+							Object.entries(cleanFields.filters).filter(
+								([_, value]) =>
+									value !== undefined &&
+									value !== null &&
+									value !== '' &&
+									(Array.isArray(value) ? value.length > 0 : true),
+							),
+						);
+
+						// If after cleaning filters is empty, set it to undefined to clear filters
+					}
+
 					const newTabs = tabs.map((t) =>
 						t.id === tabId ? { ...t, ...cleanFields } : t,
 					);
@@ -109,6 +131,14 @@ export const useTabs = create<TabsStore>()(
 
 				clearTabs: () => {
 					set({ tabs: [], activeTabId: '' });
+				},
+
+				clearFilters: (tabId: string) => {
+					const { tabs } = get();
+					const newTabs = tabs.map((t) =>
+						t.id === tabId ? { ...t, filters: undefined } : t,
+					);
+					set({ tabs: newTabs });
 				},
 			}),
 			{

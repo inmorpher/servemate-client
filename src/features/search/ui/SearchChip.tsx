@@ -1,4 +1,4 @@
-import { cn } from '@/shared/lib/classNames';
+import { cn } from '@/shared/utils/classNames';
 import { ReactNode, startTransition } from 'react';
 
 interface ChipProps {

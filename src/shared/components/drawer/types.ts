@@ -14,6 +14,7 @@ export interface DrawerProps {
 	direction?: DrawerDirection;
 	children: React.ReactNode;
 	size?: DrawerSize;
+	id?: string;
 	className?: string;
 }
 
@@ -30,6 +31,7 @@ export interface DrawerContentProps {
 	direction: DrawerDirection;
 	size?: DrawerSize;
 	isOpen: boolean;
+	id?: string;
 	onOpenChange?: (open: boolean) => void;
 	className?: string;
 }
@@ -42,4 +44,5 @@ export interface DrawerContentProps {
  */
 export interface DrawerOverlayProps {
 	onOpenChange: (open: boolean) => void;
+	id?: string;
 }

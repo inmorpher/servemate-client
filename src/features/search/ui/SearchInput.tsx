@@ -34,7 +34,7 @@ interface SearchInputProps {
 export const SearchInput = ({ value, onChange, isLoading, placeholder }: SearchInputProps) => {
 	return (
 		<div className='flex items-center gap-3'>
-			<div className='relative flex-grow'>
+			<div className='relative grow'>
 				<input
 					type='text'
 					name='search'
@@ -42,10 +42,10 @@ export const SearchInput = ({ value, onChange, isLoading, placeholder }: SearchI
 					aria-label='Search input'
 					value={value}
 					onChange={(event) => onChange(event)}
-					className='w-full px-4 py-2 pl-10 text-sm bg-ctp-surface0 border border-ctp-surface1 rounded-lg text-ctp-text placeholder-ctp-subtext0 focus:outline-none focus:ring-2 focus:ring-ctp-blue focus:border-transparent'
+					className='bg-ctp-surface0 border-ctp-surface1 text-ctp-text placeholder-ctp-subtext0 focus:ring-ctp-blue w-full rounded-lg border px-4 py-2 pl-10 text-sm focus:border-transparent focus:ring-2 focus:outline-none'
 				/>
 				<svg
-					className='absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-ctp-subtext0'
+					className='text-ctp-subtext0 absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform'
 					fill='none'
 					stroke='currentColor'
 					viewBox='0 0 24 24'
@@ -62,16 +62,21 @@ export const SearchInput = ({ value, onChange, isLoading, placeholder }: SearchI
 			<button
 				type='submit'
 				disabled={isLoading}
-				className='px-4 py-2 bg-ctp-blue text-ctp-base text-sm font-medium rounded-lg hover:bg-ctp-sapphire disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2'
+				className='bg-ctp-blue text-ctp-base hover:bg-ctp-sapphire flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50'
 			>
 				{isLoading ? (
 					<>
-						<div className='animate-spin rounded-full h-4 w-4 border-b-2 border-ctp-base'></div>
+						<div className='border-ctp-base h-4 w-4 animate-spin rounded-full border-b-2'></div>
 						<span>Searching...</span>
 					</>
 				) : (
 					<>
-						<svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+						<svg
+							className='h-4 w-4'
+							fill='none'
+							stroke='currentColor'
+							viewBox='0 0 24 24'
+						>
 							<path
 								strokeLinecap='round'
 								strokeLinejoin='round'

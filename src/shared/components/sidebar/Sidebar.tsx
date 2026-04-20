@@ -14,17 +14,19 @@ const Sidebar: FC<ISidebarProps> = ({ children }) => {
 
 	return (
 		<>
-			{/* Desktop */}
+			{/* Desktop - visible only on lg+ */}
 			<aside
 				aria-label='Side navigation'
 				className={cn(
-					'bg-ctp-base sticky top-14.25 z-10 hidden h-[calc(100vh-3.5625rem)] w-10 shrink-0 flex-col self-start p-1 md:flex',
+					'bg-ctp-base sticky top-14.25 z-10 hidden h-[calc(100vh-3.5625rem)] w-16 shrink-0 flex-col self-start p-2 lg:flex',
 				)}
 			>
-				<nav className='flex flex-1 flex-col overflow-hidden'>{children}</nav>
+				<nav className='flex flex-1 flex-col items-center gap-4 overflow-x-hidden overflow-y-auto'>
+					{children}
+				</nav>
 			</aside>
 
-			{/* Mobile */}
+			{/* Mobile - drawer sidebar for desktop menu button */}
 			<Drawer isOpen={sidebarIsOpen} onOpenChange={() => toggle('sidebar')} direction='left'>
 				<nav className='flex flex-col gap-4 pt-12' aria-label='Mobile side navigation'>
 					{children}

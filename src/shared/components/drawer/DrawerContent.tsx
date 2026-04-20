@@ -1,6 +1,5 @@
 'use client';
 
-import { useSwipe } from '@/shared/hooks/useSwipe';
 import { cn } from '@/shared/utils/classNames';
 import { FC, useRef } from 'react';
 import { DrawerContentProps } from './types';
@@ -28,20 +27,23 @@ export const DrawerContent: FC<DrawerContentProps> = ({
 	direction,
 	size = 'medium',
 	isOpen,
+	id = 'content',
 	onOpenChange,
 	className,
 }) => {
 	const drawerRef = useRef<HTMLDivElement>(null);
 
-	useSwipe(drawerRef, {
-		onSwipeLeft: () => {
-			if (direction === 'left') onOpenChange?.(false);
-		},
-		onSwipeRight: () => {
-			if (direction === 'right') onOpenChange?.(false);
-		},
-		threshold: 50,
-	});
+	//TODO: Implement swipe gestures for mobile devices to close the drawer ensuring that it does not interfere with inner content interactions. Consider using a library like react-use-gesture or implementing custom touch event handlers to detect swipe directions and trigger onOpenChange(false) accordingly. Implementing drag-handle functionality on the drawer edge could also enhance user experience by allowing users to drag the drawer closed.
+
+	// useSwipe(drawerRef, {
+	// 	onSwipeLeft: () => {
+	// 		if (direction === 'left') onOpenChange?.(false);
+	// 	},
+	// 	onSwipeRight: () => {
+	// 		if (direction === 'right') onOpenChange?.(false);
+	// 	},
+	// 	threshold: 50,
+	// });
 
 	// Define size classes for each direction
 	const sizeClasses = {
@@ -97,6 +99,7 @@ export const DrawerContent: FC<DrawerContentProps> = ({
 				className,
 			)}
 			onClick={(e) => e.stopPropagation()}
+			id={`${id}-content`}
 		>
 			{children}
 		</div>

@@ -1,14 +1,42 @@
 'use client';
 
-import SidebarNavItem from '@/shared/components/sidebar/SidebarNavItem';
+import { NavButton } from '@/shared/components/nav-button/NavButton';
+import { SidebarNavItemWithPopover } from '@/shared/components/sidebar/SidebarNavItemWithPopover';
+import { BarChart3, Settings, ShoppingCart, Users } from 'lucide-react';
 
 export const SidebarNavigation = () => {
 	return (
 		<nav className='flex flex-col items-center gap-5'>
-			<SidebarNavItem entity='dashboard' icon='window' label='Dashboard' />
-			<SidebarNavItem entity='orders' icon='file' label='cPanel' />
-			<SidebarNavItem entity='users' icon='file' label='Users' />
-			<SidebarNavItem entity='account' icon='file' label='Orders' />
+			<SidebarNavItemWithPopover
+				entity='dashboard'
+				label='Dashboard'
+				icon={<BarChart3 className='h-5 w-5' />}
+				color='bg-ctp-blue'
+			/>
+			<SidebarNavItemWithPopover
+				entity='orders'
+				label='orders'
+				icon={<ShoppingCart className='h-5 w-5' />}
+				color='bg-ctp-mauve'
+			/>
+			<SidebarNavItemWithPopover
+				entity='users'
+				label='Users'
+				icon={<Users className='h-5 w-5' />}
+				color='bg-ctp-green'
+			/>
+			<SidebarNavItemWithPopover
+				entity='settings'
+				label='Settings'
+				icon={<Settings className='h-5 w-5' />}
+				color='bg-ctp-sky'
+			/>
+			<NavButton
+				label='Dashboard'
+				onClick={() => console.log('Dashboard clicked')}
+				icon={<BarChart3 className='h-5 w-5' />}
+				variant='sidebar'
+			/>
 		</nav>
 	);
 };

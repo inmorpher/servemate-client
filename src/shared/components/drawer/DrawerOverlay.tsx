@@ -16,9 +16,10 @@ import { DrawerOverlayProps } from './types';
  *                        Called as onOpenChange(false) when the overlay is clicked.
  * @returns A JSX element representing the overlay backdrop.
  */
-export const DrawerOverlay: FC<DrawerOverlayProps> = ({ onOpenChange }) => {
+export const DrawerOverlay: FC<DrawerOverlayProps> = ({ onOpenChange, id = 'overlay' }) => {
 	return (
 		<div
+			id={`${id}-overlay`}
 			className={cn(
 				'fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-all duration-300',
 			)}

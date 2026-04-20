@@ -22,6 +22,7 @@ export const Drawer: FC<DrawerProps> = ({
 	onOpenChange,
 	direction = 'left',
 	size = 'medium',
+	id = 'drawer',
 	children,
 	className,
 }) => {
@@ -52,13 +53,14 @@ export const Drawer: FC<DrawerProps> = ({
 
 	return createPortal(
 		<>
-			{isOpen && <DrawerOverlay onOpenChange={onOpenChange} />}
+			{isOpen && <DrawerOverlay onOpenChange={onOpenChange} id={`${id}-overlay`} />}
 			<DrawerContent
 				direction={direction}
 				size={size}
 				isOpen={isOpen}
 				onOpenChange={onOpenChange}
 				className={className}
+				id={id}
 			>
 				{children}
 			</DrawerContent>

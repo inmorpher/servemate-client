@@ -1,6 +1,6 @@
 'use client';
 
-import Pagination from '@/shared/components/pagination/Paginations';
+import { Pagination } from '@/shared/components/pagination';
 import { useTabs } from '@/shared/components/tabs/store/useTabs';
 import { Tab } from '@/shared/components/tabs/types/tabs.type';
 import { useApiQuery } from '@/shared/hooks/useApiQuery';

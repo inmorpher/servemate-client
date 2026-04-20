@@ -1,7 +1,8 @@
 'use client';
-import { NavButton } from '@/shared/components/nav-button/NavButton';
 import { useTabs } from '@/shared/components/tabs/store/useTabs';
+import Image from 'next/image';
 import { FC } from 'react';
+import { Button } from '../button';
 import { ISidebarNavItemProps } from './types';
 
 const SidebarNavItem: FC<ISidebarNavItemProps> = ({ entity, icon, label }) => {
@@ -11,7 +12,11 @@ const SidebarNavItem: FC<ISidebarNavItemProps> = ({ entity, icon, label }) => {
 		addTab({ title: entity, entity: entity });
 	};
 
-	return <NavButton label={label} icon={icon} onClick={handleClick} variant='sidebar' />;
+	return (
+		<Button variant='ghost' size='icon' onClick={handleClick} aria-label={label}>
+			{icon && <Image src={`/${icon}.svg`} alt={label} width={30} height={20} />}
+		</Button>
+	);
 };
 
 export default SidebarNavItem;

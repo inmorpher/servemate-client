@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '../components/button';
 import { cn } from '../utils/classNames';
 
 interface ListErrorProps {
@@ -67,7 +68,8 @@ export const ListError = ({
 				<h2 className='text-ctp-text mb-2 text-xl font-semibold'>{title}</h2>
 				{error && <p className='text-ctp-subtext0 mb-4'>{error}</p>}
 
-				<button
+				<Button
+					variant='default'
 					onClick={() => !isLoading && refetch()} // Disable button when loading
 					disabled={isLoading} // Disable button when loading
 					className={cn(
@@ -104,7 +106,7 @@ export const ListError = ({
 					) : (
 						buttonText
 					)}
-				</button>
+				</Button>
 			</div>
 		</section>
 	);

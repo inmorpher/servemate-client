@@ -1,24 +1,8 @@
 'use client';
 
-import { createContext, ReactElement, ReactNode, useContext, useState } from 'react';
+import { ReactElement, ReactNode, useState } from 'react';
 import { Drawer } from '../components/drawer';
 import useMediaQuery from '../hooks/useMediaQuery';
-
-interface ListPageLayoutContextType {
-	filters?: React.ReactNode;
-	filtersOpen?: boolean;
-	setFiltersOpen?: (open: boolean) => void;
-}
-
-const ListPageLayoutContext = createContext<ListPageLayoutContextType | undefined>(undefined);
-
-const useListPageLayout = () => {
-	const context = useContext(ListPageLayoutContext);
-	if (!context) {
-		throw new Error('useListPageLayout must be used within a ListPageLayoutProvider');
-	}
-	return context;
-};
 
 type ListPageLayoutChild =
 	| ReactElement<FiltersProps, typeof Filters>
@@ -29,28 +13,31 @@ interface ListPageLayoutProps {
 	children: ListPageLayoutChild | ListPageLayoutChild[];
 }
 
+const isFilters = (
+	child: ReactElement<unknown>,
+): child is ReactElement<FiltersProps, typeof Filters> => child.type === Filters;
+
+const isContent = (
+	child: ReactElement<unknown>,
+): child is ReactElement<ContentProps, typeof Content> => child.type === Content;
+
+const isFooter = (
+	child: ReactElement<unknown>,
+): child is ReactElement<FooterProps, typeof Footer> => child.type === Footer;
+
 const ListPageLayoutRoot = ({ children }: ListPageLayoutProps) => {
 	const [filtersOpen, setFiltersOpen] = useState(false);
 	const isMobile = useMediaQuery('(max-width: 1024px)');
 
 	const childrenArray = Array.isArray(children) ? children : [children];
 
-	const filters = childrenArray.find(
-		(child) => child.type?.displayName === 'ListPageLayout.Filters',
-	);
-	const content = childrenArray.find(
-		(child) => child.type?.displayName === 'ListPageLayout.Content',
-	);
-	const footer = childrenArray.find(
-		(child) => child.type?.displayName === 'ListPageLayout.Footer',
-	);
-	// ...
+	const filters = childrenArray.find(isFilters);
+	const content = childrenArray.find(isContent);
+	const footer = childrenArray.find(isFooter);
 
 	const onChangeFiltersHandler = () => {
 		setFiltersOpen((prev) => !prev);
 	};
-
-	const size = isMobile ? (window.innerWidth > 600 ? 'auto' : 'large') : 'large';
 
 	const filtersWithAside = filters ? (
 		<aside className='lg:bg-ctp-surface0 sticky top-14.25 z-20 h-screen w-full overflow-x-hidden overflow-y-auto p-2 py-10 md:h-[calc(100vh-3.5625rem)] md:overflow-y-auto md:py-2 lg:w-70'>
@@ -59,20 +46,21 @@ const ListPageLayoutRoot = ({ children }: ListPageLayoutProps) => {
 	) : null;
 
 	return (
-		<ListPageLayoutContext.Provider value={{ filtersOpen, setFiltersOpen }}>
+		<>
 			{isMobile && (
 				<Drawer
+					id='filters'
 					isOpen={filtersOpen}
 					onOpenChange={onChangeFiltersHandler}
 					direction='right'
-					size={size}
+					size='auto'
 					className='bg-ctp-surface0 overflow-y-auto px-4 pt-20 pb-20'
 				>
 					{filters}
 				</Drawer>
 			)}
 
-			<div className='h-[calc(100vh-theme(height.14.25))] relative flex'>
+			<div className='relative flex'>
 				{/* Фильтры показываются только на десктопе */}
 				{!isMobile && filtersWithAside}
 
@@ -83,7 +71,9 @@ const ListPageLayoutRoot = ({ children }: ListPageLayoutProps) => {
 						<button
 							onClick={onChangeFiltersHandler}
 							className='border-ctp-surface1 bg-ctp-surface0 text-ctp-text hover:bg-ctp-surface1 active:bg-ctp-surface2 flex items-center gap-2 border-b px-4 py-3 text-sm font-medium transition-colors'
-							aria-label='Toggle filters'
+							aria-label='Toggle filters panel'
+							aria-expanded={filtersOpen}
+							aria-controls='filters-panel'
 						>
 							<svg
 								width='18'
@@ -105,7 +95,7 @@ const ListPageLayoutRoot = ({ children }: ListPageLayoutProps) => {
 					{footer}
 				</div>
 			</div>
-		</ListPageLayoutContext.Provider>
+		</>
 	);
 };
 

@@ -2,15 +2,14 @@
 
 import { cn } from '@/shared/utils/classNames';
 import { X } from 'lucide-react';
-import Image from 'next/image';
-import { startTransition } from 'react';
+import { ReactNode, startTransition } from 'react';
 
 type NavButtonVariant = 'sidebar' | 'tab';
 
 type NavButtonProps = {
 	label: string;
 	onClick: () => void;
-	icon?: string;
+	icon?: ReactNode;
 	isActive?: boolean;
 	onClose?: () => void;
 	variant?: NavButtonVariant;
@@ -32,20 +31,10 @@ export const NavButton = ({
 		});
 	};
 
-	if (variant === 'sidebar') {
-		return (
-			<button className='' onClick={clickHandler}>
-				{icon && <Image src={`/${icon}.svg`} alt={label} width={20} height={20} />}
-			</button>
-		);
-	}
-
-	// tab variant (default)
 	return (
 		<div
 			className={cn(
-				'group corner-squircle gap-1/2 flex min-w-41 items-center rounded-lg px-2 py-1 text-sm transition-all duration-300',
-
+				'group corner-squircle gap-1/2 bg-ctp-surface2 flex min-w-41 items-center rounded-lg px-2 py-1 text-sm transition-all duration-300',
 				isActive
 					? 'bg-ctp-surface0 text-ctp-text border-ctp-blue ring-ctp-blue ring-1'
 					: 'bg-ctp-base text-ctp-subtext0 hover:bg-ctp-surface1 border-transparent',

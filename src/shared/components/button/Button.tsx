@@ -4,24 +4,27 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 
 const buttonVariants = cva(
-	'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+	'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ctp-blue disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-ctp-text ',
 	{
 		variants: {
 			variant: {
-				default: 'bg-primary text-primary-foreground shadow hover:bg-primary/90',
-				destructive:
-					'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90',
+				default: 'hover:bg-ctp-blue  shadow hover:bg-ctp-sapphire',
+				destructive: 'bg-ctp-red  shadow-sm hover:bg-ctp-red/90',
 				outline:
-					'border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground',
-				secondary: 'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80',
-				ghost: 'hover:bg-accent hover:text-accent-foreground',
-				link: 'text-primary underline-offset-4 hover:underline',
+					'border border-ctp-surface1 bg-ctp-surface0 text-ctp-text shadow-sm hover:bg-ctp-surface1',
+				secondary: 'bg-ctp-surface1 text-ctp-text shadow-sm hover:bg-ctp-surface2',
+				ghost: 'hover:bg-ctp-surface1 hover:text-ctp-text',
+				link: 'text-ctp-blue underline-offset-4 hover:underline',
+				chip: 'bg-ctp-surface0 ring-ctp-surface1 focus-visible:ring-ctp-blue  ring-1 focus-visible:ring-2',
+				unstyled: '',
 			},
 			size: {
-				default: 'h-9 px-4 py-2',
-				sm: 'h-8 rounded-md px-3 text-xs',
-				lg: 'h-10 rounded-md px-8',
-				icon: 'h-9 w-9',
+				default: 'h-12 px-4 py-2',
+				sm: 'h-10 rounded-md px-3 text-xs',
+				xs: 'h-8 rounded-md px-2 text-xs',
+				lg: 'h-14 rounded-md px-8',
+				icon: 'h-12 w-12',
+				bare: '',
 			},
 		},
 		defaultVariants: {

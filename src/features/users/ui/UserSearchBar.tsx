@@ -36,11 +36,7 @@ function UserSearchBar({ isLoading, criteria, updateCriteria }: UserSearchBarPro
 	const handleReset = () => {
 		setSearchValue('');
 		updateCriteria({
-			name: undefined,
-			role: undefined,
-			isActive: undefined,
-			sortBy: 'name',
-			sortOrder: 'asc',
+			...criteria,
 		});
 	};
 
@@ -83,7 +79,13 @@ function UserSearchBar({ isLoading, criteria, updateCriteria }: UserSearchBarPro
 				{/* Activity filter */}
 				{/* <Search.Select
 					name='status'
-					value={criteria?.isActive === true ? 'true' : criteria?.isActive === false ? 'false' : ''}
+					value={
+						criteria?.isActive === true
+							? 'true'
+							: criteria?.isActive === false
+								? 'false'
+								: ''
+					}
 					onChange={handleTestChange}
 					options={userSearchOptions.statuses}
 					defaultOption={true}

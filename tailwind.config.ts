@@ -45,6 +45,10 @@ const config: Config = {
 					mantle: '#05060f',
 					crust: '#020311',
 				},
+				spacing: {
+					'14.25': '3.5625rem', // header height
+					'70': '17.5rem', // filters width
+				},
 			},
 		},
 	},

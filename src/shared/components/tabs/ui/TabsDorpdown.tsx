@@ -22,17 +22,17 @@ export const TabsDropdown = ({ isMobile = false }: TabsDropdownProps) => {
 	return (
 		<Popover open={isOpen} onOpenChange={setIsOpen}>
 			<PopoverTrigger className={`w-1/2 ${isMobileClasses}`} asChild>
-				<div className='text-ctp-text hover:bg-ctp-surface2 border-ctp-base sticky top-0 left-0 flex items-center justify-between rounded-md border px-4 py-2'>
+				<button className='text-ctp-text focus :bg-ctp-surface border-ctp-base sticky top-0 left-0 flex cursor-grab items-center justify-between rounded-md border bg-amber-900 px-4 py-2'>
 					<span className='font-medium capitalize'>
 						{activeTab ? activeTab?.title : 'Select Tab'}
 					</span>
 					<span>▼</span>
-				</div>
+				</button>
 			</PopoverTrigger>
 			<PopoverContent
-				className={`corner-squircle bg-ctp-surface2/30 $ rounded-2xl border-0 p-2 ring-1 ring-white/10 backdrop-blur-xl ${isMobileClasses}`}
+				className={`corner-squircle bg-ctp-surface2/30 min-w-full rounded-2xl border-0 p-2 ring-1 ring-white/10 backdrop-blur-xl ${isMobileClasses}`}
 				side='bottom'
-				align='end'
+				align='center'
 				sideOffset={15}
 			>
 				<div className='flex flex-col gap-2'>

@@ -115,7 +115,9 @@ interface ContentProps {
 const Content = ({ children }: ContentProps) => {
 	return (
 		<main className='flex min-w-0 flex-1 flex-col overflow-hidden'>
-			<section className='flex-1 overflow-y-auto p-2 md:px-6'>{children}</section>
+			<section className='min-w-0 flex-1 overflow-x-auto overflow-y-auto p-2 md:px-6'>
+				{children}
+			</section>
 		</main>
 	);
 };

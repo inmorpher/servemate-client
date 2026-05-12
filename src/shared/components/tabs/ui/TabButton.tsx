@@ -1,13 +1,19 @@
 import { cn } from '@/shared/utils/classNames';
 import { X } from 'lucide-react';
 import { Button } from '../../button';
-interface TabButtonProps {
+interface TabButtonProps extends React.HTMLAttributes<HTMLDivElement> {
 	label: string;
 	isActive?: boolean;
 	onClose?: () => void;
 	onClick: () => void;
 }
-export const TabButton = ({ label, isActive = false, onClose, onClick }: TabButtonProps) => {
+export const TabButton = ({
+	label,
+	isActive = false,
+	onClose,
+	onClick,
+	...props
+}: TabButtonProps) => {
 	return (
 		<div
 			draggable='true'
@@ -15,6 +21,7 @@ export const TabButton = ({ label, isActive = false, onClose, onClick }: TabButt
 				'group ring-ctp-overlay0 focus-within:ring-ctp-blue relative flex h-8 min-w-41 items-center gap-1 rounded-lg px-2 ring-1 transition-all duration-300 in-[dragging]:cursor-grabbing',
 				isActive ? 'bg-ctp-blue ring-ctp-blue' : 'bg-ctp-surface1 hover:bg-ctp-surface2',
 			)}
+			{...props}
 		>
 			<Button
 				variant='unstyled'

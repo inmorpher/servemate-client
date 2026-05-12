@@ -1,7 +1,7 @@
 'use client';
 
 import { TabEntities } from '@/shared/components/tabs/types/tabs.type';
-import React, { Activity, Fragment, JSX, Suspense, ViewTransition } from 'react';
+import React, { Activity, JSX, Suspense, ViewTransition } from 'react';
 import { useTabs } from '../../shared/components/tabs/store/useTabs';
 
 type TabComponentProps = {
@@ -22,25 +22,24 @@ const CPanelIndex = () => {
 	const activeTabId = useTabs((state) => state.activeTabId);
 
 	return (
-		<>
-			{/* <TabsHorizontal /> */}
-			<Suspense fallback={<div className='p-4'>Loading...</div>}>
-				{tabs.map((tab) => {
-					const isActive = activeTabId === tab.id;
-					const Component = tabComponentMap[tab.entity];
+		<Suspense fallback={<div className='p-4'>Loading...</div>}>
+			{tabs.map((tab) => {
+				const isActive = activeTabId === tab.id;
+				const Component = tabComponentMap[tab.entity];
 
-					return Component ? (
-						<Fragment key={tab.id}>
-							<ViewTransition>
-								<Activity mode={isActive ? 'visible' : 'hidden'}>
-									<Component tabId={tab.id} />
-								</Activity>
-							</ViewTransition>
-						</Fragment>
-					) : null;
-				})}
-			</Suspense>
-		</>
+				if (!Component) {
+					return null;
+				}
+
+				return (
+					<Activity key={tab.id} mode={isActive ? 'visible' : 'hidden'}>
+						<ViewTransition>
+							<Component tabId={tab.id} />
+						</ViewTransition>
+					</Activity>
+				);
+			})}
+		</Suspense>
 	);
 };
 

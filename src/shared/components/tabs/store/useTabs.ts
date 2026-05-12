@@ -74,13 +74,6 @@ export const useTabs = create<TabsStore>()(
 					const tab = tabs.find((t) => t.id === tabId);
 
 					if (tab) {
-						if (document.startViewTransition) {
-							document.startViewTransition(() => {
-								set({ activeTabId: tabId });
-							});
-						} else {
-							set({ activeTabId: tabId });
-						}
 						set({ activeTabId: tabId });
 					}
 				},

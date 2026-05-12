@@ -8,7 +8,7 @@ import { ListError } from '@/shared/layouts/Error';
 import { ListPageLayout } from '@/shared/layouts/ListPageLayout2';
 import { OrderSearchCriteria, OrderSearchListResult } from '@servemate/dto';
 import OrderFilters from './OrderFilters';
-import { OrderList } from './OrderList';
+import { OrderListTest } from './OrderListTest';
 
 const OrdersListPage = () => {
 	const currentTab: Tab<OrderSearchCriteria> | undefined = useTabs((state) =>
@@ -16,6 +16,24 @@ const OrdersListPage = () => {
 	);
 	const updateTab = useTabs((state) => state.updateTab);
 	const filters = currentTab?.filters;
+	console.log('filters', filters?.sortOrder);
+	const handleSortChange = (sortBy: NonNullable<OrderSearchCriteria['sortBy']>) => {
+		if (!currentTab) {
+			return;
+		}
+
+		const nextSortOrder =
+			filters?.sortBy === sortBy && filters?.sortOrder === 'desc' ? 'asc' : 'desc';
+
+		updateTab(currentTab.id, {
+			filters: {
+				...(filters || {}),
+				sortBy,
+				sortOrder: nextSortOrder,
+				page: 1,
+			},
+		});
+	};
 
 	const { data, error, isError, isLoading, isFetching, refetch } =
 		useApiQuery<OrderSearchListResult>('/orders', filters, {});
@@ -31,12 +49,23 @@ const OrdersListPage = () => {
 			</ListPageLayout.Filters>
 
 			<ListPageLayout.Content>
-				<OrderList
+				{/* <OrderList
+					filters={filters}
 					isFetching={isFetching}
 					isLoading={isLoading}
 					orders={data?.orders}
 					totalCount={data?.totalCount}
-				/>
+					onSortChange={handleSortChange}
+				/> */}
+				{
+					<OrderListTest
+						orders={data?.orders}
+						isLoading={isLoading}
+						onSortChange={handleSortChange}
+						sortBy={filters?.sortBy}
+						sortOrder={filters?.sortOrder}
+					/>
+				}
 			</ListPageLayout.Content>
 
 			<ListPageLayout.Footer>

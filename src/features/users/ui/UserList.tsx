@@ -2,6 +2,7 @@
 
 import { UserListResult } from '@servemate/dto';
 
+import { HoverCardComponent } from '@/shared/components/hover-card';
 import { ListSkeleton } from '@/shared/components/skeleton/ListSkeleton';
 import UserCard from './UserCard';
 
@@ -21,6 +22,15 @@ export function UserList({ isLoading, users, pageSize }: UserListProps) {
 
 	return (
 		<div className='space-y-4' style={{ minHeight: 'inherit' }}>
+			<HoverCardComponent side='top'>
+				<HoverCardComponent.Trigger asChild>
+					<button>Hover me</button>
+				</HoverCardComponent.Trigger>
+				<HoverCardComponent.Content>
+					<div className='p-4'>This is the hover card content</div>
+				</HoverCardComponent.Content>
+			</HoverCardComponent>
+
 			{users.map((user) => (
 				<UserCard key={user.id} user={user} />
 			))}

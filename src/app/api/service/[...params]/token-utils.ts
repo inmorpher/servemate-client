@@ -49,17 +49,26 @@ export async function forceRefreshToken(): Promise<TokenResponse> {
  * Единая точка дедупликации — если рефреш уже идёт, ждём его.
  * Если нет — запускаем и сбрасываем промис после завершения.
  */
+const refreshPromises = new Map<string, Promise<TokenResponse>>();
+
 async function deduplicatedRefresh(session: SessionData): Promise<TokenResponse> {
-	if (refreshTokenPromise) {
-		return refreshTokenPromise;
+	const key = session.refreshToken;
+	if (!key) {
+		throw new ApiError('No refresh token available', 401, true);
 	}
 
-	refreshTokenPromise = refreshTokenInternal(session);
+	const existing = refreshPromises.get(key);
+	if (existing) {
+		return existing;
+	}
+
+	const promise = refreshTokenInternal(session);
+	refreshPromises.set(key, promise);
 
 	try {
-		return await refreshTokenPromise;
+		return await promise;
 	} finally {
-		refreshTokenPromise = null;
+		refreshPromises.delete(key);
 	}
 }
 

@@ -1,39 +1,16 @@
 'use client';
-import { ISidebarContextType } from '@/shared/components/sidebar/types';
+import { useSidebarStore } from '@/features/sidebar/model/useSidebarStore';
 import { usePathname } from 'next/navigation';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
-const SidebarContext = createContext<ISidebarContextType | undefined>(undefined);
-
+// SidebarProvider — просто хук для синхронизации pathname с store
 export const SidebarProvider = ({ children }: { children: React.ReactNode }) => {
-	const [isOpen, setIsOpen] = useState(false);
-
+	const setPathname = useSidebarStore((state) => state.setPathname);
 	const pathname = usePathname();
 
-	// Закрываем сайдбар при изменении маршрута
 	useEffect(() => {
-		if (window.innerWidth < 1024) {
-			setIsOpen(false);
-		}
-	}, [pathname]);
+		setPathname(pathname);
+	}, [pathname, setPathname]);
 
-	const toggleSidebar = () => {
-		if (window.innerWidth < 1024) {
-			setIsOpen((prev) => !prev);
-		}
-	};
-
-	return (
-		<SidebarContext.Provider value={{ isOpen, pathname, setIsOpen, toggleSidebar }}>
-			{children}
-		</SidebarContext.Provider>
-	);
-};
-
-export const useSidebar = () => {
-	const context = useContext(SidebarContext);
-	if (!context) {
-		throw new Error('useSidebar must be used within a SidebarProvider');
-	}
-	return context;
+	return <>{children}</>;
 };

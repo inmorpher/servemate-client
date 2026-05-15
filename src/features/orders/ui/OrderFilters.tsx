@@ -1,69 +1,50 @@
 'use client';
 
-import { Search } from '@/features/search';
 import { orderSearchOptions } from '@/features/search/model/ordersOptions';
 import { SearchChip } from '@/features/search/ui/SearchChip';
-import { Filter } from '@/shared/components/filter';
+import { DateRangePicker } from '@/shared/components/date-range-picker';
+import { Filter } from '@/shared/components/filter/index';
+import FilterReset from '@/shared/components/filter/ui/FilterReset';
 import RangeSlider from '@/shared/components/slider/ui/Slider';
-import { OrderMetaDTO, OrderSearchCriteria } from '@servemate/dto';
-import { UseQueryResult } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useOrderFilters } from '../hooks/useOrderFilters';
 
-export const OrderFilters = ({
-	ordersMeta,
-	orderSearchCriteria,
-	updateFilters,
-}: {
-	ordersMeta: UseQueryResult<OrderMetaDTO, unknown>;
-	orderSearchCriteria: OrderSearchCriteria;
-	updateFilters: (filters: Partial<OrderSearchCriteria>) => void;
-}) => {
-	const [searchValue, setSearchValue] = useState('');
-
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-		const id = searchValue.trim() ? Number(searchValue) : undefined;
-		updateFilters({ id });
-	};
-
-	const handlePriceRangeChange = (values: number[]) => {
-		const [minAmount, maxAmount] = values;
-		updateFilters({ minAmount, maxAmount });
-	};
-
-	const handleAllergyToggle = (allergy: string) => {
-		const current = orderSearchCriteria.allergies || [];
-		const newAllergies = current.includes(allergy)
-			? current.filter((a) => a !== allergy)
-			: [...current, allergy];
-		updateFilters({ allergies: newAllergies });
-	};
-
-	const handleStatusToggle = (status: string) => {
-		const current = orderSearchCriteria.statuses || [];
-		const newStatuses = current.includes(status)
-			? current.filter((s) => s !== status)
-			: [...current, status];
-		updateFilters({ statuses: newStatuses });
-	};
+export const OrderFilters = () => {
+	const {
+		metaData,
+		filters,
+		handleAllergyToggle,
+		handlePriceRangeChange,
+		handleStatusToggle,
+		handleTableNumber,
+		handleRangeChange,
+	} = useOrderFilters();
 
 	return (
-		<Filter title='Search Orders' className='max-h-dvh'>
-			<Search onSubmit={handleSubmit}>
-				<Search.Input
-					value={searchValue}
-					onChange={(e) => setSearchValue(e.target.value)}
-					placeholder='Search by Order ID...'
-				/>
-			</Search>
-
+		<Filter className='max-h-dvh'>
+			<FilterReset filters={filters} />
+			{/* Date Range Filter */}
+			{metaData?.dates && (
+				<Filter.Group label='Order Date'>
+					<DateRangePicker
+						dates={{
+							startDate: filters?.dateFrom
+								? new Date(filters.dateFrom).toDateString()
+								: metaData.dates.min,
+							endDate: filters?.dateTo
+								? new Date(filters.dateTo).toDateString()
+								: metaData.dates.max,
+						}}
+						onRangeChange={handleRangeChange}
+					/>
+				</Filter.Group>
+			)}
 			{/* Allergies Filter */}
-			{ordersMeta.isSuccess && ordersMeta.data?.allergies && (
+			{metaData?.allergies && (
 				<Filter.Group label='Allergies'>
 					{orderSearchOptions.allergies.map((option) => (
 						<SearchChip
 							key={option.value}
-							isActive={ordersMeta.data.allergies?.includes(option.value)}
+							isActive={filters?.allergies?.includes(option.value)}
 							onClick={() => handleAllergyToggle(option.value)}
 						>
 							{option.value}
@@ -71,31 +52,47 @@ export const OrderFilters = ({
 					))}
 				</Filter.Group>
 			)}
-
 			{/* Price Range Filter */}
-			{ordersMeta.isSuccess && ordersMeta.data?.prices && (
+			{metaData?.prices && (
 				<Filter.Group label='Price Range'>
 					<RangeSlider
-						minValue={ordersMeta.data.prices.min}
-						maxValue={ordersMeta.data.prices.max}
-						handler={handlePriceRangeChange}
-						defaultValue={[ordersMeta.data.prices.min, ordersMeta.data.prices.max]}
+						key={filters?.minAmount && filters?.maxAmount ? 'active' : 'reset'}
+						minValue={metaData.prices.min}
+						maxValue={metaData.prices.max}
+						onChange={handlePriceRangeChange}
+						value={
+							filters?.minAmount && filters?.maxAmount
+								? [filters.minAmount, filters.maxAmount]
+								: [metaData.prices.min, metaData.prices.max]
+						}
 					/>
 				</Filter.Group>
 			)}
-
 			{/* Status Filter */}
 			<Filter.Group label='Status'>
 				{orderSearchOptions.statuses.map((option) => (
 					<SearchChip
 						key={option.value}
-						isActive={orderSearchCriteria.statuses?.includes(option.value)}
+						isActive={filters?.status === option.value}
 						onClick={() => handleStatusToggle(option.value)}
 					>
 						{option.label}
 					</SearchChip>
 				))}
 			</Filter.Group>
+			<Filter.Group label='Tables'>
+				{metaData?.tableNumbers.map((t: number) => (
+					<SearchChip
+						key={t}
+						isActive={filters?.tableNumbers?.includes(t)}
+						onClick={() => handleTableNumber(t)}
+					>
+						{t}
+					</SearchChip>
+				))}
+			</Filter.Group>
 		</Filter>
 	);
 };
+
+export default OrderFilters;

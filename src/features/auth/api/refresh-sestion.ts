@@ -7,7 +7,7 @@ import { updateSessionWithTokens } from '@/app/lib/session-update';
 export async function refreshSessionAction() {
 	try {
 		const session = await getSession();
-		console.log('🔄 Refreshing session, current refreshCount:', session.refreshCount);
+
 		if (!session?.refreshToken) {
 			return { success: false, error: 'No refresh token' };
 		}
@@ -30,7 +30,7 @@ export async function refreshSessionAction() {
 			refreshCount: currentCount + 1,
 		});
 
-		return { success: true };
+		return { success: true, token: data?.accessToken };
 	} catch (error: unknown) {
 		return { success: false, error: `An error occurred while refreshing session. ${error}` };
 	}

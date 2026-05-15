@@ -13,5 +13,3 @@ export const CONFIG = {
 		Days: (n: number) => n * 86400,
 	},
 } as const;
-
-console.log('CONFIG.API_BASE_URL:', CONFIG.API_BASE_URL);

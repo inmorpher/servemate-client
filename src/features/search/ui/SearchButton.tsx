@@ -1,3 +1,5 @@
+import { Button } from '@/shared/components/button';
+
 interface SearchSortTogglerProps {
 	sortOptions: string | undefined;
 	onClick: () => void;
@@ -24,13 +26,9 @@ interface SearchSortTogglerProps {
  */
 export const SearchSortToggler = ({ sortOptions, onClick }: SearchSortTogglerProps) => {
 	return (
-		<button
-			type='button'
-			onClick={onClick}
-			className='px-3 py-1.5 text-sm bg-ctp-surface0 border border-ctp-surface1 rounded-md text-ctp-text hover:bg-ctp-surface1 transition-colors flex items-center gap-1 '
-		>
+		<Button variant='outline' type='button' onClick={onClick} className='' size={'sm'}>
 			{sortOptions === 'desc' ? '↓' : '↑'}
 			{sortOptions === 'desc' ? 'Desc.' : 'Asc.'}
-		</button>
+		</Button>
 	);
 };

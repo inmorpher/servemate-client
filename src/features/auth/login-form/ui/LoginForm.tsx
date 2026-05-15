@@ -1,43 +1,11 @@
 'use client';
 
+import { ILoginFormInputs, loginAction } from '@/features/auth/actions/login';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
-export interface ILoginFormInputs {
-	email: string;
-	password: string;
-}
-
-export async function login(formData: ILoginFormInputs) {
-	try {
-		const { email, password } = formData;
-
-		const response = await fetch('/api/auth/', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ email, password }),
-		});
-
-		if (!response.ok) {
-			const error = await response.json();
-			throw new Error(error.error || 'Ошибка авторизации');
-		}
-
-		const result = await response.json();
-		console.log('[Client Login] Успешная авторизация:', result);
-
-		// Редирект на клиенте
-		window.location.href = '/account';
-
-		return result;
-	} catch (error) {
-		console.error('[Client Login] Ошибка:', error);
-		throw error;
-	}
-}
-
-const LoginForm = () => {
+const LoginFormContent = () => {
 	const {
 		register,
 		handleSubmit,
@@ -48,26 +16,16 @@ const LoginForm = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	// Получаем callbackUrl из URL параметров или используем значение по умолчанию
-	const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+	const callbackUrl = searchParams.get('callbackUrl') || '/cpanel';
 
 	const onSubmit: SubmitHandler<ILoginFormInputs> = async (data) => {
 		try {
 			setIsLoading(true);
 			setError(null);
-			console.log('Form data:', data);
-			console.log('Redirecting to:', callbackUrl);
 
-			// Вызываем серверную функцию, передавая данные формы как объект
-			await login(data);
-
-			// Если мы дошли до этой точки без ошибок и редиректа,
-			// выполним перенаправление вручную (обычно не выполняется из-за redirect() в серверной функции)
-			window.location.href = callbackUrl;
+			await loginAction(data, callbackUrl);
 		} catch (err) {
-			console.error('Login error:', err);
-			setError(err instanceof Error ? err.message : 'Произошла ошибка при входе');
-		} finally {
+			setError(err instanceof Error ? err.message : 'Ошибка входа');
 			setIsLoading(false);
 		}
 	};
@@ -75,19 +33,19 @@ const LoginForm = () => {
 	return (
 		<>
 			{error && (
-				<div className='rounded-md bg-ctp-red/20 p-4 mb-4'>
-					<div className='text-sm text-ctp-red'>{error}</div>
+				<div className='bg-ctp-red/20 mb-4 rounded-md p-4'>
+					<div className='text-ctp-red text-sm'>{error}</div>
 				</div>
 			)}
 
-			<form className='mt-8 space-y-6' onSubmit={handleSubmit(onSubmit)}>
-				<div className='rounded-md shadow-sm -space-y-px'>
+			<form className='space-y-6' onSubmit={handleSubmit(onSubmit)}>
+				<div className='-space-y-px rounded-md shadow-sm'>
 					<div>
 						<label htmlFor='email-address' className='sr-only'>
 							Email
 						</label>
 						{errors.email && (
-							<p className='text-xs text-ctp-red mt-1 px-2'>{errors.email.message}</p>
+							<p className='text-ctp-red mt-1 px-2 text-xs'>{errors.email.message}</p>
 						)}
 						<input
 							id='email-address'
@@ -101,7 +59,7 @@ const LoginForm = () => {
 							name='email'
 							type='email'
 							autoComplete='email'
-							className='appearance-none rounded-t-md relative block w-full px-3 py-2 bg-ctp-surface0 border border-ctp-overlay0 placeholder-ctp-subtext0 text-ctp-text focus:outline-none focus:ring-ctp-lavender focus:border-ctp-lavender focus:z-10 sm:text-sm'
+							className='bg-ctp-surface0 border-ctp-overlay0 placeholder-ctp-subtext0 text-ctp-text focus:ring-ctp-lavender focus:border-ctp-lavender relative block w-full appearance-none rounded-t-md border px-3 py-2 focus:z-10 focus:outline-none sm:text-sm'
 							placeholder='Email'
 						/>
 					</div>
@@ -120,11 +78,13 @@ const LoginForm = () => {
 							})}
 							type='password'
 							autoComplete='current-password'
-							className='appearance-none rounded-b-md relative block w-full px-3 py-2 bg-ctp-surface0 border border-ctp-overlay0 placeholder-ctp-subtext0 text-ctp-text focus:outline-none focus:ring-ctp-lavender focus:border-ctp-lavender focus:z-10 sm:text-sm'
+							className='bg-ctp-surface0 border-ctp-overlay0 placeholder-ctp-subtext0 text-ctp-text focus:ring-ctp-lavender focus:border-ctp-lavender relative block w-full appearance-none rounded-b-md border px-3 py-2 focus:z-10 focus:outline-none sm:text-sm'
 							placeholder='Password'
 						/>
 						{errors.password && (
-							<p className='text-xs text-ctp-red mt-1 px-2'>{errors.password.message}</p>
+							<p className='text-ctp-red mt-1 px-2 text-xs'>
+								{errors.password.message}
+							</p>
 						)}
 					</div>
 				</div>
@@ -133,7 +93,7 @@ const LoginForm = () => {
 					<button
 						type='submit'
 						disabled={isLoading}
-						className='group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-ctp-crust bg-ctp-blue hover:bg-ctp-sapphire focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ctp-lavender disabled:bg-ctp-blue/70'
+						className='group text-ctp-crust bg-ctp-blue hover:bg-ctp-sapphire focus:ring-ctp-lavender disabled:bg-ctp-blue/70 relative flex w-full justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium focus:ring-2 focus:ring-offset-2 focus:outline-none'
 					>
 						{isLoading ? 'Загрузка...' : 'Войти'}
 					</button>
@@ -143,4 +103,4 @@ const LoginForm = () => {
 	);
 };
 
-export default LoginForm;
+export default LoginFormContent;

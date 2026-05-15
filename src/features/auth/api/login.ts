@@ -4,7 +4,7 @@ import { getSession } from '@/app/lib/session';
 import { jwtDecode } from 'jwt-decode';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { ILoginFormInputs } from '../login-form/ui/LoginForm';
+import { ILoginFormInputs } from '../actions/login';
 
 interface JwtPayload {
 	exp: number;
@@ -16,9 +16,8 @@ interface JwtPayload {
 export async function login(formData: ILoginFormInputs) {
 	try {
 		const { email, password } = formData;
-		console.log('[loginAction] Данные формы:', { email, password: '***' });
 
-		const response = await fetch('http://192.168.2.60:3002/api/auth/login', {
+		const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ email, password }),
@@ -36,18 +35,9 @@ export async function login(formData: ILoginFormInputs) {
 
 		// Decode the access token to get expiration time and user ID
 		const decodedToken = jwtDecode<JwtPayload>(accessToken);
-		const expiresAt = decodedToken.exp; // Переводим в миллисекунды
+		const expiresAt = decodedToken.exp * 1000; // Переводим в миллисекунды
 		const userId = decodedToken.id;
 		const role = decodedToken.role || 'user';
-
-		console.log('[loginAction] Декодированный токен:', decodedToken);
-		console.log('[loginAction] Время истечения токена:', expiresAt);
-		console.log('[loginAction] , expiresAt:', expiresAt.toLocaleString());
-
-		console.log(
-			'[loginAction] Токен успешно получен, срок действия до:',
-			new Date(expiresAt).toLocaleString()
-		);
 
 		// Get session and update it
 		const session = await getSession();
@@ -64,10 +54,6 @@ export async function login(formData: ILoginFormInputs) {
 
 		const cookieStore = await cookies();
 		const savedCookie = cookieStore.get('servemate-session');
-		console.log('[loginAction] Кука после сохранения:', {
-			exists: !!savedCookie,
-			value: savedCookie?.value?.substring(0, 50) + '...',
-		});
 
 		//Redirect to dashboard
 		redirect('/account');

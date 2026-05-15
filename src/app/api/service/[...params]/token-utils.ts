@@ -8,91 +8,83 @@ import { DecodedToken, SessionData, TokenResponse } from './types';
 let refreshTokenPromise: Promise<TokenResponse> | null = null;
 
 export async function getValidatedTokenFromSession(): Promise<TokenResponse> {
-	try {
-		console.log('🔍 [middleware] Проверка токена в сессии');
-		const session = (await getSession()) as SessionData;
+	const session = (await getSession()) as SessionData;
 
-		if (!session?.refreshToken || !session?.accessToken) {
-			console.error('❌ [API] Сессия не найдена или нет токенов');
-			throw new ApiError('Unauthorized: No session or token found', 401, true);
-		}
-
-		const now = Math.floor(Date.now() / 1000);
-		const decodedToken = jwtDecode<DecodedToken>(session.accessToken);
-
-		if (!decodedToken.exp || !decodedToken.iat) {
-			throw new ApiError('Invalid token format', 401, true);
-		}
-
-		const tokenLifeTime = decodedToken.exp - decodedToken.iat;
-		const refreshBuffer = Math.floor(tokenLifeTime * CONFIG.TOKEN_REFRESH_BUFFER_PERCENT);
-		const isTokenExpiringSoon = decodedToken.exp - refreshBuffer <= now;
-
-		if (isTokenExpiringSoon) {
-			return await handleTokenRefresh(session);
-		}
-
-		return {
-			accessToken: session.accessToken,
-			refreshToken: session.refreshToken,
-		};
-	} catch (error) {
-		if (error instanceof ApiError) {
-			throw error;
-		}
-
-		throw new ApiError('Token validation failed', 500);
+	if (!session?.refreshToken || !session?.accessToken) {
+		throw new ApiError('Unauthorized: No session or token found', 401, true);
 	}
+
+	const now = Math.floor(Date.now() / 1000);
+	const decoded = jwtDecode<DecodedToken>(session.accessToken);
+
+	if (!decoded.exp || !decoded.iat) {
+		throw new ApiError('Invalid token format', 401, true);
+	}
+
+	const tokenLifeTime = decoded.exp - decoded.iat;
+	const refreshBuffer = Math.floor(tokenLifeTime * CONFIG.TOKEN_REFRESH_BUFFER_PERCENT);
+	const isExpiringSoon = decoded.exp - refreshBuffer <= now;
+
+	if (isExpiringSoon) {
+		return deduplicatedRefresh(session);
+	}
+
+	return {
+		accessToken: session.accessToken,
+		refreshToken: session.refreshToken,
+	};
 }
 
-async function handleTokenRefresh(session: SessionData): Promise<TokenResponse> {
-	if (refreshTokenPromise) {
-		return await refreshTokenPromise;
+export async function forceRefreshToken(): Promise<TokenResponse> {
+	const session = (await getSession()) as SessionData;
+
+	if (!session?.refreshToken) {
+		throw new ApiError('No refresh token available', 401, true);
 	}
 
-	refreshTokenPromise = refreshTokenInternal(session);
+	return deduplicatedRefresh(session);
+}
+
+/**
+ * Единая точка дедупликации — если рефреш уже идёт, ждём его.
+ * Если нет — запускаем и сбрасываем промис после завершения.
+ */
+const refreshPromises = new Map<string, Promise<TokenResponse>>();
+
+async function deduplicatedRefresh(session: SessionData): Promise<TokenResponse> {
+	const key = session.refreshToken;
+	if (!key) {
+		throw new ApiError('No refresh token available', 401, true);
+	}
+
+	const existing = refreshPromises.get(key);
+	if (existing) {
+		return existing;
+	}
+
+	const promise = refreshTokenInternal(session);
+	refreshPromises.set(key, promise);
 
 	try {
-		return await refreshTokenPromise;
+		return await promise;
 	} finally {
-		refreshTokenPromise = null;
+		refreshPromises.delete(key);
 	}
 }
 
 async function refreshTokenInternal(session: SessionData): Promise<TokenResponse> {
-	try {
-		const response = await fetch(`${CONFIG.API_BASE_URL}/auth/refresh-token`, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ refreshToken: session.refreshToken }),
-		});
+	const response = await fetch(`${CONFIG.API_BASE_URL}/auth/refresh-token`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ refreshToken: session.refreshToken }),
+	});
 
-		if (!response.ok) throw new Error(`Refresh failed: ${response.status}`);
-
-		const tokenData = await response.json();
-
-		// ✅ Используем централизованную функцию вместо дублирования логики
-		await updateSessionWithTokens(tokenData as TokenResponse);
-
-		return tokenData;
-	} catch (error) {
-		console.error('❌ [API] Ошибка обновления токена:', error);
+	if (!response.ok) {
 		throw new ApiError('Token refresh failed', 401, true);
 	}
-}
 
-export async function forceRefreshToken(): Promise<TokenResponse> {
-	try {
-		const session = (await getSession()) as SessionData;
+	const tokenData: TokenResponse = await response.json();
+	await updateSessionWithTokens(tokenData);
 
-		if (!session?.refreshToken) {
-			throw new ApiError('No refresh token available', 401, true);
-		}
-
-		// ✅ Переиспользуем существующий метод
-		return await refreshTokenInternal(session);
-	} catch (error) {
-		if (error instanceof ApiError) throw error;
-		throw new ApiError('Force refresh failed', 401, true);
-	}
+	return tokenData;
 }

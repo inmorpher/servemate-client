@@ -30,7 +30,7 @@ const config: Config = {
 					lavender: '#b4befe',
 
 					// Surface
-					text: '#f5f5ff',
+					text: 'red',
 					subtext1: '#d0d4f8',
 					subtext0: '#b0b5db',
 					overlay2: '#8691af',
@@ -44,6 +44,10 @@ const config: Config = {
 					base: '#080810',
 					mantle: '#05060f',
 					crust: '#020311',
+				},
+				spacing: {
+					'14.25': '3.5625rem', // header height
+					'70': '17.5rem', // filters width
 				},
 			},
 		},

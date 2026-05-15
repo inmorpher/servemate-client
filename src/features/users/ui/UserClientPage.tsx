@@ -1,15 +1,14 @@
 'use client';
 
-import Pagination from '@/shared/components/pagination/Paginations';
-
-import { useEffect } from 'react';
+import { Pagination } from '@/shared/components/pagination';
+import { useTabs } from '@/shared/components/tabs/store/useTabs';
+import { Tab } from '@/shared/components/tabs/types/tabs.type';
+import { ListPageLayout } from '@/shared/layouts/ListPageLayout2';
+import { UserSearchCriteria } from '@servemate/dto';
+import { ViewTransition } from 'react';
 import { useGetUsers } from '../hooks/useUsers';
-
-import { SessionDebug } from '@/features/auth/api/debugCookie';
-import { ListPageLayout } from '@/shared/layouts/ListPageLayout';
-import { UserList } from './UserList';
 import UserSearchBar from './UserSearchBar';
-
+import { UsersList } from './UsersList';
 /**
  * Renders the user management page for clients, including search, pagination, and user list.
  *
@@ -18,52 +17,95 @@ import UserSearchBar from './UserSearchBar';
  *
  * @returns {JSX.Element} The user client page layout with search, pagination, and user list.
  */
-export const UserClientPage = () => {
-	const { isLoading, data, updateSearchCriteria, userSearchCriteria } = useGetUsers();
 
-	useEffect(() => {
-		window.scrollTo({
-			top: 0,
-			behavior: 'smooth',
+const UserClientPage = ({ tabId }: { tabId: Tab['id'] }) => {
+	const currentTab: Tab<UserSearchCriteria> | undefined = useTabs((state) =>
+		state.getTabById(tabId),
+	);
+	const updateTab = useTabs((state) => state.updateTab);
+	const filters = currentTab?.filters;
+	const { isLoading, data } = useGetUsers(filters || {});
+
+	const handleSortChange = (sortBy: NonNullable<UserSearchCriteria['sortBy']>) => {
+		if (!currentTab) {
+			return;
+		}
+
+		const nextSortOrder =
+			filters?.sortBy === sortBy && filters?.sortOrder === 'desc' ? 'asc' : 'desc';
+
+		updateTab(currentTab.id, {
+			filters: {
+				...(filters || {}),
+				sortBy,
+				sortOrder: nextSortOrder,
+				page: 1,
+			},
 		});
-	}, [userSearchCriteria]);
+	};
 
 	const handlePageChange = (newPage: number) => {
-		updateSearchCriteria({ page: newPage });
+		if (!currentTab) {
+			return;
+		}
+
+		updateTab(currentTab.id, {
+			filters: {
+				...(filters || {}),
+				page: newPage,
+			},
+		});
 	};
 
 	const handlePageSizeChange = (newSize: number) => {
-		updateSearchCriteria({ pageSize: newSize, page: 1 });
+		if (!currentTab) {
+			return;
+		}
+
+		updateTab(currentTab.id, {
+			filters: {
+				...(filters || {}),
+				pageSize: newSize,
+				page: 1,
+			},
+		});
 	};
 
 	const { users, totalCount, totalPages, page, pageSize } = data || {};
 
-	const effectivePageSize = pageSize ?? userSearchCriteria.pageSize ?? 10;
+	const effectivePageSize = pageSize ?? filters?.pageSize ?? 10;
 	return (
-		<>
-			<SessionDebug />
-			<ListPageLayout
-				renderFilters={() => (
-					<UserSearchBar
+		<ViewTransition>
+			<ListPageLayout>
+				<ListPageLayout.Filters>
+					<UserSearchBar />
+				</ListPageLayout.Filters>
+
+				<ListPageLayout.Content>
+					<UsersList
 						isLoading={isLoading}
-						updateCriteria={updateSearchCriteria}
-						criteria={userSearchCriteria}
+						users={users}
+						pageSize={effectivePageSize}
+						totalCount={totalCount}
+						sortBy={filters?.sortBy}
+						sortOrder={filters?.sortOrder}
+						onSortChange={handleSortChange}
 					/>
-				)}
-				renderFooter={() => (
+				</ListPageLayout.Content>
+
+				<ListPageLayout.Footer>
 					<Pagination
 						totalCount={totalCount ?? 0}
 						totalPages={totalPages ?? 1}
-						currentPage={page ?? 1}
-						pageSize={pageSize ?? 10}
+						currentPage={page ?? filters?.page ?? 1}
+						pageSize={pageSize ?? filters?.pageSize ?? 10}
 						onPageChange={handlePageChange}
 						onPageSizeChange={handlePageSizeChange}
 					/>
-				)}
-				renderContent={() => (
-					<UserList isLoading={isLoading} users={users} pageSize={effectivePageSize} />
-				)}
-			></ListPageLayout>
-		</>
+				</ListPageLayout.Footer>
+			</ListPageLayout>
+		</ViewTransition>
 	);
 };
+
+export default UserClientPage;

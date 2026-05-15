@@ -1,12 +1,5 @@
 import { FC, ReactNode } from 'react';
 
-export interface ISidebarContextType {
-	isOpen: boolean;
-	pathname: string;
-	setIsOpen: (isOpen: boolean) => void;
-	toggleSidebar: () => void;
-}
-
 export interface ISidebarProps {
 	children: ReactNode;
 }
@@ -23,7 +16,7 @@ export interface ISidebarNavProps {
 }
 
 export interface ISidebarNavItemProps {
-	href: string;
+	entity: string;
 	icon?: string;
 	label: string;
 }

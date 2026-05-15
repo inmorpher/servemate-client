@@ -19,14 +19,9 @@ interface FilterContainerProps {
  */
 export const FilterContainer = ({ children, title, className }: FilterContainerProps) => {
 	return (
-		<aside
-			className={cn(
-				'bg-ctp-base rounded-2xlc sticky top-[calc(3.5625rem+1.5rem)] h-fit max-h-[calc(100vh-3.5625rem-3rem)] w-100 shrink-0 self-start overflow-y-auto rounded-2xl p-2',
-				className,
-			)}
-		>
+		<div className={cn('flex flex-col items-center space-y-4', className)}>
 			{title && <h3 className='text-lg font-semibold'>{title}</h3>}
-			<div className='flex flex-col space-y-4'>{children}</div>
-		</aside>
+			{children}
+		</div>
 	);
 };

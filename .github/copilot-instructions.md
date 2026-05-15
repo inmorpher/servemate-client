@@ -91,7 +91,7 @@ import {
 
 ### Search Criteria & Data Fetching Patterns
 
-#### Option 1: Full-featured hook with URL sync + React Query
+#### Option 1: Full-featured hook with React Query
 
 Use `useGetOrders` (or similar domain-specific hooks) for complete search functionality:
 
@@ -101,11 +101,10 @@ const { data, isLoading, orderSearchCriteria, updateSearchCriteria } = useGetOrd
 // updateSearchCriteria automatically:
 // 1. Merges new criteria with existing
 // 2. Builds query string via buildQueryParams()
-// 3. Updates URL via router.push()
-// 4. React Query re-fetches with new queryKey
+// 3. React Query re-fetches with new queryKey
 ```
 
-Benefits: Syncs URL state, handles pagination, leverages React Query caching automatically.
+Benefits: Handles pagination, leverages React Query caching automatically.
 
 #### Option 2: Simple data fetch with React Query
 
@@ -117,7 +116,31 @@ const { data } = useApiQuery<OrderMetaDTO>('/api/service/orders/meta', undefined
 });
 ```
 
-#### Option 3: Parse URL-only without fetching
+#### Option 3: Zustand Persist Store for Local Filter State
+
+For component-level filters that need persistence (like `OrderFilters`), use Zustand with persist middleware:
+
+```typescript
+// Store definition with persist middleware
+const useOrderFiltersStore = create<FilterState>(
+	persist(
+		(set) => ({
+			filters: {
+				/* initial state */
+			},
+			updateTab: (tabId, updates) =>
+				set((state) => ({
+					/* ... */
+				})),
+		}),
+		{ name: 'order-filters-storage' }, // Persisted to localStorage
+	),
+);
+```
+
+Benefits: Filters persist across page reloads, no URL manipulation needed, synced to localStorage automatically.
+
+#### Option 4: Parse criteria without fetching
 
 Use `useSearchCriteria` to read URL params without triggering data fetches:
 
@@ -127,22 +150,6 @@ const searchCriteria = useSearchCriteria({
 	numberFields: ['page', 'pageSize', 'minAmount'],
 	arrayFields: ['status'],
 });
-```
-
-**URL Sync Pattern**: When using form inputs (like search boxes), maintain two state layers:
-
-1. Local form state (`useState`) for instant UI feedback
-2. URL state for persistence/shareability
-3. Manual synchronization via `updateSearchCriteria()` on form submit or debounced onChange
-
-Example from `OrderFilters.tsx`:
-
-```typescript
-const [searchValue, setSearchValue] = useState(''); // Local input state
-const handleSubmit = (e) => {
-	e.preventDefault();
-	updateFilters({ id: Number(searchValue) }); // Updates URL
-};
 ```
 
 ### Backend Decorator Pattern
@@ -288,6 +295,6 @@ export const API_ENDPOINTS = { Users: `/api/service/users`, Orders: `/api/servic
 - ❌ **Business logic in UI components**: Extract to custom hooks (like `useGetOrders`) or API services
 - ❌ **Missing TypeScript types from `@servemate/dto`**: Always import types from the shared package, never duplicate type definitions
 - ❌ **Using `any` type**: Use specific types, unions, generics, or `unknown` instead
-- ❌ **Desynchronized local state and URL**: If you use `useState()` for form inputs, sync them to URL via `updateSearchCriteria()` on submit
+- ❌ **Mixing storage patterns**: Don't combine Zustand persist with URL state for the same filters — choose one approach
 - ❌ **Mixing query hooks**: Don't use both `useGetOrders()` and `useApiQuery()` for the same data, choose one pattern
 - ❌ **Forgetting React Query's query key structure**: When search criteria change, the hook must re-fetch (handled automatically if queryKey includes criteria)

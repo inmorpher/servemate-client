@@ -30,28 +30,34 @@ export default async function AccountPage() {
 	// }
 
 	return (
-		<div className='bg-ctp-mantle rounded-lg shadow-lg p-6'>
-			<div className='flex justify-between items-center mb-6'>
-				<h1 className='text-2xl font-bold text-ctp-mauve'>Профиль пользователя</h1>
+		<div className='bg-ctp-mantle rounded-lg p-6 shadow-lg'>
+			<div className='mb-6 flex items-center justify-between'>
+				<h1 className='text-ctp-mauve text-2xl font-bold'>Профиль пользователя</h1>
 			</div>
 
-			<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-				<div className='bg-ctp-surface0 p-4 rounded-lg space-y-4'>
-					<h2 className='text-xl font-semibold text-ctp-lavender mb-2'>Основная информация</h2>
+			<div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+				<div className='bg-ctp-surface0 space-y-4 rounded-lg p-4'>
+					<h2 className='text-ctp-lavender mb-2 text-xl font-semibold'>
+						Основная информация
+					</h2>
 					<div className='text-ctp-subtext1'>
 						<div className='mb-3'>
-							<span className='block text-sm font-medium text-ctp-subtext0'>Имя</span>
+							<span className='text-ctp-subtext0 block text-sm font-medium'>Имя</span>
 							{/* <span className='block text-lg text-ctp-peach'>{user?.name || 'Не указано'}</span> */}
 						</div>
 						<div className='mb-3'>
-							<span className='block text-sm font-medium text-ctp-subtext0'>Email</span>
+							<span className='text-ctp-subtext0 block text-sm font-medium'>
+								Email
+							</span>
 
 							{/* <SkeletonText isLoading={isUserLoading}> */}
 							{/* <span className='block text-lg text-ctp-blue'>{user?.email || 'Не указано'}</span> */}
 							{/* </SkeletonText> */}
 						</div>
 						<div className='mb-3'>
-							<span className='block text-sm font-medium text-ctp-subtext0'>Роль</span>
+							<span className='text-ctp-subtext0 block text-sm font-medium'>
+								Роль
+							</span>
 							<span className='block text-lg'>
 								{/* {isUserLoading ? (
 									<div className='h-6 w-24 bg-ctp-surface2 rounded animate-pulse'></div>
@@ -61,7 +67,9 @@ export default async function AccountPage() {
 							</span>
 						</div>
 						<div>
-							<span className='block text-sm font-medium text-ctp-subtext0 mb-1'>Статус</span>
+							<span className='text-ctp-subtext0 mb-1 block text-sm font-medium'>
+								Статус
+							</span>
 							{/* <span
 								className={`inline-block px-2 py-1 text-xs font-medium rounded ${
 									user?.isActive ? 'bg-ctp-green text-ctp-base' : 'bg-ctp-red text-ctp-base'
@@ -72,23 +80,33 @@ export default async function AccountPage() {
 						</div>
 					</div>
 				</div>
-				<div className='bg-ctp-surface0 p-4 rounded-lg space-y-4'>
-					<h2 className='text-xl font-semibold text-ctp-lavender mb-2'>Детальная информация</h2>
+				<div className='bg-ctp-surface0 space-y-4 rounded-lg p-4'>
+					<h2 className='text-ctp-lavender mb-2 text-xl font-semibold'>
+						Детальная информация
+					</h2>
 					<div className='text-ctp-subtext1'>
 						<div className='mb-3'>
-							<span className='block text-sm font-medium text-ctp-subtext0'>ID пользователя</span>
+							<span className='text-ctp-subtext0 block text-sm font-medium'>
+								ID пользователя
+							</span>
 							{/* <span className='block text-lg text-ctp-teal'>{user.id}</span> */}
 						</div>
 						<div className='mb-3'>
-							<span className='block text-sm font-medium text-ctp-subtext0'>Последний вход</span>
+							<span className='text-ctp-subtext0 block text-sm font-medium'>
+								Последний вход
+							</span>
 							{/* <span className='block text-lg text-ctp-sky'>{formatDate(user?.lastLogin)}</span> */}
 						</div>
 						<div className='mb-3'>
-							<span className='block text-sm font-medium text-ctp-subtext0'>Дата создания</span>
+							<span className='text-ctp-subtext0 block text-sm font-medium'>
+								Дата создания
+							</span>
 							{/* <span className='block text-lg text-ctp-sapphire'>{formatDate(user?.createdAt)}</span> */}
 						</div>
 						<div>
-							<span className='block text-sm font-medium text-ctp-subtext0'>Дата обновления</span>
+							<span className='text-ctp-subtext0 block text-sm font-medium'>
+								Дата обновления
+							</span>
 							{/* <span className='block text-lg text-ctp-sapphire'>{formatDate(user?.updatedAt)}</span> */}
 						</div>
 					</div>

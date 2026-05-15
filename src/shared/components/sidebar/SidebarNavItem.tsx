@@ -1,29 +1,22 @@
 'use client';
+import { useTabs } from '@/shared/components/tabs/store/useTabs';
 import Image from 'next/image';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { FC } from 'react';
+import { Button } from '../button';
 import { ISidebarNavItemProps } from './types';
 
-const SidebarNavItem: FC<ISidebarNavItemProps> = ({ href, icon, label }) => {
-	const pathname = usePathname();
-	const isActive = pathname === href;
+const SidebarNavItem: FC<ISidebarNavItemProps> = ({ entity, icon, label }) => {
+	const { addTab } = useTabs();
+
+	const handleClick = () => {
+		addTab({ title: entity, entity: entity });
+	};
 
 	return (
-		<Link href={href} className='block'>
-			<div
-				className={`flex items-center p-3 mb-2 rounded-md transition-colors transition-all-3s ${
-					isActive ? 'bg-ctp-surface1 text-ctp-mauve' : 'hover:bg-ctp-surface0 text-ctp-text'
-				}`}
-			>
-				{
-					//conditionally render the icon if it exists
-				}
-				{icon && <Image src={`/${icon}.svg`} alt={label} width={20} height={20} className='mr-3' />}
-
-				<span className='font-medium'>{label}</span>
-			</div>
-		</Link>
+		<Button variant='ghost' size='icon' onClick={handleClick} aria-label={label}>
+			{icon && <Image src={`/${icon}.svg`} alt={label} width={30} height={20} />}
+		</Button>
 	);
 };
+
 export default SidebarNavItem;

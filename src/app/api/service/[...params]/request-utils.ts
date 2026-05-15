@@ -22,7 +22,8 @@ export async function buildServiceRequest(
 	// Очищаем проблематичные заголовки
 	['host', 'content-length'].forEach((header) => headers.delete(header));
 
-	const body = isMethodWithBody(request.method) ? await request.text() : undefined;
+	const rawBody = isMethodWithBody(request.method) ? await request.text() : undefined;
+	const body = rawBody && rawBody.trim().length > 0 ? rawBody : undefined;
 
 	return { serviceUrl, headers, body };
 }

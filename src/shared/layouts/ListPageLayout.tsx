@@ -3,42 +3,37 @@
 import { ReactNode } from 'react';
 
 interface ListPageLayoutProps {
-	renderFilters?: () => ReactNode;
-	renderFooter?: () => ReactNode;
-	renderContent: () => ReactNode;
+	Filters?: ReactNode;
+	Content?: ReactNode;
+	Footer?: ReactNode;
+	filtersOpen?: boolean;
 }
 
-// export const ListPageLayout = ({ children, footer, filters }: ListPageLayoutProps) => {
-// 	return (
-// 		<div className='flex h-full relative'>
-// 			<div className='relative bg-ctp-base h-full flex flex-col flex-grow overflow-x-hidden'>
-// 				<main className='flex-1 p-6 overflow-hidden bg-ctp-surface1 rounded-2xl'>{children}</main>
-// 				{footer && <footer className='flex-shrink-0'>{footer}</footer>}
-// 			</div>
-// 			{filters && filters}
-// 		</div>
-// 	);
-// };
-
 export const ListPageLayout = ({
-	renderFilters,
-	renderFooter,
-	renderContent,
+	Filters,
+	Content,
+	Footer,
+	filtersOpen = true,
 }: ListPageLayoutProps) => {
 	return (
-		<div className='flex gap-4'>
+		<div className='h-[calc(100vh-theme(height.14.25))] relative flex'>
+			{/* Filters panel - mobile overlay or desktop sidebar */}
+			{Filters && (
+				<div
+					className={`fixed top-14.25 z-8 -translate-x-full transition-all duration-200 lg:sticky lg:translate-x-0`}
+				>
+					{Filters}
+				</div>
+			)}
 			{/* Main content area */}
-			<div className='bg-ctp-surface0 flex min-w-0 flex-1 flex-col rounded-2xl'>
-				{renderContent && <main className='p-6'>{renderContent()}</main>}
-				{renderFooter && (
-					<footer className='border-ctp-surface1 bg-ctp-surface0 sticky bottom-0 shrink-0 border-t px-6 py-4'>
-						{renderFooter()}
-					</footer>
+			<main className='flex min-w-0 flex-1 flex-col overflow-hidden'>
+				{Content && (
+					<section className='flex-1 overflow-y-auto p-2 md:px-6'>{Content}</section>
 				)}
-			</div>
-
-			{/* Right sidebar filters — sticky */}
-			{renderFilters && renderFilters()}
+				{Footer && (
+					<footer className='bg-ctp-surface0 shrink md:px-6 md:py-4'>{Footer}</footer>
+				)}
+			</main>
 		</div>
 	);
 };

@@ -49,7 +49,7 @@ export async function updateSessionWithTokens(
 
 		await session.save();
 	} catch (error) {
-		console.error('❌ [Session Update] Ошибка при обновлении сессии:', error);
+		console.error('[Session Update] Error session  :', error);
 		throw error;
 	}
 }

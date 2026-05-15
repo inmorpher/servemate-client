@@ -1,22 +1,38 @@
 'use client';
 
-import { useSidebar } from '@/providers/SidebarProvider';
+import { useDrawerStore } from '@/shared/store/useDrawerStore';
 import { cn } from '@/shared/utils/classNames';
 import { FC } from 'react';
+import { Drawer } from '../drawer/Drawer';
 import { ISidebarProps } from './types';
 
 const Sidebar: FC<ISidebarProps> = ({ children }) => {
-	const { isOpen } = useSidebar();
+	const sidebarIsOpen = useDrawerStore((state) => state.isOpen('sidebar'));
+	const toggle = useDrawerStore((state) => state.toggle);
+
+	console.log('Sidebar render, isOpen:', sidebarIsOpen);
 
 	return (
-		<aside
-			className={cn(
-				'bg-ctp-base sticky top-14.25 left-0 z-10 h-[calc(100vh-3.5625rem)] w-64 shrink-0 self-start overflow-y-auto p-4 transition-transform duration-150 ease-in-out lg:translate-x-0',
-				isOpen ? 'translate-x-0' : '-translate-x-full',
-			)}
-		>
-			<div className='flex h-full flex-col'>{children}</div>
-		</aside>
+		<>
+			{/* Desktop - visible only on lg+ */}
+			<aside
+				aria-label='Side navigation'
+				className={cn(
+					'bg-ctp-base sticky top-14.25 z-10 hidden h-[calc(100vh-3.5625rem)] w-16 shrink-0 flex-col self-start p-2 lg:flex',
+				)}
+			>
+				<nav className='flex flex-1 flex-col items-center gap-4 overflow-x-hidden overflow-y-auto'>
+					{children}
+				</nav>
+			</aside>
+
+			{/* Mobile - drawer sidebar for desktop menu button */}
+			<Drawer isOpen={sidebarIsOpen} onOpenChange={() => toggle('sidebar')} direction='left'>
+				<nav className='flex flex-col gap-4 pt-12' aria-label='Mobile side navigation'>
+					{children}
+				</nav>
+			</Drawer>
+		</>
 	);
 };
 

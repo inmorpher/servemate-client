@@ -1,7 +1,7 @@
 import { useSearchCriteria } from '@/shared/hooks/useSearchCriteria';
 import { buildQueryParams } from '@/shared/utils/buildQueryParams';
 import { usePathname, useRouter } from 'next/navigation';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import type { ZodType } from 'zod';
 
 interface UseResourceSearchCriteriaOptions {
@@ -32,17 +32,17 @@ export const useResourceSearchCriteria = <T extends Record<string, unknown>>({
 			const queryParams = buildQueryParams(updatedCriteria);
 			router.push(`${pathname}?${queryParams.toString()}`);
 		},
-		[searchCriteria, router, pathname]
+		[searchCriteria, router, pathname],
 	);
 
 	const setPage = useCallback(
 		(page: number) => updateSearchCriteria({ page } as unknown as Partial<T>),
-		[updateSearchCriteria]
+		[updateSearchCriteria],
 	);
 
 	const setPageSize = useCallback(
 		(pageSize: number) => updateSearchCriteria({ pageSize, page: 1 } as unknown as Partial<T>),
-		[updateSearchCriteria]
+		[updateSearchCriteria],
 	);
 
 	const updateFilters = useCallback(
@@ -50,15 +50,15 @@ export const useResourceSearchCriteria = <T extends Record<string, unknown>>({
 			const criteriaWithReset = resetPageOnFilters ? { ...newFilters, page: 1 } : newFilters;
 			updateSearchCriteria(criteriaWithReset);
 		},
-		[updateSearchCriteria, resetPageOnFilters]
+		[updateSearchCriteria, resetPageOnFilters],
 	);
 
-	useEffect(() => {
-		window.scrollTo({
-			top: 0,
-			behavior: 'smooth',
-		});
-	}, [searchCriteria]);
+	// useEffect(() => {
+	// 	window.scrollTo({
+	// 		top: 0,
+	// 		behavior: 'smooth',
+	// 	});
+	// }, [searchCriteria]);
 
 	return {
 		searchCriteria,

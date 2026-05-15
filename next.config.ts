@@ -1,6 +1,10 @@
 import type { NextConfig } from 'next';
+import path from 'node:path';
 
 const nextConfig: NextConfig = {
+	turbopack: {
+		root: path.join(__dirname),
+	},
 	allowedDevOrigins: ['192.168.2.70'],
 	env: {
 		API_URL: process.env.API_URL || 'http://localhost:3002/api',

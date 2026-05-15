@@ -47,7 +47,7 @@ export const TabsHorizontal = ({ isMobile = false }: TabsHorizontalProps) => {
 
 				// If there are filters, wrap in HoverCard
 				return (
-					<HoverCardComponent key={'tab-hover-' + tab.id} side='bottom'>
+					<HoverCardComponent key={'tab-hover-' + tab.id} side='left'>
 						<HoverCardComponent.Trigger asChild>{tabButton}</HoverCardComponent.Trigger>
 						<HoverCardComponent.Content>
 							<div className='space-y-2'>

@@ -3,12 +3,12 @@
 import { Pagination } from '@/shared/components/pagination';
 import { useTabs } from '@/shared/components/tabs/store/useTabs';
 import { Tab } from '@/shared/components/tabs/types/tabs.type';
-import { useApiQuery } from '@/shared/hooks/useApiQuery';
 import { ListError } from '@/shared/layouts/Error';
 import { ListPageLayout } from '@/shared/layouts/ListPageLayout2';
-import { OrderSearchCriteria, OrderSearchListResult } from '@servemate/dto';
+import { OrderSearchCriteria } from '@servemate/dto';
 import OrderFilters from './OrderFilters';
 import { OrderListTest } from './OrderListTest';
+import { useGetOrdersAndMeta } from '../hooks/useGetOrdersAndMeta';
 
 const OrdersListPage = () => {
 	const currentTab: Tab<OrderSearchCriteria> | undefined = useTabs((state) =>
@@ -16,7 +16,6 @@ const OrdersListPage = () => {
 	);
 	const updateTab = useTabs((state) => state.updateTab);
 	const filters = currentTab?.filters;
-	console.log('filters', filters?.sortOrder);
 	const handleSortChange = (sortBy: NonNullable<OrderSearchCriteria['sortBy']>) => {
 		if (!currentTab) {
 			return;
@@ -35,8 +34,8 @@ const OrdersListPage = () => {
 		});
 	};
 
-	const { data, error, isError, isLoading, isFetching, refetch } =
-		useApiQuery<OrderSearchListResult>('/orders', filters, {});
+	const { orders, ordersMeta } = useGetOrdersAndMeta(filters || {});
+	const { data, error, isError, isLoading, isFetching, refetch } = orders;
 
 	if (isError || currentTab === undefined) {
 		return <ListError error={error?.message} refetch={refetch} isLoading={isLoading} />;

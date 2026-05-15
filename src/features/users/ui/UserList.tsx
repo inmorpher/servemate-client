@@ -22,7 +22,7 @@ export function UserList({ isLoading, users, pageSize }: UserListProps) {
 
 	return (
 		<div className='space-y-4' style={{ minHeight: 'inherit' }}>
-			<HoverCardComponent side='top'>
+			<HoverCardComponent side='left'>
 				<HoverCardComponent.Trigger asChild>
 					<button>Hover me</button>
 				</HoverCardComponent.Trigger>

@@ -4,24 +4,22 @@ import { ActionMenu } from '@/shared/components/action-menu/ActionMenu';
 import { Button } from '@/shared/components/button';
 import { Table } from '@/shared/components/table';
 import { OrderSearchCriteria, OrderSearchListResult, OrderSortOptions } from '@servemate/dto';
-import { CircleDot, Pencil } from 'lucide-react';
+import { Pencil, Phone, Printer, Trash2 } from 'lucide-react';
+import { useCallback } from 'react';
+import { useCallOrderItems } from '../hooks/useCallOrderItems';
+import { useDeleteOrder } from '../hooks/useDeleteOrder';
+import { usePrintOrderItems } from '../hooks/usePrintOrderItems';
 import { formatCurrency, formatDate, getStatusColor } from '../utils/orderHelpers';
-interface OrderListTestProps {
-	orders: OrderSearchListResult['orders'] | undefined;
-	isLoading?: boolean;
-	sortBy?: Partial<OrderSearchCriteria['sortBy']>;
-	sortOrder?: Partial<OrderSearchCriteria['sortOrder']>;
-	onSortChange: (sortBy: NonNullable<OrderSearchCriteria['sortBy']>) => void;
-}
+export type OrderListItem = OrderSearchListResult['orders'][number];
 
-type OrderRow = {
-	id: number;
-	status: string;
-	tableNumber: number;
-	guestsCount: number;
-	totalAmount: string;
-	orderTime: string;
-};
+export interface OrderListTestProps {
+	orders: OrderListItem[] | undefined;
+	isLoading?: boolean;
+	sortBy?: OrderSearchCriteria['sortBy'];
+	sortOrder?: OrderSearchCriteria['sortOrder'];
+	onSortChange: (sortBy: NonNullable<OrderSearchCriteria['sortBy']>) => void;
+	onEditOrder?: (order: OrderListItem) => void;
+}
 
 const columns = [
 	{ label: 'Order', sortBy: OrderSortOptions.ID },
@@ -41,10 +39,34 @@ export const OrderListTest = ({
 	onSortChange,
 	sortBy,
 	sortOrder,
+	onEditOrder,
 }: OrderListTestProps) => {
-	const isActiveColumn = (columnSortBy: NonNullable<OrderSearchCriteria['sortBy']>) => {
-		return sortBy === columnSortBy;
+	const deleteOrderMutation = useDeleteOrder();
+	const printOrderItemsMutation = usePrintOrderItems();
+	const callOrderItemsMutation = useCallOrderItems();
+
+	const isActiveColumn = useCallback(
+		(columnSortBy: NonNullable<OrderSearchCriteria['sortBy']>) => sortBy === columnSortBy,
+		[sortBy],
+	);
+
+	const handleDeleteOrder = async (orderId: number) => {
+		const shouldDelete = globalThis.confirm(`Delete order #${orderId}?`);
+		if (!shouldDelete) {
+			return;
+		}
+
+		await deleteOrderMutation.mutateAsync({ id: String(orderId) });
 	};
+
+	const handlePrintOrderItems = async (orderId: number) => {
+		await printOrderItemsMutation.mutateAsync({ id: String(orderId) });
+	};
+
+	const handleCallOrderItems = async (orderId: number) => {
+		await callOrderItemsMutation.mutateAsync({ id: String(orderId) });
+	};
+
 	return (
 		<div className='border-ctp-surface1 bg-ctp-surface0 min-w-50 overflow-x-auto rounded-xl border'>
 			<Table className='text-ctp-text w-full table-fixed'>
@@ -52,8 +74,6 @@ export const OrderListTest = ({
 					<Table.Row className='bg-ctp-surface1/60 text-ctp-subtext0 divide-amber-50 p-0'>
 						{columns.map((column) => {
 							const isActiveSort = isActiveColumn(column.sortBy);
-							console.table({ sortBy, columnSortBy: column.sortBy });
-							console.log('isActiveSort', isActiveSort);
 							return (
 								<Table.HeaderCell
 									key={column.label}
@@ -123,25 +143,32 @@ export const OrderListTest = ({
 										orientation='horizontal'
 										items={[
 											{
-												label: `Edit order`,
+												label: 'Edit order',
 												icon: <Pencil size={16} />,
 												onClick: () => {
-													// Handle edit action
+													onEditOrder?.(order);
 												},
 												variant: 'default',
 											},
 											{
-												label: `Change status`,
-												icon: <CircleDot className='h-4 w-4' />,
+												label: 'Print items',
+												icon: <Printer className='h-4 w-4' />,
 												onClick: () => {
-													// Handle change status action
+													void handlePrintOrderItems(order.id);
 												},
 											},
 											{
-												label: `Delete order`,
-												icon: <CircleDot className='h-4 w-4' />,
+												label: 'Call items',
+												icon: <Phone className='h-4 w-4' />,
 												onClick: () => {
-													// Handle delete action
+													void handleCallOrderItems(order.id);
+												},
+											},
+											{
+												label: 'Delete order',
+												icon: <Trash2 className='h-4 w-4' />,
+												onClick: () => {
+													void handleDeleteOrder(order.id);
 												},
 												variant: 'destructive',
 											},

@@ -1,11 +1,11 @@
 'use client';
 
-import { API_ENDPOINTS } from '@/consts';
 import { buildQueryParams } from '@/shared/utils/buildQueryParams';
 import { OrderSearchCriteria, OrderSearchListResult, OrderSearchSchema } from '@servemate/dto';
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
+import { orderApiClient } from '../api';
 
 type UseGetOrdersReturn = UseQueryResult<OrderSearchListResult> & {
 	orderSearchCriteria: OrderSearchCriteria;
@@ -32,15 +32,7 @@ export const useGetOrders = (): UseGetOrdersReturn => {
 
 	const ordersData = useQuery({
 		queryKey: ['orders', orderSearchCriteria],
-		queryFn: async () => {
-			const queryParams = buildQueryParams(orderSearchCriteria);
-			const response = await fetch(`${API_ENDPOINTS.OrdersActions.list}?${queryParams.toString()}`);
-			if (!response.ok) {
-				throw new Error('Failed to fetch orders');
-			}
-
-			return await response.json();
-		},
+		queryFn: () => orderApiClient.getOrders(orderSearchCriteria),
 		placeholderData: keepPreviousData,
 		notifyOnChangeProps: ['data', 'error', 'isLoading', 'isFetching'],
 		staleTime: 5 * 60 * 1000, // 5 minutes
@@ -53,7 +45,7 @@ export const useGetOrders = (): UseGetOrdersReturn => {
 			const queryParams = buildQueryParams(updatedCriteria);
 			router.push(`${pathname}?${queryParams.toString()}`);
 		},
-		[orderSearchCriteria, router, pathname]
+		[orderSearchCriteria, router, pathname],
 	);
 
 	return {

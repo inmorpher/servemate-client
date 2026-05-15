@@ -5,7 +5,7 @@ import { forceRefreshToken, getValidatedTokenFromSession } from './token-utils';
 
 async function handler(
 	request: NextRequest,
-	{ params }: { params: Promise<{ params: string[] }> }
+	{ params }: { params: Promise<{ params: string[] }> },
 ) {
 	try {
 		const { accessToken } = await getValidatedTokenFromSession();
@@ -15,7 +15,7 @@ async function handler(
 		const { serviceUrl, headers, body } = await buildServiceRequest(
 			request,
 			pathParams,
-			accessToken
+			accessToken,
 		);
 
 		const response = await fetch(serviceUrl, {
@@ -43,6 +43,14 @@ async function handler(
 			return new Response(await retryResponse.text(), {
 				status: retryResponse.status,
 				headers: retryResponse.headers,
+			});
+		}
+
+		if (response.status === 204 || response.status === 205 || response.status === 304) {
+			return new Response(null, {
+				status: response.status,
+				statusText: response.statusText,
+				headers: response.headers,
 			});
 		}
 

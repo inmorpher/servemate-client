@@ -1,4 +1,4 @@
-import { ReactNode, RefObject } from 'react';
+import { ReactNode } from 'react';
 
 export type HoverCardSide = 'top' | 'right' | 'bottom' | 'left';
 export type HoverCardAlign = 'start' | 'center' | 'end';
@@ -29,17 +29,9 @@ export interface HoverCardContentProps {
 export interface HoverCardContextValue {
 	open: boolean;
 	setOpen: (open: boolean) => void;
-	triggerRef: RefObject<HTMLElement | HTMLButtonElement | null>;
-	contentRef: RefObject<HTMLDivElement | null>;
-	position: {
-		top: number;
-		left: number;
-	};
-	side: HoverCardSide;
-	align: HoverCardAlign;
-	sideOffset: number;
-	updatePosition: () => void;
 	scheduleOpen: () => void;
 	scheduleClose: () => void;
 	clearTimers: () => void;
+	side: HoverCardSide;
+	align: HoverCardAlign;
 }

@@ -35,7 +35,7 @@ export async function login(formData: ILoginFormInputs) {
 
 		// Decode the access token to get expiration time and user ID
 		const decodedToken = jwtDecode<JwtPayload>(accessToken);
-		const expiresAt = decodedToken.exp; // Переводим в миллисекунды
+		const expiresAt = decodedToken.exp * 1000; // Переводим в миллисекунды
 		const userId = decodedToken.id;
 		const role = decodedToken.role || 'user';
 

@@ -1,38 +1,43 @@
 'use client';
 
 import { cn } from '@/shared/utils/classNames';
-import { createPortal } from 'react-dom';
+import * as PopoverPrimitive from '@radix-ui/react-popover';
+import { forwardRef } from 'react';
 import { useHoverCardContext } from '../context/HoveCardContext';
 import { HoverCardContentProps } from '../types';
 
-export const HoverCardContent = ({
-	children,
-	className,
-	sideOffset = 4,
-}: HoverCardContentProps) => {
-	const { open, contentRef, position, scheduleOpen, scheduleClose } = useHoverCardContext();
+export const HoverCardContent = forwardRef<HTMLDivElement, HoverCardContentProps>(
+	({ children, className, sideOffset = 8 }, ref) => {
+		const { scheduleOpen, scheduleClose, side, align } = useHoverCardContext();
 
-	if (!open || typeof document === 'undefined') return null;
+		return (
+			<PopoverPrimitive.Portal>
+				<PopoverPrimitive.Content
+					ref={ref}
+					side={side}
+					align={align}
+					sideOffset={sideOffset}
+					className={cn(
+						'border-ctp-surface1 bg-ctp-surface0 text-ctp-text border',
+						'corner-squircle rounded-2xl p-3 shadow-xl',
+						'data-[state=open]:animate-in data-[state=closed]:animate-out',
+						'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+						'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+						'data-[side=bottom]:slide-in-from-top-2',
+						'data-[side=top]:slide-in-from-bottom-2',
+						'data-[side=left]:slide-in-from-right-2',
+						'data-[side=right]:slide-in-from-left-2',
+						'z-50',
+						className,
+					)}
+					onPointerEnter={scheduleOpen}
+					onPointerLeave={scheduleClose}
+				>
+					{children}
+				</PopoverPrimitive.Content>
+			</PopoverPrimitive.Portal>
+		);
+	},
+);
 
-	return createPortal(
-		<div
-			ref={contentRef}
-			role='tooltip'
-			className={cn(
-				'fixed z-50',
-				'border-ctp-surface1 bg-ctp-surface0 text-ctp-text border',
-				'corner-squircle rounded-2xl p-3 shadow-xl',
-				className,
-			)}
-			style={{
-				top: `${position.top + sideOffset}px`,
-				left: `${position.left}px`,
-			}}
-			onPointerEnter={scheduleOpen}
-			onPointerLeave={scheduleClose}
-		>
-			{children}
-		</div>,
-		document.body,
-	);
-};
+HoverCardContent.displayName = 'HoverCardContent';

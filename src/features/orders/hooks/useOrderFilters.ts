@@ -1,7 +1,7 @@
 import { useTabs } from '@/shared/components/tabs/store/useTabs';
 import { Tab } from '@/shared/components/tabs/types/tabs.type';
-import { useApiQuery } from '@/shared/hooks/useApiQuery';
-import { Allergies, OrderMetaDTO, OrderSearchCriteria, OrderState } from '@servemate/dto';
+import { Allergies, OrderSearchCriteria, OrderState } from '@servemate/dto';
+import { useGetOrdersMeta } from './useGetOrdersMeta';
 
 export interface OrdersListPageProps {
 	tabId: Tab['id'];
@@ -9,13 +9,9 @@ export interface OrdersListPageProps {
 }
 export const useOrderFilters = () => {
 	// Fetching metadata for filters (like available statuses, tables, etc.)
-	const { data: metaData } = useApiQuery<OrderMetaDTO>('/orders/meta', undefined, {
-		staleTime: 5 * 60 * 1000,
-		refetchInterval: 5 * 60 * 1000,
-	});
+	const { data: metaData } = useGetOrdersMeta();
 
 	// Getting state from Zustand store for tabs
-	const clearFilters = useTabs((state) => state.clearFilters);
 	const currentTab = useTabs((state) => state.getTabById(state.activeTabId));
 	const updateTab = useTabs((state) => state.updateTab);
 

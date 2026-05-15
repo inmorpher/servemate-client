@@ -1,5 +1,6 @@
 import { keepPreviousData, useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { buildApiUrl } from '../utils/buildApiUrl';
+import { apiRequest } from '../utils/apiRequest';
+import { buildQueryParams } from '../utils/buildQueryParams';
 
 /**
  * useApiQuery
@@ -32,17 +33,11 @@ export const useApiQuery = <TData = unknown>(
 	params?: Record<string, unknown>,
 	options?: Omit<UseQueryOptions<TData>, 'queryKey' | 'queryFn'>,
 ) => {
-	return useQuery({
-		queryKey: [endpoint, params ? JSON.stringify(params) : null],
-		queryFn: async () => {
-			const url = buildApiUrl(endpoint, params);
+	const queryParams = params ? buildQueryParams(params) : null;
 
-			const response = await fetch(url);
-			if (!response.ok) {
-				throw new Error('Failed to fetch data');
-			}
-			return response.json() as Promise<TData>;
-		},
+	return useQuery({
+		queryKey: [endpoint, queryParams],
+		queryFn: async () => apiRequest<TData>(endpoint, { params, responseMode: 'json' }),
 		placeholderData: keepPreviousData,
 		staleTime: 5 * 60 * 1000, //default 5 minutes
 		...options, //other options like staleTime, refetchOnWindowFocus etc.

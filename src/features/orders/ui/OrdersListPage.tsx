@@ -4,7 +4,7 @@ import { Pagination } from '@/shared/components/pagination';
 import { useTabs } from '@/shared/components/tabs/store/useTabs';
 import { Tab } from '@/shared/components/tabs/types/tabs.type';
 import { ListError } from '@/shared/layouts/Error';
-import { ListPageLayout } from '@/shared/layouts/ListPageLayout2';
+import { ListPageLayout } from '@/shared/layouts/ListPageLayout';
 import { OrderSearchCriteria } from '@servemate/dto';
 import type { ComponentType, ReactNode } from 'react';
 import { useGetOrdersAndMeta } from '../hooks/useGetOrdersAndMeta';

@@ -3,7 +3,7 @@
 import { Pagination } from '@/shared/components/pagination';
 import { useTabs } from '@/shared/components/tabs/store/useTabs';
 import { Tab } from '@/shared/components/tabs/types/tabs.type';
-import { ListPageLayout } from '@/shared/layouts/ListPageLayout2';
+import { ListPageLayout } from '@/shared/layouts/ListPageLayout';
 import { UserSearchCriteria } from '@servemate/dto';
 import { ViewTransition } from 'react';
 import { useGetUsers } from '../hooks/useUsers';

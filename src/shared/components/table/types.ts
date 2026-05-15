@@ -3,6 +3,7 @@ import { ComponentPropsWithoutRef, ReactNode, Ref } from 'react';
 export type TableCellProps = ComponentPropsWithoutRef<'td'> & {
 	ref?: Ref<HTMLTableCellElement>;
 	isSelected?: boolean;
+	truncate?: boolean;
 };
 
 export type TableHeaderCellProps = ComponentPropsWithoutRef<'th'> & {

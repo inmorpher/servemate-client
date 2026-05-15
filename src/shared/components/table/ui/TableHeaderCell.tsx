@@ -11,7 +11,6 @@ export const TableHeaderCell = ({
 	ref,
 	...props
 }: TableHeaderCellProps) => {
-	console.log('isSorted', isSorted);
 	return (
 		<th
 			ref={ref}

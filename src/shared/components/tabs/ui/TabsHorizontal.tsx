@@ -28,12 +28,15 @@ export const TabsHorizontal = ({ isMobile = false }: TabsHorizontalProps) => {
 			className={`ml-1.5 gap-4 self-end overflow-x-auto p-1 lg:flex ${isMobile ? 'lg:flex' : 'hidden'}`}
 		>
 			{tabs.map((tab) => {
-				const hasFilters = tab?.filters && Object.keys(tab.filters).length > 0;
+				const filterEntries = Object.entries(tab.filters ?? {});
+				const filterCount = filterEntries.length;
+				const hasFilters = filterCount > 0;
 
 				const tabButton = (
 					<TabButton
 						key={'tab-' + tab.id}
 						label={tab?.title}
+						filterCount={hasFilters ? filterCount : undefined}
 						isActive={tab.id === activeTabId}
 						onClick={() => handleTabSelect(tab.id)}
 						onClose={() => removeTab(tab.id)}
@@ -47,18 +50,17 @@ export const TabsHorizontal = ({ isMobile = false }: TabsHorizontalProps) => {
 
 				// If there are filters, wrap in HoverCard
 				return (
-					<HoverCardComponent key={'tab-hover-' + tab.id} side='left'>
+					<HoverCardComponent key={'tab-hover-' + tab.id}>
 						<HoverCardComponent.Trigger asChild>{tabButton}</HoverCardComponent.Trigger>
 						<HoverCardComponent.Content>
 							<div className='space-y-2'>
-								{Object.entries(tab.filters!).map(([key, value]) => (
+								{filterEntries.map(([key, value]) => (
 									<div key={key} className='text-sm'>
 										<span className='text-ctp-subtext1 font-medium'>
-											{formatFilterKey(key)}: {/* ← используешь функцию */}
+											{formatFilterKey(key)}:
 										</span>
 										<span className='text-ctp-text ml-2'>
-											{formatFilterValue(key, value)}{' '}
-											{/* ← и вторую функцию */}
+											{formatFilterValue(key, value)}
 										</span>
 									</div>
 								))}

@@ -18,9 +18,8 @@ const OrderFilters = () => {
 		handleStatusToggle,
 		handleTableNumber,
 		handleRangeChange,
+		handleClearFilters,
 	} = useOrderFilters();
-
-	console.log('filters', filters);
 
 	return (
 		<Filter className='max-h-dvh'>
@@ -84,7 +83,7 @@ const OrderFilters = () => {
 				))}
 			</Filter.Group>
 			<Filter.Group label='Tables'>
-				{metaData?.tableNumbers.map((t) => (
+				{metaData?.tableNumbers.map((t: number) => (
 					<SearchChip
 						key={t}
 						isActive={filters?.tableNumbers?.includes(t)}

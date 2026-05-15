@@ -1,6 +1,6 @@
 import { useTabs } from '@/shared/components/tabs/store/useTabs';
 import { Tab } from '@/shared/components/tabs/types/tabs.type';
-import { Allergies, OrderSearchCriteria, OrderState } from '@servemate/dto';
+import { Allergies, OrderMetaDTO, OrderSearchCriteria, OrderState } from '@servemate/dto';
 import { useGetOrdersMeta } from './useGetOrdersMeta';
 
 export interface OrdersListPageProps {
@@ -9,7 +9,7 @@ export interface OrdersListPageProps {
 }
 export const useOrderFilters = () => {
 	// Fetching metadata for filters (like available statuses, tables, etc.)
-	const { data: metaData } = useGetOrdersMeta();
+	const { data: metaData }: { data: OrderMetaDTO | undefined } = useGetOrdersMeta();
 
 	// Getting state from Zustand store for tabs
 	const currentTab = useTabs((state) => state.getTabById(state.activeTabId));
@@ -92,18 +92,20 @@ export const useOrderFilters = () => {
 		});
 	};
 
-	const hnaldeClearFilters = () => {
+	const handleClearFilters = () => {
 		if (currentTab) {
+			updateTab(currentTab.id, { filters: undefined });
 		}
 	};
 
 	return {
-		metaData,
+		metaData: metaData as OrderMetaDTO | undefined,
 		filters,
 		handleAllergyToggle,
 		handlePriceRangeChange,
 		handleStatusToggle,
 		handleTableNumber,
 		handleRangeChange,
+		handleClearFilters,
 	};
 };

@@ -3,7 +3,6 @@
 import { orderSearchOptions } from '@/features/search/model/ordersOptions';
 import { cn } from '@/shared/utils/classNames';
 import { OrderSearchCriteria, OrderSearchListResult } from '@servemate/dto';
-import { ViewTransition } from 'react';
 import { formatCurrency, formatDate, getStatusColor } from '../utils/orderHelpers';
 import { OrderCard } from './OrderCard';
 
@@ -90,165 +89,158 @@ export const OrderList = ({
 	const activeSortOrder = filters?.sortOrder;
 
 	return (
-		<ViewTransition>
-			<div className='space-y-4'>
-				<div className='flex flex-wrap items-center justify-between gap-3'>
-					{totalCount !== undefined && (
-						<div className='text-ctp-subtext1 text-sm'>
-							Found <span className='text-ctp-text font-bold'>{totalCount}</span>{' '}
-							orders
-						</div>
-					)}
+		<div className='space-y-4'>
+			<div className='flex flex-wrap items-center justify-between gap-3'>
+				{totalCount !== undefined && (
+					<div className='text-ctp-subtext1 text-sm'>
+						Found <span className='text-ctp-text font-bold'>{totalCount}</span> orders
+					</div>
+				)}
 
-					{activeSortBy && (
-						<div className='text-ctp-subtext1 text-xs'>
-							Sorted by{' '}
-							<span className='text-ctp-text font-medium'>
-								{getSortLabel(activeSortBy)}
-							</span>{' '}
-							({activeSortOrder || 'asc'})
-						</div>
-					)}
-				</div>
+				{activeSortBy && (
+					<div className='text-ctp-subtext1 text-xs'>
+						Sorted by{' '}
+						<span className='text-ctp-text font-medium'>
+							{getSortLabel(activeSortBy)}
+						</span>{' '}
+						({activeSortOrder || 'asc'})
+					</div>
+				)}
+			</div>
 
-				<div className='space-y-3 md:hidden'>
+			<div className='space-y-3 md:hidden'>
+				{isLoading && !orders ? (
+					<div className='space-y-4'>
+						{Array.from({ length: 4 }).map((_, index) => (
+							<div
+								key={index}
+								className='bg-ctp-surface0 border-ctp-surface1 animate-pulse rounded-xl border p-4'
+							>
+								<div className='flex items-start justify-between gap-3'>
+									<div className='space-y-2'>
+										<div className='bg-ctp-surface1 h-5 w-28 rounded' />
+										<div className='bg-ctp-surface1 h-4 w-20 rounded' />
+									</div>
+									<div className='bg-ctp-surface1 h-5 w-16 rounded' />
+								</div>
+								<div className='mt-4 grid grid-cols-2 gap-3'>
+									<div className='bg-ctp-surface1 h-4 rounded' />
+									<div className='bg-ctp-surface1 h-4 rounded' />
+									<div className='bg-ctp-surface1 h-4 rounded' />
+									<div className='bg-ctp-surface1 h-4 rounded' />
+								</div>
+							</div>
+						))}
+					</div>
+				) : !orders || orders.length === 0 ? (
+					<div className='text-ctp-subtext1 bg-ctp-surface0 border-ctp-surface1 rounded-xl border border-dashed px-4 py-8 text-center text-sm'>
+						No orders found
+					</div>
+				) : (
+					<div className='space-y-4'>
+						{orders.map((order) => (
+							<OrderCard key={order.id} order={order} />
+						))}
+					</div>
+				)}
+			</div>
+
+			<div className='border-ctp-surface1 bg-ctp-surface0 hidden overflow-x-auto rounded-xl border md:block'>
+				<div role='table' className='min-w-215'>
+					<div
+						role='row'
+						className='bg-ctp-surface1/60 text-ctp-subtext0 grid grid-cols-[1.4fr_1fr_0.8fr_0.8fr_1fr_1fr] gap-3 border-b px-4 py-3 text-xs font-semibold tracking-wide uppercase'
+					>
+						{columns.map((column) => {
+							const sortState = isActiveSort(
+								activeSortBy,
+								activeSortOrder,
+								column.sortBy,
+							);
+
+							return (
+								<button
+									key={column.label}
+									type='button'
+									role='columnheader'
+									aria-sort={
+										sortState === 'asc'
+											? 'ascending'
+											: sortState === 'desc'
+												? 'descending'
+												: 'none'
+									}
+									className={cn(
+										'hover:text-ctp-text flex items-center gap-2 text-left transition-colors',
+										column.alignRight && 'justify-end text-right',
+									)}
+									onClick={() => onSortChange(column.sortBy)}
+								>
+									<span>{column.label}</span>
+									<span className='text-ctp-subtext1 text-[10px] font-medium'>
+										{sortState === 'asc'
+											? '↑'
+											: sortState === 'desc'
+												? '↓'
+												: '↕'}
+									</span>
+								</button>
+							);
+						})}
+					</div>
+
 					{isLoading && !orders ? (
-						<div className='space-y-4'>
-							{Array.from({ length: 4 }).map((_, index) => (
+						<div className='divide-ctp-surface1 animate-pulse divide-y'>
+							{Array.from({ length: 6 }).map((_, index) => (
 								<div
 									key={index}
-									className='bg-ctp-surface0 border-ctp-surface1 animate-pulse rounded-xl border p-4'
+									className='grid grid-cols-[1.4fr_1fr_0.8fr_0.8fr_1fr_1fr] gap-3 px-4 py-4'
 								>
-									<div className='flex items-start justify-between gap-3'>
-										<div className='space-y-2'>
-											<div className='bg-ctp-surface1 h-5 w-28 rounded' />
-											<div className='bg-ctp-surface1 h-4 w-20 rounded' />
-										</div>
-										<div className='bg-ctp-surface1 h-5 w-16 rounded' />
-									</div>
-									<div className='mt-4 grid grid-cols-2 gap-3'>
-										<div className='bg-ctp-surface1 h-4 rounded' />
-										<div className='bg-ctp-surface1 h-4 rounded' />
-										<div className='bg-ctp-surface1 h-4 rounded' />
-										<div className='bg-ctp-surface1 h-4 rounded' />
-									</div>
+									{Array.from({ length: columns.length }).map((__, cellIndex) => (
+										<div
+											key={cellIndex}
+											className={cn(
+												'bg-ctp-surface1 h-4 rounded',
+												cellIndex === columns.length - 1 && 'ml-auto w-24',
+												cellIndex === columns.length - 2 && 'ml-auto w-20',
+												cellIndex === 0 && 'w-36',
+											)}
+										/>
+									))}
 								</div>
 							))}
 						</div>
 					) : !orders || orders.length === 0 ? (
-						<div className='text-ctp-subtext1 bg-ctp-surface0 border-ctp-surface1 rounded-xl border border-dashed px-4 py-8 text-center text-sm'>
+						<div className='text-ctp-subtext1 px-4 py-8 text-center text-sm'>
 							No orders found
 						</div>
 					) : (
-						<div className='space-y-4'>
+						<div className='divide-ctp-surface1 divide-y'>
 							{orders.map((order) => (
-								<OrderCard key={order.id} order={order} />
+								<div
+									key={order.id}
+									role='row'
+									className={cn(
+										'grid grid-cols-[1.4fr_1fr_0.8fr_0.8fr_1fr_1fr] gap-3 px-4 py-4 text-sm transition-colors',
+										isFetching && 'opacity-80',
+										'hover:bg-ctp-surface1/40',
+									)}
+								>
+									{columns.map((column) => (
+										<div
+											key={column.label}
+											role='cell'
+											className={cn(column.alignRight && 'text-right')}
+										>
+											<OrderCell order={order} column={column} />
+										</div>
+									))}
+								</div>
 							))}
 						</div>
 					)}
 				</div>
-
-				<div className='border-ctp-surface1 bg-ctp-surface0 hidden overflow-x-auto rounded-xl border md:block'>
-					<div role='table' className='min-w-215'>
-						<div
-							role='row'
-							className='bg-ctp-surface1/60 text-ctp-subtext0 grid grid-cols-[1.4fr_1fr_0.8fr_0.8fr_1fr_1fr] gap-3 border-b px-4 py-3 text-xs font-semibold tracking-wide uppercase'
-						>
-							{columns.map((column) => {
-								const sortState = isActiveSort(
-									activeSortBy,
-									activeSortOrder,
-									column.sortBy,
-								);
-
-								return (
-									<button
-										key={column.label}
-										type='button'
-										role='columnheader'
-										aria-sort={
-											sortState === 'asc'
-												? 'ascending'
-												: sortState === 'desc'
-													? 'descending'
-													: 'none'
-										}
-										className={cn(
-											'hover:text-ctp-text flex items-center gap-2 text-left transition-colors',
-											column.alignRight && 'justify-end text-right',
-										)}
-										onClick={() => onSortChange(column.sortBy)}
-									>
-										<span>{column.label}</span>
-										<span className='text-ctp-subtext1 text-[10px] font-medium'>
-											{sortState === 'asc'
-												? '↑'
-												: sortState === 'desc'
-													? '↓'
-													: '↕'}
-										</span>
-									</button>
-								);
-							})}
-						</div>
-
-						{isLoading && !orders ? (
-							<div className='divide-ctp-surface1 animate-pulse divide-y'>
-								{Array.from({ length: 6 }).map((_, index) => (
-									<div
-										key={index}
-										className='grid grid-cols-[1.4fr_1fr_0.8fr_0.8fr_1fr_1fr] gap-3 px-4 py-4'
-									>
-										{Array.from({ length: columns.length }).map(
-											(__, cellIndex) => (
-												<div
-													key={cellIndex}
-													className={cn(
-														'bg-ctp-surface1 h-4 rounded',
-														cellIndex === columns.length - 1 &&
-															'ml-auto w-24',
-														cellIndex === columns.length - 2 &&
-															'ml-auto w-20',
-														cellIndex === 0 && 'w-36',
-													)}
-												/>
-											),
-										)}
-									</div>
-								))}
-							</div>
-						) : !orders || orders.length === 0 ? (
-							<div className='text-ctp-subtext1 px-4 py-8 text-center text-sm'>
-								No orders found
-							</div>
-						) : (
-							<div className='divide-ctp-surface1 divide-y'>
-								{orders.map((order) => (
-									<div
-										key={order.id}
-										role='row'
-										className={cn(
-											'grid grid-cols-[1.4fr_1fr_0.8fr_0.8fr_1fr_1fr] gap-3 px-4 py-4 text-sm transition-colors',
-											isFetching && 'opacity-80',
-											'hover:bg-ctp-surface1/40',
-										)}
-									>
-										{columns.map((column) => (
-											<div
-												key={column.label}
-												role='cell'
-												className={cn(column.alignRight && 'text-right')}
-											>
-												<OrderCell order={order} column={column} />
-											</div>
-										))}
-									</div>
-								))}
-							</div>
-						)}
-					</div>
-				</div>
 			</div>
-		</ViewTransition>
+		</div>
 	);
 };

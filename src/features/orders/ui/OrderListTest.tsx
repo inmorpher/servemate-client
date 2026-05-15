@@ -138,7 +138,7 @@ export const OrderListTest = ({
 								>
 									{formatDate(order.orderTime)}
 								</Table.Cell>
-								<Table.Cell>
+								<Table.Cell truncate={false}>
 									<ActionMenu
 										orientation='horizontal'
 										items={[

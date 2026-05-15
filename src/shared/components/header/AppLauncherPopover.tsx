@@ -1,5 +1,6 @@
 'use client';
 
+import { logoutAction } from '@/features/auth/actions/logout';
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/components/popover';
 import { BarChart3, LogOut, Settings, ShoppingCart, Users } from 'lucide-react';
 import Link from 'next/link';
@@ -115,8 +116,8 @@ export const AppLauncherPopover = () => {
 					{/* Logout button */}
 					<div className='bg-ctp-surface1 mt-4 h-px' />
 					<button
-						onClick={() => {
-							// TODO: implement logout
+						onClick={async () => {
+							await logoutAction();
 							setIsOpen(false);
 						}}
 						className='hover:bg-ctp-surface1 text-ctp-red flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors'

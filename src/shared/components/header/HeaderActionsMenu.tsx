@@ -1,5 +1,6 @@
 'use client';
 
+import { logoutAction } from '@/features/auth/actions/logout';
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/components/popover';
 import { Bell, LogOut, MoreVertical, Settings, User } from 'lucide-react';
 import Link from 'next/link';
@@ -26,7 +27,7 @@ export const HeaderActionsMenu = ({
 	const router = useRouter();
 
 	const handleLogout = async () => {
-		// TODO: implement logout
+		await logoutAction();
 		router.push('/login');
 		setIsOpen(false);
 	};

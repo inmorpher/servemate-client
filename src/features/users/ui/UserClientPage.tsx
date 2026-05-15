@@ -1,28 +1,14 @@
 'use client';
 
-import Pagination from '@/shared/components/pagination/Paginations';
-
-import { useGetUsers } from '../hooks/useUsers';
-
+import { Pagination } from '@/shared/components/pagination';
+import { useTabs } from '@/shared/components/tabs/store/useTabs';
 import { Tab } from '@/shared/components/tabs/types/tabs.type';
-import { ListPageLayout } from '@/shared/layouts/ListPageLayout';
-import { buildQueryParams } from '@/shared/utils/buildQueryParams';
+import { ListPageLayout } from '@/shared/layouts/ListPageLayout2';
 import { UserSearchCriteria } from '@servemate/dto';
-import { useQueryClient } from '@tanstack/react-query';
 import { ViewTransition } from 'react';
-import { UserList } from './UserList';
+import { useGetUsers } from '../hooks/useUsers';
 import UserSearchBar from './UserSearchBar';
-
-const fetchWithQuery = async (entity: string, filters: UserSearchCriteria) => {
-	const queryClient = useQueryClient();
-	const queryString = buildQueryParams(filters);
-	await queryClient.prefetchQuery({
-		queryKey: [entity, filters],
-		queryFn: () => {
-			fetch(`/api/service/${entity}?${queryString}`).then((res) => res.json());
-		},
-	});
-};
+import { UsersList } from './UsersList';
 /**
  * Renders the user management page for clients, including search, pagination, and user list.
  *
@@ -31,56 +17,93 @@ const fetchWithQuery = async (entity: string, filters: UserSearchCriteria) => {
  *
  * @returns {JSX.Element} The user client page layout with search, pagination, and user list.
  */
-const UserClientPage = ({ tabId }: { tabId: Tab['id'] }) => {
-	const { isLoading, data, updateSearchCriteria, userSearchCriteria } = useGetUsers();
 
-	// useEffect(() => {
-	// 	window.scrollTo({
-	// 		top: 0,
-	// 		behavior: 'smooth',
-	// 	});
-	// }, [userSearchCriteria]);
+const UserClientPage = ({ tabId }: { tabId: Tab['id'] }) => {
+	const currentTab: Tab<UserSearchCriteria> | undefined = useTabs((state) =>
+		state.getTabById(tabId),
+	);
+	const updateTab = useTabs((state) => state.updateTab);
+	const filters = currentTab?.filters;
+	const { isLoading, data } = useGetUsers(filters || {});
+
+	const handleSortChange = (sortBy: NonNullable<UserSearchCriteria['sortBy']>) => {
+		if (!currentTab) {
+			return;
+		}
+
+		const nextSortOrder =
+			filters?.sortBy === sortBy && filters?.sortOrder === 'desc' ? 'asc' : 'desc';
+
+		updateTab(currentTab.id, {
+			filters: {
+				...(filters || {}),
+				sortBy,
+				sortOrder: nextSortOrder,
+				page: 1,
+			},
+		});
+	};
 
 	const handlePageChange = (newPage: number) => {
-		updateSearchCriteria({ page: newPage });
+		if (!currentTab) {
+			return;
+		}
+
+		updateTab(currentTab.id, {
+			filters: {
+				...(filters || {}),
+				page: newPage,
+			},
+		});
 	};
 
 	const handlePageSizeChange = (newSize: number) => {
-		updateSearchCriteria({ pageSize: newSize, page: 1 });
+		if (!currentTab) {
+			return;
+		}
+
+		updateTab(currentTab.id, {
+			filters: {
+				...(filters || {}),
+				pageSize: newSize,
+				page: 1,
+			},
+		});
 	};
 
 	const { users, totalCount, totalPages, page, pageSize } = data || {};
 
-	const effectivePageSize = pageSize ?? userSearchCriteria.pageSize ?? 10;
+	const effectivePageSize = pageSize ?? filters?.pageSize ?? 10;
 	return (
 		<ViewTransition>
-			<input
-				type='text'
-				placeholder='Search users...'
-				className='mb-4 w-full rounded border p-2'
-			/>
-			<ListPageLayout
-				Filters={
-					<UserSearchBar
+			<ListPageLayout>
+				<ListPageLayout.Filters>
+					<UserSearchBar />
+				</ListPageLayout.Filters>
+
+				<ListPageLayout.Content>
+					<UsersList
 						isLoading={isLoading}
-						updateCriteria={updateSearchCriteria}
-						criteria={userSearchCriteria}
+						users={users}
+						pageSize={effectivePageSize}
+						totalCount={totalCount}
+						sortBy={filters?.sortBy}
+						sortOrder={filters?.sortOrder}
+						onSortChange={handleSortChange}
 					/>
-				}
-				Footer={
+				</ListPageLayout.Content>
+
+				<ListPageLayout.Footer>
 					<Pagination
 						totalCount={totalCount ?? 0}
 						totalPages={totalPages ?? 1}
-						currentPage={page ?? 1}
-						pageSize={pageSize ?? 10}
+						currentPage={page ?? filters?.page ?? 1}
+						pageSize={pageSize ?? filters?.pageSize ?? 10}
 						onPageChange={handlePageChange}
 						onPageSizeChange={handlePageSizeChange}
 					/>
-				}
-				Content={
-					<UserList isLoading={isLoading} users={users} pageSize={effectivePageSize} />
-				}
-			></ListPageLayout>
+				</ListPageLayout.Footer>
+			</ListPageLayout>
 		</ViewTransition>
 	);
 };

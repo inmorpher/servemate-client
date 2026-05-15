@@ -6,16 +6,9 @@ import { Tab } from '@/shared/components/tabs/types/tabs.type';
 import { ListError } from '@/shared/layouts/Error';
 import { ListPageLayout } from '@/shared/layouts/ListPageLayout';
 import { OrderSearchCriteria } from '@servemate/dto';
-import type { ComponentType, ReactNode } from 'react';
 import { useGetOrdersAndMeta } from '../hooks/useGetOrdersAndMeta';
 import OrderFilters from './OrderFilters';
-import { OrderListTest } from './OrderListTest';
-
-const OrdersPageLayout = ListPageLayout as unknown as ComponentType<{
-	Filters?: ReactNode;
-	Content?: ReactNode;
-	Footer?: ReactNode;
-}>;
+import { OrderList } from './OrderList';
 
 export const OrdersListPage = () => {
 	const currentTab: Tab<OrderSearchCriteria> | undefined = useTabs((state) =>
@@ -49,18 +42,20 @@ export const OrdersListPage = () => {
 	}
 
 	return (
-		<OrdersPageLayout
-			Filters={<OrderFilters />}
-			Content={
-				<OrderListTest
+		<ListPageLayout>
+			<ListPageLayout.Filters>
+				<OrderFilters />
+			</ListPageLayout.Filters>
+			<ListPageLayout.Content>
+				<OrderList
 					orders={data?.orders}
 					isLoading={isLoading}
 					onSortChange={handleSortChange}
 					sortBy={filters?.sortBy}
 					sortOrder={filters?.sortOrder}
 				/>
-			}
-			Footer={
+			</ListPageLayout.Content>
+			<ListPageLayout.Footer>
 				<Pagination
 					totalCount={data?.totalCount || 0}
 					totalPages={data?.totalPages || 0}
@@ -83,8 +78,8 @@ export const OrdersListPage = () => {
 						})
 					}
 				/>
-			}
-		/>
+			</ListPageLayout.Footer>
+		</ListPageLayout>
 	);
 };
 

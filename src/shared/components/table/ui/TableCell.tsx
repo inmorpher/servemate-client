@@ -14,9 +14,9 @@ export const TableCell = ({
 			ref={ref}
 			align={align}
 			className={cn(
-				'border-ctp-surface1 data-[active=true]:bg-ctp-surface1/40 px-4 py-3 align-middle font-semibold transition-colors',
+				'border-ctp-surface1 data-[active=true]:bg-ctp-surface1/60 bg-ctp-surface0 group-hover:bg-ctp-surface0/2 px-4 py-3 align-middle font-semibold',
 				truncate && 'truncate',
-				isSelected && 'bg-ctp-surface1/40',
+				isSelected && 'bg-ctp-red',
 				className,
 			)}
 			{...props}

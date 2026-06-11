@@ -1,7 +1,7 @@
-import { cn } from '@/shared/utils/classNames';
 import { Popover, PopoverContent, PopoverTrigger } from '@radix-ui/react-popover';
 import { MoreHorizontal, MoreVertical } from 'lucide-react';
 import { ReactNode, useState } from 'react';
+import { Button } from '../button/Button';
 
 export type ActionMenuItem = {
 	label: string;
@@ -41,26 +41,26 @@ export const ActionMenu = ({
 
 			<PopoverContent
 				align='end'
-				className='border-ctp-text bg-ctp-surface0 corner-squircle w-48 space-y-1 rounded-2xl p-1'
+				className='border-ctp-text bg-ctp-surface0 corner-squircle corner-squircle w-48 space-y-1 rounded-2xl p-1'
 			>
 				<div className=''>
 					{items.map((item) => (
-						<button
+						<Button
 							key={item.label}
-							type='button'
+							variant={item.variant}
 							onClick={() => {
 								item.onClick();
 								setOpen(false);
 							}}
-							className={cn(
-								'hover:bg-ctp-surface1 text-ctp-text flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm transition-colors',
-								item.variant === 'destructive' &&
-									'text-ctp-red/2 hover:text-ctp-red',
-							)}
+							className='w-full'
+							// className={cn(
+							// 	'hover:bg-ctp-surface1 text-ctp-text flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm transition-colors',
+							// 	item.variant === 'destructive' && 'text-ctp-red hover:bg-ctp-red/10'
+							// )}
 						>
 							{item.icon}
 							{item.label}
-						</button>
+						</Button>
 					))}
 				</div>
 			</PopoverContent>

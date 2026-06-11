@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@/shared/components/button';
 import { Pagination } from '@/shared/components/pagination';
 import { useTabs } from '@/shared/components/tabs/store/useTabs';
 import { Tab } from '@/shared/components/tabs/types/tabs.type';
@@ -8,7 +9,7 @@ import { UserSearchCriteria } from '@servemate/dto';
 import { ViewTransition } from 'react';
 import { useGetUsers } from '../hooks/useUsers';
 import UserSearchBar from './UserSearchBar';
-import { UsersList } from './UsersList';
+import { UsersList } from './table/UsersList';
 /**
  * Renders the user management page for clients, including search, pagination, and user list.
  *
@@ -73,7 +74,6 @@ const UserClientPage = ({ tabId }: { tabId: Tab['id'] }) => {
 
 	const { users, totalCount, totalPages, page, pageSize } = data || {};
 
-	const effectivePageSize = pageSize ?? filters?.pageSize ?? 10;
 	return (
 		<ViewTransition>
 			<ListPageLayout>
@@ -82,11 +82,10 @@ const UserClientPage = ({ tabId }: { tabId: Tab['id'] }) => {
 				</ListPageLayout.Filters>
 
 				<ListPageLayout.Content>
+					<Button variant='destructive'>fsdfds</Button>
 					<UsersList
 						isLoading={isLoading}
 						users={users}
-						pageSize={effectivePageSize}
-						totalCount={totalCount}
 						sortBy={filters?.sortBy}
 						sortOrder={filters?.sortOrder}
 						onSortChange={handleSortChange}

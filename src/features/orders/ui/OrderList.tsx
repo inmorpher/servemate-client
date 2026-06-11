@@ -68,8 +68,17 @@ export const OrderList = ({
 	};
 
 	return (
-		<div className='border-ctp-surface1 bg-ctp-surface0 min-w-50 overflow-x-auto rounded-xl border'>
+		<div className='border-ctp-surface1 bg-ctp-surface0 max-w-full overflow-x-auto rounded-xl border'>
 			<Table className='text-ctp-text w-full table-fixed'>
+				<colgroup>
+					<col style={{ width: '5rem' }} />
+					<col style={{ width: '10rem' }} />
+					<col style={{ width: '8rem' }} />
+					<col style={{ width: '8rem' }} />
+					<col style={{ width: '8rem' }} />
+					<col style={{ width: '8rem' }} />
+					<col style={{ width: '5rem' }} />
+				</colgroup>
 				<Table.Head>
 					<Table.Row className='bg-ctp-surface1/60 text-ctp-subtext0 divide-amber-50 p-0'>
 						{columns.map((column) => {
@@ -106,7 +115,7 @@ export const OrderList = ({
 						{orders?.map((order) => (
 							<Table.Row key={order.id}>
 								<Table.Cell data-active={isActiveColumn(OrderSortOptions.ID)}>
-									Order #{order.id}
+									#{order.id}
 								</Table.Cell>
 
 								<Table.Cell
@@ -129,7 +138,8 @@ export const OrderList = ({
 									className='text-ctp-green font-semibold'
 									data-active={isActiveColumn(OrderSortOptions.TOTAL_AMOUNT)}
 								>
-									{formatCurrency(order.totalAmount)}
+									{formatCurrency(order.totalAmount)} |{' '}
+									{formatCurrency(order.tip)} | {formatCurrency(order.discount)}
 								</Table.Cell>
 								<Table.Cell
 									className='text-monospace text-ctp-subtext0'

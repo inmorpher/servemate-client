@@ -1,17 +1,17 @@
 import { UserRole } from '@servemate/dto';
 
-const getRoleColor = (role: UserRole) => {
+const getRoleColor = (role: UserRole, variant: 'text' | 'bg') => {
 	switch (role) {
 		case 'ADMIN':
-			return 'bg-ctp-mauve text-ctp-base';
+			return variant === 'text' ? 'text-ctp-mauve' : 'bg-ctp-mauve';
 		case 'MANAGER':
-			return 'bg-ctp-peach text-ctp-base';
+			return variant === 'text' ? 'text-ctp-peach' : 'bg-ctp-peach';
 		case 'HOST':
-			return 'bg-ctp-mauve text-ctp-base';
+			return variant === 'text' ? 'text-ctp-mauve' : 'bg-ctp-mauve';
 		case 'USER':
-			return 'bg-ctp-text text-ctp-base ';
+			return variant === 'text' ? 'text-ctp-text' : 'bg-ctp-text';
 		default:
-			return 'bg-ctp-surface1 text-ctp-text';
+			return variant === 'text' ? 'text-ctp-text' : 'bg-ctp-surface1';
 	}
 };
 

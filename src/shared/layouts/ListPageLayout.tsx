@@ -40,7 +40,7 @@ const ListPageLayoutRoot = ({ children }: ListPageLayoutProps) => {
 	};
 
 	const filtersWithAside = filters ? (
-		<aside className='lg:bg-ctp-surface0 sticky top-14.25 z-20 h-screen w-full overflow-x-hidden overflow-y-auto p-2 py-10 md:h-[calc(100vh-3.5625rem)] md:overflow-y-auto md:py-2 lg:w-70'>
+		<aside className='lg:bg-ctp-surface0 h-full w-full self-stretch overflow-x-hidden overflow-y-auto p-2 py-10 md:py-2 lg:w-70'>
 			{filters}
 		</aside>
 	) : null;
@@ -60,7 +60,7 @@ const ListPageLayoutRoot = ({ children }: ListPageLayoutProps) => {
 				</Drawer>
 			)}
 
-			<div className='relative flex'>
+			<div className='flex h-[calc(100dvh-3.5625rem)] min-h-0 min-w-0 overflow-hidden'>
 				{/* Фильтры показываются только на десктопе */}
 				{!isMobile && filtersWithAside}
 
@@ -114,8 +114,8 @@ interface ContentProps {
 
 const Content = ({ children }: ContentProps) => {
 	return (
-		<main className='flex min-w-0 flex-1 flex-col overflow-hidden'>
-			<section className='min-w-0 flex-1 overflow-x-auto overflow-y-auto p-2 md:px-6'>
+		<main className='relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden'>
+			<section className='min-h-0 w-full min-w-0 flex-1 overflow-y-auto p-2 md:px-6'>
 				{children}
 			</section>
 		</main>

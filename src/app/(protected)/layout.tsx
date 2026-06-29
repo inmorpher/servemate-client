@@ -9,8 +9,7 @@ import { AppLauncherPopover } from '@/shared/components/header/AppLauncherPopove
 import { HeaderActionsMenu } from '@/shared/components/header/HeaderActionsMenu';
 import { TabsDropdown, TabsHorizontal } from '@/shared/components/tabs';
 import { useDrawerStore } from '@/shared/store/useDrawerStore';
-import { Menu } from 'lucide-react';
-import { ReactNode } from 'react';
+import { createContext, ReactNode, useCallback, useState } from 'react';
 
 /**
  * ProtectedLayout
@@ -39,6 +38,9 @@ import { ReactNode } from 'react';
  * @see {@link ListPageLayout} - Sub-layout for list-based pages
  * @see {@link src/shared/components/header} - Header components
  */
+export const FiltersPortalContext = createContext<{ target: HTMLDivElement | null }>({
+	target: null,
+});
 
 interface ProtectedLayoutProps {
 	/** React node(s) to render in the main content area */
@@ -49,25 +51,17 @@ const HEADER_HEIGHT = '14.24';
 
 const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
 	const toggle = useDrawerStore((state) => state.toggle);
+	const [portalTarget, setPortalTarget] = useState<HTMLDivElement | null>(null);
 
+	const setPortalHostRef = useCallback((node: HTMLDivElement | null) => {
+		setPortalTarget(node);
+	}, []);
 	return (
 		<>
 			{/* Header with sticky positioning */}
 			<header
-				className={`bg-ctp-base sticky inset-x-0 top-0 left-0 z-40 flex w-full items-center gap-2 px-4 py-2 lg:h-${HEADER_HEIGHT}`}
+				className={`bg-ctp-base sticky inset-x-0 top-0 left-0 z-40 flex w-full items-center gap-2 px-4 py-2 lg:h-14`}
 			>
-				{/*
-				 * Menu button for sidebar toggle.
-				 * Desktop only (lg+) — allows toggling sidebar visibility state
-				 */}
-				<button
-					onClick={() => toggle('sidebar')}
-					className='hidden p-2 lg:block'
-					aria-label='Toggle sidebar'
-				>
-					<Menu className='text-ctp-text h-4 w-4' />
-				</button>
-
 				{/* App Launcher - Mobile only (<lg) - used for app switcher on small screens */}
 				<div className='flex lg:hidden'>
 					<AppLauncherPopover />
@@ -95,20 +89,26 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
 					<HeaderActionsMenu notificationCount={0} />
 				</div>
 			</header>
-
-			{/* Sidebar and main content container */}
-			<div className='flex min-w-0'>
-				<Sidebar>
-					<SidebarNavigation />
-				</Sidebar>
-				{/* <div className='fixed right-0 bottom-0 left-0 z-50 lg:hidden'>
+			<FiltersPortalContext.Provider value={{ target: portalTarget }}>
+				{/* Sidebar and main content container */}
+				<div className='flex min-w-0'>
+					<Sidebar>
+						<SidebarNavigation />
+					</Sidebar>
+					{/* <div className='fixed right-0 bottom-0 left-0 z-50 lg:hidden'>
 					<TabsDropdown isMobile />
 				</div> */}
-				{/* Main content area - flexes to fill available space */}
-				<main className='relative min-h-0 min-w-0 flex-1 overflow-hidden lg:mb-0'>
-					{children}
-				</main>
-			</div>
+
+					<aside
+						id='filters-drawer'
+						ref={setPortalHostRef}
+						className='scrollbar-thin'
+					></aside>
+
+					{/* Main content area - flexes to fill available space */}
+					<main className='relative flex-1 overflow-hidden lg:mb-0'>{children}</main>
+				</div>
+			</FiltersPortalContext.Provider>
 		</>
 	);
 };

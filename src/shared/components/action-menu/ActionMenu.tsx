@@ -41,7 +41,7 @@ export const ActionMenu = ({
 
 			<PopoverContent
 				align='end'
-				className='border-ctp-text bg-ctp-surface0 corner-squircle corner-squircle w-48 space-y-1 rounded-2xl p-1'
+				className='border-ctp-text bg-ctp-surface0 corner-squircle corner-squircle data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 w-48 space-y-1 rounded-2xl p-1'
 			>
 				<div className=''>
 					{items.map((item) => (

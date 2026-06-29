@@ -1,12 +1,10 @@
 'use client';
 
-import { Button } from '@/shared/components/button';
 import { Pagination } from '@/shared/components/pagination';
-import { useTabs } from '@/shared/components/tabs/store/useTabs';
 import { Tab } from '@/shared/components/tabs/types/tabs.type';
+import { useListPageState } from '@/shared/hooks/useListPageState';
 import { ListPageLayout } from '@/shared/layouts/ListPageLayout';
 import { UserSearchCriteria } from '@servemate/dto';
-import { ViewTransition } from 'react';
 import { useGetUsers } from '../hooks/useUsers';
 import UserSearchBar from './UserSearchBar';
 import { UsersList } from './table/UsersList';
@@ -20,90 +18,36 @@ import { UsersList } from './table/UsersList';
  */
 
 const UserClientPage = ({ tabId }: { tabId: Tab['id'] }) => {
-	const currentTab: Tab<UserSearchCriteria> | undefined = useTabs((state) =>
-		state.getTabById(tabId),
-	);
-	const updateTab = useTabs((state) => state.updateTab);
-	const filters = currentTab?.filters;
+	const { filters, handleSortChange, handlePageChange, handlePageSizeChange } =
+		useListPageState<UserSearchCriteria>({ tabId });
+
 	const { isLoading, data } = useGetUsers(filters || {});
-
-	const handleSortChange = (sortBy: NonNullable<UserSearchCriteria['sortBy']>) => {
-		if (!currentTab) {
-			return;
-		}
-
-		const nextSortOrder =
-			filters?.sortBy === sortBy && filters?.sortOrder === 'desc' ? 'asc' : 'desc';
-
-		updateTab(currentTab.id, {
-			filters: {
-				...(filters || {}),
-				sortBy,
-				sortOrder: nextSortOrder,
-				page: 1,
-			},
-		});
-	};
-
-	const handlePageChange = (newPage: number) => {
-		if (!currentTab) {
-			return;
-		}
-
-		updateTab(currentTab.id, {
-			filters: {
-				...(filters || {}),
-				page: newPage,
-			},
-		});
-	};
-
-	const handlePageSizeChange = (newSize: number) => {
-		if (!currentTab) {
-			return;
-		}
-
-		updateTab(currentTab.id, {
-			filters: {
-				...(filters || {}),
-				pageSize: newSize,
-				page: 1,
-			},
-		});
-	};
 
 	const { users, totalCount, totalPages, page, pageSize } = data || {};
 
 	return (
-		<ViewTransition>
-			<ListPageLayout>
-				<ListPageLayout.Filters>
-					<UserSearchBar />
-				</ListPageLayout.Filters>
-
-				<ListPageLayout.Content>
-					<Button variant='destructive'>fsdfds</Button>
-					<UsersList
-						isLoading={isLoading}
-						users={users}
-						sortBy={filters?.sortBy}
-						sortOrder={filters?.sortOrder}
-						onSortChange={handleSortChange}
-					/>
-				</ListPageLayout.Content>
-
-				<ListPageLayout.Footer>
-					<Pagination
-						totalCount={totalCount ?? 0}
-						totalPages={totalPages ?? 1}
-						currentPage={page ?? filters?.page ?? 1}
-						pageSize={pageSize ?? filters?.pageSize ?? 10}
-						onPageChange={handlePageChange}
-						onPageSizeChange={handlePageSizeChange}
-					/>
-				</ListPageLayout.Footer>
-			</ListPageLayout>
-		</ViewTransition>
+		<ListPageLayout
+			filters={<UserSearchBar />}
+			content={
+				<UsersList
+					isLoading={isLoading}
+					users={users}
+					sortBy={filters?.sortBy}
+					sortOrder={filters?.sortOrder}
+					onSortChange={handleSortChange}
+				/>
+			}
+			footer={
+				<Pagination
+					totalCount={totalCount ?? 0}
+					totalPages={totalPages ?? 1}
+					currentPage={page ?? filters?.page ?? 1}
+					pageSize={pageSize ?? filters?.pageSize ?? 10}
+					onPageChange={handlePageChange}
+					onPageSizeChange={handlePageSizeChange}
+				/>
+			}
+		/>
 	);
 };
 

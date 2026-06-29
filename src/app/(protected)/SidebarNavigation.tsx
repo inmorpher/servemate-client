@@ -1,6 +1,5 @@
 'use client';
 
-import { NavButton } from '@/shared/components/nav-button/NavButton';
 import { SidebarNavItemWithPopover } from '@/shared/components/sidebar/SidebarNavItemWithPopover';
 import { BarChart3, Settings, ShoppingCart, Users } from 'lucide-react';
 
@@ -30,12 +29,6 @@ export const SidebarNavigation = () => {
 				label='Settings'
 				icon={<Settings className='h-5 w-5' />}
 				color='bg-ctp-sky'
-			/>
-			<NavButton
-				label='Dashboard'
-				onClick={() => console.log('Dashboard clicked')}
-				icon={<BarChart3 className='h-5 w-5' />}
-				variant='sidebar'
 			/>
 		</nav>
 	);

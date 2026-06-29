@@ -12,13 +12,17 @@ interface UserTableBodyProps {
 
 export const UserTableBody = ({ users, isLoading, sortBy, onDelete }: UserTableBodyProps) => (
 	<Table.Body>
-		{users?.map((user) => (
-			<UserTableRow
-				key={'user-table' + user.id}
-				user={user}
-				sortBy={sortBy}
-				onDelete={onDelete}
-			/>
-		))}
+		{users && users.length > 0 ? (
+			users.map((user) => (
+				<UserTableRow
+					key={'user-table' + user.id}
+					user={user}
+					sortBy={sortBy}
+					onDelete={onDelete}
+				/>
+			))
+		) : (
+			<Table.EmptyState colSpan={7}>No users found for the current filters.</Table.EmptyState>
+		)}
 	</Table.Body>
 );

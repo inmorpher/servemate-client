@@ -20,7 +20,7 @@ export const OrderFilters = () => {
 	} = useOrderFilters();
 
 	return (
-		<Filter className='max-h-dvh'>
+		<Filter>
 			<FilterReset filters={filters} />
 			{/* Date Range Filter */}
 			{metaData?.dates && (
@@ -91,6 +91,9 @@ export const OrderFilters = () => {
 					</SearchChip>
 				))}
 			</Filter.Group>
+			{
+				/////// Additional filters can be added here in the future
+			}
 		</Filter>
 	);
 };

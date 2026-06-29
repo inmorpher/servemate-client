@@ -26,8 +26,8 @@ export const UsersTable = ({
 	onEditUser,
 	onDeleteUser,
 }: UsersTableProps) => (
-	<div className='border-ctp-surface1 bg-ctp-surface0 max-w-full min-w-0 overflow-x-auto overflow-y-auto rounded-xl border'>
-		<Table className='text-ctp-text w-full min-w-max table-fixed'>
+	<div className='border-ctp-surface1 shadow-soft max-w-full min-w-0 overflow-x-auto overflow-y-auto border'>
+		<Table className='text-ctp-text w-full min-w-230 table-fixed'>
 			<UsersTableColGroup />
 			{isLoading ? (
 				<Table.Skeleton rows={10} columns={USER_COLUMN_COUNT} />

@@ -43,6 +43,5 @@ export interface DrawerContentProps {
  * Receives a boolean indicating whether the drawer is open (`true`) or closed (`false`).
  */
 export interface DrawerOverlayProps {
-	onOpenChange: (open: boolean) => void;
-	id?: string;
+	id: string;
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@/shared/components/button';
 import { Pagination } from '@/shared/components/pagination';
 import { Tab } from '@/shared/components/tabs/types/tabs.type';
 import { useListPageState } from '@/shared/hooks/useListPageState';
@@ -23,6 +24,32 @@ export const OrdersListPage = ({ tabId }: { tabId: Tab['id'] }) => {
 
 	return (
 		<ListPageLayout
+			title='Orders'
+			description='Manage and review all orders in one place.'
+			actions={
+				<>
+					<Button variant='outline' size='sm'>
+						Export
+					</Button>
+					<Button size='sm'>Create order</Button>
+				</>
+			}
+			activeFilters={[
+				{ id: 'status', label: 'Status: Active', onRemove: () => undefined },
+				{ id: 'date', label: 'Date: Today', onRemove: () => undefined },
+			]}
+			onClearFilters={() => undefined}
+			toolbarActions={
+				<>
+					<Button variant='outline' size='sm'>
+						Filters
+					</Button>
+					<Button variant='ghost' size='sm'>
+						Sort
+					</Button>
+				</>
+			}
+			showViewToggle
 			filters={<OrderFilters />}
 			content={
 				<OrderList

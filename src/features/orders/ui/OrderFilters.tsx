@@ -5,8 +5,8 @@ import { SearchChip } from '@/features/search/ui/SearchChip';
 import { DateRangePicker } from '@/shared/components/date-range-picker';
 import { Filter } from '@/shared/components/filter/index';
 import FilterReset from '@/shared/components/filter/ui/FilterReset';
-import RangeSlider from '@/shared/components/slider/ui/Slider';
 import { useOrderFilters } from '../hooks/useOrderFilters';
+import { PriceRangeFilter } from './PriceRangeFilter';
 
 export const OrderFilters = () => {
 	const {
@@ -55,8 +55,7 @@ export const OrderFilters = () => {
 			{/* Price Range Filter */}
 			{metaData?.prices && (
 				<Filter.Group label='Price Range'>
-					<RangeSlider
-						key={filters?.minAmount && filters?.maxAmount ? 'active' : 'reset'}
+					<PriceRangeFilter
 						minValue={metaData.prices.min}
 						maxValue={metaData.prices.max}
 						onChange={handlePriceRangeChange}

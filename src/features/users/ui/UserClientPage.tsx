@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@/shared/components/button';
 import { Pagination } from '@/shared/components/pagination';
 import { Tab } from '@/shared/components/tabs/types/tabs.type';
 import { useListPageState } from '@/shared/hooks/useListPageState';
@@ -27,6 +28,32 @@ const UserClientPage = ({ tabId }: { tabId: Tab['id'] }) => {
 
 	return (
 		<ListPageLayout
+			title='Users'
+			description='Manage clients and review account data.'
+			actions={
+				<>
+					<Button variant='outline' size='sm'>
+						Invite
+					</Button>
+					<Button size='sm'>Add user</Button>
+				</>
+			}
+			activeFilters={[
+				{ id: 'role', label: 'Role: Client', onRemove: () => undefined },
+				{ id: 'status', label: 'Status: Active', onRemove: () => undefined },
+			]}
+			onClearFilters={() => undefined}
+			toolbarActions={
+				<>
+					<Button variant='outline' size='sm'>
+						Filters
+					</Button>
+					<Button variant='ghost' size='sm'>
+						Sort
+					</Button>
+				</>
+			}
+			showViewToggle
 			filters={<UserSearchBar />}
 			content={
 				<UsersList

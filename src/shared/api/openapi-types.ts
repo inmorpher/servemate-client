@@ -13,71 +13,137 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Login user */
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["LoginRequest"];
-                };
-            };
-            responses: {
-                /** @description Successful login */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["LoginResponse"];
-                    };
-                };
-            };
-        };
+        /** login */
+        post: operations["AuthenticationController_login"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/tables": {
+    "/api/auth/logout": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** List tables */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description List of tables */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["TablesResponse"];
-                    };
-                };
-            };
+        get?: never;
+        put?: never;
+        /** logout */
+        post: operations["AuthenticationController_logout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/refresh-token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
+        get?: never;
+        put?: never;
+        /** refreshToken */
+        post: operations["AuthenticationController_refreshToken"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** me */
+        get: operations["AuthenticationController_me"];
         put?: never;
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/drink-items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** getDrinkItems */
+        get: operations["DrinkItemsController_getDrinkItems"];
+        put?: never;
+        /** createDrinkItem */
+        post: operations["DrinkItemsController_createDrinkItem"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/drink-items/:id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** getDrinkItem */
+        get: operations["DrinkItemsController_getDrinkItem"];
+        put?: never;
+        post?: never;
+        /** deleteDrinkItem */
+        delete: operations["DrinkItemsController_deleteDrinkItem"];
+        options?: never;
+        head?: never;
+        /** updateDrinkItem */
+        patch: operations["DrinkItemsController_updateDrinkItem"];
+        trace?: never;
+    };
+    "/api/food-items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** getFoodItems */
+        get: operations["FoodItemsController_getFoodItems"];
+        put?: never;
+        /** createFoodItem */
+        post: operations["FoodItemsController_createFoodItem"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/food-items/:id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** getFoodItem */
+        get: operations["FoodItemsController_getFoodItem"];
+        put?: never;
+        post?: never;
+        /** deleteFoodItem */
+        delete: operations["FoodItemsController_deleteFoodItem"];
+        options?: never;
+        head?: never;
+        /** updateFoodItem */
+        patch: operations["FoodItemsController_updateFoodItem"];
         trace?: never;
     };
     "/api/orders": {
@@ -87,30 +153,447 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List orders */
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                /** @description List of orders */
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["OrdersResponse"];
-                    };
-                };
-            };
+        /** getOrders */
+        get: operations["OrdersController_getOrders"];
+        put?: never;
+        /** createOrder */
+        post: operations["OrdersController_createOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/orders/meta": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
+        /** getOrderMeta */
+        get: operations["OrdersController_getOrderMeta"];
         put?: never;
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/orders/:id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** getOrderById */
+        get: operations["OrdersController_getOrderById"];
+        put?: never;
+        post?: never;
+        /** deleteOrder */
+        delete: operations["OrdersController_deleteOrder"];
+        options?: never;
+        head?: never;
+        /** updateOrderProperties */
+        patch: operations["OrdersController_updateOrderProperties"];
+        trace?: never;
+    };
+    "/api/orders/:id/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** updateOrderItems */
+        patch: operations["OrdersController_updateOrderItems"];
+        trace?: never;
+    };
+    "/api/orders/:id/print": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** orderItemsPrint */
+        post: operations["OrdersController_orderItemsPrint"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/orders/:id/call": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** orderItemsCall */
+        post: operations["OrdersController_orderItemsCall"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** getPayments */
+        get: operations["PaymentController_getPayments"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payments/:id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** getPayment */
+        get: operations["PaymentController_getPayment"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payments/order/:id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** createPayment */
+        post: operations["PaymentController_createPayment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payments/complete/:id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** completePayment */
+        post: operations["PaymentController_completePayment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payments/refund/:id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** refundPayment */
+        post: operations["PaymentController_refundPayment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payments/cancel/:id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** cancelPayment */
+        post: operations["PaymentController_cancelPayment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/reservations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** getAllReservations */
+        get: operations["ReservationController_getAllReservations"];
+        put?: never;
+        /** createReservation */
+        post: operations["ReservationController_createReservation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/reservations/:id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** getReservationById */
+        get: operations["ReservationController_getReservationById"];
+        /** updateReservation */
+        put: operations["ReservationController_updateReservation"];
+        post?: never;
+        /** deleteReservation */
+        delete: operations["ReservationController_deleteReservation"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/reservations/:id/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** updateReservationStatus */
+        patch: operations["ReservationController_updateReservationStatus"];
+        trace?: never;
+    };
+    "/api/reservations/:id/time": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** updateReservationTime */
+        patch: operations["ReservationController_updateReservationTime"];
+        trace?: never;
+    };
+    "/api/reservations/:id/tables": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** updateReservationTables */
+        patch: operations["ReservationController_updateReservationTables"];
+        trace?: never;
+    };
+    "/api/reservations/:id/guest-info": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** updateReservationGuestInfo */
+        patch: operations["ReservationController_updateReservationGuestInfo"];
+        trace?: never;
+    };
+    "/api/reservations/:id/comment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** updateReservationComment */
+        patch: operations["ReservationController_updateReservationComment"];
+        trace?: never;
+    };
+    "/api/tables": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** getTables */
+        get: operations["TableController_getTables"];
+        put?: never;
+        /** createTable */
+        post: operations["TableController_createTable"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tables/:id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** getTableById */
+        get: operations["TableController_getTableById"];
+        /** updateTable */
+        put: operations["TableController_updateTable"];
+        post?: never;
+        /** deleteTable */
+        delete: operations["TableController_deleteTable"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tables/:id/clear": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** clearTable */
+        patch: operations["TableController_clearTable"];
+        trace?: never;
+    };
+    "/api/tables/assign": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** assignTableToServer */
+        post: operations["TableController_assignTableToServer"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tables/:id/seat": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** seatGuests */
+        patch: operations["TableController_seatGuests"];
+        trace?: never;
+    };
+    "/api/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** getUsers */
+        get: operations["UserController_getUsers"];
+        put?: never;
+        /** createUser */
+        post: operations["UserController_createUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/users/:id": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** updateUser */
+        put: operations["UserController_updateUser"];
+        post?: never;
+        /** deleteUser */
+        delete: operations["UserController_deleteUser"];
         options?: never;
         head?: never;
         patch?: never;
@@ -120,6 +603,806 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        arrayQueryParamSchema: Record<string, never>;
+        listPropsSchema: {
+            page?: number;
+            pageSize?: number;
+            totalPages: number;
+            totalCount: number;
+        };
+        searchCriteriaSchema: {
+            page?: number;
+            pageSize?: number;
+            /** @enum {string} */
+            sortOrder?: "asc" | "desc";
+        };
+        baseItemSchema: {
+            id: number;
+            name: string;
+            price: number;
+            description: string;
+            ingredients: Record<string, never>;
+            isAvailable?: boolean;
+            popularityScore?: number;
+            image?: string;
+        };
+        drinkItemSchema: {
+            id: number;
+            name: string;
+            price: number;
+            description: string;
+            ingredients: Record<string, never>;
+            isAvailable?: boolean;
+            popularityScore?: number;
+            image?: string;
+            category: Record<string, never>;
+            volume: number;
+            alcoholPercentage: number;
+            isCarbonated: Record<string, never>;
+            tempriture: Record<string, never>;
+        };
+        foodItemSchema: {
+            id: number;
+            name: string;
+            price: number;
+            description: string;
+            ingredients: Record<string, never>;
+            isAvailable?: boolean;
+            popularityScore?: number;
+            image?: string;
+            category: Record<string, never>;
+            /** @enum {string} */
+            type: "APPETIZER" | "MAIN_COURSE" | "DESSERT" | "SIDES" | "SAUCE" | "OTHER";
+            isVegan?: boolean;
+            isGlutenFree?: boolean;
+            isVegetarian?: boolean;
+            allergies: Record<string, never>;
+            preparationTime?: number;
+            /** @enum {string} */
+            spicyLevel?: "NOT_SPICY" | "MILD" | "MEDIUM" | "HOT" | "EXTRA_HOT";
+            calories?: number;
+        };
+        createDrinkItemSchema: {
+            name: string;
+            price: number;
+            description: string;
+            ingredients: Record<string, never>;
+            isAvailable?: boolean;
+            popularityScore?: number;
+            image?: string;
+            category: Record<string, never>;
+            volume: number;
+            alcoholPercentage: number;
+            isCarbonated: Record<string, never>;
+            tempriture: Record<string, never>;
+        };
+        createFoodItemSchema: {
+            name: string;
+            price: number;
+            description: string;
+            ingredients: Record<string, never>;
+            isAvailable?: boolean;
+            popularityScore?: number;
+            image?: string;
+            category: Record<string, never>;
+            /** @enum {string} */
+            type: "APPETIZER" | "MAIN_COURSE" | "DESSERT" | "SIDES" | "SAUCE" | "OTHER";
+            isVegan?: boolean;
+            isGlutenFree?: boolean;
+            isVegetarian?: boolean;
+            allergies: Record<string, never>;
+            preparationTime?: number;
+            /** @enum {string} */
+            spicyLevel?: "NOT_SPICY" | "MILD" | "MEDIUM" | "HOT" | "EXTRA_HOT";
+            calories?: number;
+        };
+        updateDrinkItemSchema: {
+            name?: string;
+            price?: number;
+            description?: string;
+            ingredients?: Record<string, never>;
+            isAvailable?: boolean;
+            popularityScore?: number;
+            image?: string;
+            category?: Record<string, never>;
+            volume?: number;
+            alcoholPercentage?: number;
+            isCarbonated?: Record<string, never>;
+            tempriture?: Record<string, never>;
+        };
+        updateFoodItemSchema: {
+            name?: string;
+            price?: number;
+            description?: string;
+            ingredients?: Record<string, never>;
+            isAvailable?: boolean;
+            popularityScore?: number;
+            image?: string;
+            category?: Record<string, never>;
+            /** @enum {string} */
+            type?: "APPETIZER" | "MAIN_COURSE" | "DESSERT" | "SIDES" | "SAUCE" | "OTHER";
+            isVegan?: boolean;
+            isGlutenFree?: boolean;
+            isVegetarian?: boolean;
+            allergies?: Record<string, never>;
+            preparationTime?: number;
+            /** @enum {string} */
+            spicyLevel?: "NOT_SPICY" | "MILD" | "MEDIUM" | "HOT" | "EXTRA_HOT";
+            calories?: number;
+        };
+        searchFoodItemsSchema: {
+            id?: number;
+            name?: string;
+            price?: number;
+            description?: string;
+            ingredients?: Record<string, never>;
+            isAvailable?: boolean;
+            popularityScore?: number;
+            image?: string;
+            category?: Record<string, never>;
+            /** @enum {string} */
+            type?: "APPETIZER" | "MAIN_COURSE" | "DESSERT" | "SIDES" | "SAUCE" | "OTHER";
+            isVegan?: boolean;
+            isGlutenFree?: boolean;
+            isVegetarian?: boolean;
+            allergies?: Record<string, never>;
+            preparationTime?: number;
+            /** @enum {string} */
+            spicyLevel?: "NOT_SPICY" | "MILD" | "MEDIUM" | "HOT" | "EXTRA_HOT";
+            calories?: number;
+            page?: number;
+            pageSize?: number;
+            /** @enum {string} */
+            sortOrder?: "asc" | "desc";
+            /** @enum {string} */
+            sortBy?: "id" | "name" | "price" | "popularityScore" | "ingredients" | "isAvailable" | "popularityScore" | "createdAt" | "updatedAt" | "type" | "category" | "allergies" | "preparationTime" | "spicyLevel" | "calories" | "isVegan" | "isGlutenFree";
+        };
+        searchDrinkItemsSchema: {
+            id?: number;
+            name?: string;
+            price?: number;
+            description?: string;
+            ingredients?: Record<string, never>;
+            isAvailable?: boolean;
+            popularityScore?: number;
+            image?: string;
+            category?: Record<string, never>;
+            volume?: number;
+            alcoholPercentage?: number;
+            isCarbonated?: Record<string, never>;
+            tempriture?: Record<string, never>;
+            page?: number;
+            pageSize?: number;
+            /** @enum {string} */
+            sortOrder?: "asc" | "desc";
+            /** @enum {string} */
+            sortBy?: "id" | "name" | "price" | "popularityScore" | "ingredients" | "isAvailable" | "popularityScore" | "createdAt" | "updatedAt" | "category" | "volume" | "alcoholPercentage" | "isCarbonated" | "tempriture";
+        };
+        foodItemsListSchema: {
+            page?: number;
+            pageSize?: number;
+            totalPages: number;
+            totalCount: number;
+            items: {
+                id: number;
+                name: string;
+                price: number;
+                description: string;
+                ingredients: Record<string, never>;
+                isAvailable?: boolean;
+                popularityScore?: number;
+                image?: string;
+                category: Record<string, never>;
+                /** @enum {string} */
+                type: "APPETIZER" | "MAIN_COURSE" | "DESSERT" | "SIDES" | "SAUCE" | "OTHER";
+                isVegan?: boolean;
+                isGlutenFree?: boolean;
+                isVegetarian?: boolean;
+                allergies: Record<string, never>;
+                preparationTime?: number;
+                /** @enum {string} */
+                spicyLevel?: "NOT_SPICY" | "MILD" | "MEDIUM" | "HOT" | "EXTRA_HOT";
+                calories?: number;
+            }[];
+        };
+        drinkItemsListSchema: {
+            page?: number;
+            pageSize?: number;
+            totalPages: number;
+            totalCount: number;
+            items: {
+                id: number;
+                name: string;
+                price: number;
+                description: string;
+                ingredients: Record<string, never>;
+                isAvailable?: boolean;
+                popularityScore?: number;
+                image?: string;
+                category: Record<string, never>;
+                volume: number;
+                alcoholPercentage: number;
+                isCarbonated: Record<string, never>;
+                tempriture: Record<string, never>;
+            }[];
+        };
+        orderItemSchema: {
+            id: number;
+            price: number;
+            discount?: number;
+            itemId: number;
+            finalPrice?: number;
+            specialRequest: string;
+            allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
+            printed?: boolean;
+            fired?: boolean;
+            guestNumber: number;
+            /** @enum {string} */
+            paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
+            foodItem?: {
+                name: string;
+                id: number;
+            };
+            drinkItem?: {
+                name: string;
+                id: number;
+            };
+        };
+        OrderSchema: {
+            id: number;
+            tableNumber: number;
+            orderNumber: number;
+            guestsCount: number;
+            /** Format: date-time */
+            orderTime: string;
+            /** Format: date-time */
+            updatedAt: string;
+            allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
+            serverId: number;
+            totalAmount?: number;
+            /** @enum {string} */
+            status?: "AWAITING" | "RECEIVED" | "SERVED" | "CANCELED" | "DISPUTED" | "READY_TO_PAY" | "COMPLETED";
+            comments: string;
+            /** Format: date-time */
+            completionTime: string;
+            discount?: number;
+            tip?: number;
+            shiftId: string;
+        };
+        OrderSearchSchema: {
+            id?: number;
+            tableNumbers: Record<string, never>;
+            guestsCount?: number;
+            allergies: Record<string, never>;
+            serverId?: Record<string, never>;
+            serverName?: string;
+            status?: Record<string, never>;
+            minAmount?: number;
+            maxAmount?: number;
+            page?: number;
+            pageSize?: number;
+            /** @enum {string} */
+            sortBy?: "id" | "tableNumber" | "guestsCount" | "orderTime" | "updatedAt" | "status" | "totalAmount";
+            /** @enum {string} */
+            sortOrder?: "asc" | "desc";
+            /** Format: date-time */
+            dateFrom?: string;
+            /** Format: date-time */
+            dateTo?: string;
+        };
+        foodAndDrinkSchema: {
+            foodItemId: number;
+            quantity: number;
+            price: number;
+            guestNumber: number;
+        };
+        OrderCreateSchema: {
+            tableNumber: number;
+            guestsCount: number;
+            allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
+            serverId: number;
+            totalAmount?: number;
+            /** @enum {string} */
+            status?: "AWAITING" | "RECEIVED" | "SERVED" | "CANCELED" | "DISPUTED" | "READY_TO_PAY" | "COMPLETED";
+            comments: string;
+            /** Format: date-time */
+            completionTime: string;
+            discount?: number;
+            foodItems?: {
+                guestNumber: number;
+                items: {
+                    id?: number;
+                    price: number;
+                    discount?: number;
+                    itemId: number;
+                    finalPrice?: number;
+                    specialRequest: string;
+                    allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
+                    printed?: boolean;
+                    fired?: boolean;
+                    guestNumber?: number;
+                    /** @enum {string} */
+                    paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
+                }[];
+            }[];
+            drinkItems?: {
+                guestNumber: number;
+                items: {
+                    id?: number;
+                    price: number;
+                    discount?: number;
+                    itemId: number;
+                    finalPrice?: number;
+                    specialRequest: string;
+                    allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
+                    printed?: boolean;
+                    fired?: boolean;
+                    guestNumber?: number;
+                    /** @enum {string} */
+                    paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
+                }[];
+            }[];
+        };
+        OrderFullSingleSchema: {
+            id: number;
+            tableNumber: number;
+            guestsCount: number;
+            /** Format: date-time */
+            orderTime: string;
+            /** Format: date-time */
+            updatedAt: string;
+            allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
+            serverId: number;
+            totalAmount?: number;
+            /** @enum {string} */
+            status?: "AWAITING" | "RECEIVED" | "SERVED" | "CANCELED" | "DISPUTED" | "READY_TO_PAY" | "COMPLETED";
+            comments: string;
+            /** Format: date-time */
+            completionTime: string;
+            discount?: number;
+            tip?: number;
+            shiftId: string;
+            server: {
+                name: string;
+                id: number;
+            };
+            foodItems: {
+                guestNumber: number;
+                items: {
+                    id?: number;
+                    price: number;
+                    discount?: number;
+                    itemId: number;
+                    finalPrice?: number;
+                    specialRequest: string;
+                    allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
+                    printed?: boolean;
+                    fired?: boolean;
+                    guestNumber?: number;
+                    /** @enum {string} */
+                    paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
+                }[];
+            }[];
+            drinkItems: {
+                guestNumber: number;
+                items: {
+                    id?: number;
+                    price: number;
+                    discount?: number;
+                    itemId: number;
+                    finalPrice?: number;
+                    specialRequest: string;
+                    allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
+                    printed?: boolean;
+                    fired?: boolean;
+                    guestNumber?: number;
+                    /** @enum {string} */
+                    paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
+                }[];
+            }[];
+        };
+        OrderUpdateProps: {
+            tableNumber?: number;
+            guestsCount?: number;
+            allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
+            totalAmount?: number;
+            /** @enum {string} */
+            status?: "AWAITING" | "RECEIVED" | "SERVED" | "CANCELED" | "DISPUTED" | "READY_TO_PAY" | "COMPLETED";
+            comments: string;
+            discount?: number;
+            tip?: number;
+        };
+        OrderUpdateItemsSchema: {
+            foodItems?: {
+                guestNumber: number;
+                items: {
+                    price: number;
+                    discount?: number;
+                    itemId: number;
+                    finalPrice?: number;
+                    specialRequest: string;
+                    allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
+                    printed?: boolean;
+                    fired?: boolean;
+                    /** @enum {string} */
+                    paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
+                }[];
+            }[];
+            drinkItems?: {
+                guestNumber: number;
+                items: {
+                    price: number;
+                    discount?: number;
+                    itemId: number;
+                    finalPrice?: number;
+                    specialRequest: string;
+                    allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
+                    printed?: boolean;
+                    fired?: boolean;
+                    /** @enum {string} */
+                    paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
+                }[];
+            }[];
+        };
+        OrderItemIdsSchema: Record<string, never>;
+        OrderIds: Record<string, never>;
+        PrepareItems: {
+            foodItems?: {
+                id?: number;
+                price?: number;
+                discount?: number;
+                itemId?: number;
+                finalPrice?: number;
+                specialRequest?: string;
+                allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
+                printed?: boolean;
+                fired?: boolean;
+                guestNumber?: number;
+                /** @enum {string} */
+                paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
+                foodItem?: {
+                    name: string;
+                    id: number;
+                };
+            }[];
+            drinkItems?: {
+                id?: number;
+                price?: number;
+                discount?: number;
+                itemId?: number;
+                finalPrice?: number;
+                specialRequest?: string;
+                allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
+                printed?: boolean;
+                fired?: boolean;
+                guestNumber?: number;
+                /** @enum {string} */
+                paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
+                drinkItem?: {
+                    name: string;
+                    id: number;
+                };
+            }[];
+        };
+        OrderMeta: {
+            statuses: ("AWAITING" | "RECEIVED" | "SERVED" | "CANCELED" | "DISPUTED" | "READY_TO_PAY" | "COMPLETED")[];
+            allergies: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
+            maxGuests: number;
+            prices: {
+                min: number;
+                max: number;
+            };
+            dates: {
+                min: string;
+                max: string;
+            };
+            tableNumbers: number[];
+            filtered: {
+                maxGuests: number;
+                prices: {
+                    min: number;
+                    max: number;
+                };
+                dates: {
+                    min: string;
+                    max: string;
+                };
+                tableNumbers: number[];
+            };
+        };
+        PaymentSchema: {
+            id: number;
+            amount: number;
+            tax?: number;
+            tip?: number;
+            serviceCharge?: number;
+            paymentType: Record<string, never>;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            completedAt: string;
+            orderId: number;
+            status: Record<string, never>;
+        };
+        PartialPaymentSchema: {
+            id?: number;
+            amount?: number;
+            tax?: number;
+            tip?: number;
+            serviceCharge?: number;
+            paymentType?: Record<string, never>;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            completedAt?: string;
+            orderId?: number;
+            status?: Record<string, never>;
+        };
+        PaymentSearchSchema: {
+            id?: number;
+            amount?: number;
+            tax?: number;
+            tip?: number;
+            serviceCharge?: number;
+            paymentType?: Record<string, never>;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            completedAt?: string;
+            orderId?: number;
+            status?: Record<string, never>;
+            page?: number;
+            pageSize?: number;
+            /** @enum {string} */
+            sortBy?: "id" | "amount" | "paymentType" | "createdAt" | "completedAt" | "orderId";
+            /** @enum {string} */
+            sortOrder?: "asc" | "desc";
+        };
+        RefundSchema: {
+            reason: string;
+            /** Format: date-time */
+            createdAt?: string;
+        };
+        ReservationSchema: {
+            id: number;
+            guestsCount: number;
+            time: Record<string, never>;
+            name: string;
+            email?: string;
+            phone: string;
+            status?: Record<string, never>;
+            tables: Record<string, never>;
+            comments?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt: string;
+            isActive?: Record<string, never>;
+        };
+        ReservationSearchCriteria: {
+            page?: number;
+            pageSize?: number;
+            /** @enum {string} */
+            sortOrder?: "asc" | "desc";
+            name?: string;
+            email?: string;
+            phone?: string;
+            status?: Record<string, never>;
+            guestsCount?: number;
+            time?: Record<string, never>;
+            tables?: Record<string, never>;
+            isActive?: Record<string, never>;
+            sortBy?: string;
+            guestsCountMin?: number;
+            guestsCountMax?: number;
+            timeStart?: Record<string, never>;
+            timeEnd?: Record<string, never>;
+        };
+        CreateReservationSchema: {
+            guestsCount: number;
+            time: Record<string, never>;
+            name: string;
+            email?: string;
+            phone: string;
+            status?: Record<string, never>;
+            tables: Record<string, never>;
+            comments?: string;
+        };
+        ReservationWithTablesSchema: {
+            id: number;
+            guestsCount: number;
+            time: Record<string, never>;
+            name: string;
+            email?: string;
+            phone: string;
+            status?: Record<string, never>;
+            tables: {
+                id: number;
+                tableNumber: number;
+            }[];
+            comments?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt: string;
+            isActive?: Record<string, never>;
+        };
+        ReservationConflict: {
+            reservationId: number;
+            time: Record<string, never>;
+            tables: {
+                id: number;
+                tableNumber: number;
+            }[];
+        };
+        ReservationDetailedSchema: {
+            reservation: {
+                id: number;
+                guestsCount: number;
+                time: Record<string, never>;
+                name: string;
+                email?: string;
+                phone: string;
+                status?: Record<string, never>;
+                tables: {
+                    id: number;
+                    tableNumber: number;
+                }[];
+                comments?: string;
+                /** Format: date-time */
+                createdAt?: string;
+                /** Format: date-time */
+                updatedAt: string;
+                isActive?: Record<string, never>;
+            };
+            conflict: {
+                reservationId: number;
+                time: Record<string, never>;
+                tables: {
+                    id: number;
+                    tableNumber: number;
+                }[];
+            }[];
+        };
+        UpdateReservationSchema: {
+            guestsCount?: number;
+            time?: Record<string, never>;
+            name?: string;
+            email?: string;
+            phone?: string;
+            status?: Record<string, never>;
+            tables?: Record<string, never>;
+            comments?: string;
+            isActive?: Record<string, never>;
+        };
+        ReservationGuestInfoSchema: {
+            email?: string;
+            name?: string;
+            phone?: string;
+            guestsCount?: number;
+        };
+        TableBaseTableSchema: {
+            id: number;
+            tableNumber: number;
+            capacity: number;
+            additionalCapacity: number;
+            isOccupied: boolean;
+            /** @enum {string} */
+            status: "AVAILABLE" | "OCCUPIED" | "RESERVED" | "ORDERING" | "SERVING" | "PAYMENT";
+            guests: number;
+            originalCapacity: number;
+        };
+        TableSeatingSchema: {
+            tableNumber: number;
+            guests: number;
+            reservationId?: number;
+            SeatingType?: Record<string, never>;
+        };
+        TableAssignmentSchema: {
+            serverId: number;
+            isPrimary?: boolean;
+            assignedTables: number[];
+        };
+        TableSchema: {
+            id: number;
+            tableNumber: number;
+            capacity: number;
+            additionalCapacity: number;
+            isOccupied: boolean;
+            /** @enum {string} */
+            status: "AVAILABLE" | "OCCUPIED" | "RESERVED" | "ORDERING" | "SERVING" | "PAYMENT";
+            guests: number;
+            originalCapacity: number;
+            orders?: {
+                id: number;
+                /** Format: date-time */
+                orderTime: string;
+                /** @enum {string} */
+                status?: "AWAITING" | "RECEIVED" | "SERVED" | "CANCELED" | "DISPUTED" | "READY_TO_PAY" | "COMPLETED";
+            }[];
+            assignment?: {
+                serverId: number;
+                isPrimary?: boolean;
+            }[];
+        };
+        TableSearchCriteriaSchema: {
+            id: Record<string, never>;
+            tableNumber?: number;
+            minCapacity?: number;
+            maxCapacity?: number;
+            isOccupied: Record<string, never>;
+            status?: Record<string, never>;
+            serverId?: number;
+            page?: number;
+            pageSize?: number;
+            sortBy?: string;
+            /** @enum {string} */
+            sortOrder?: "asc" | "desc";
+        };
+        TableCreateSchema: {
+            tableNumber: Record<string, never>;
+            capacity: Record<string, never>;
+        };
+        TableUpdatesSchema: {
+            tableNumber?: Record<string, never>;
+            capacity?: Record<string, never>;
+        };
+        TableIdSchema: {
+            id: Record<string, never>;
+        };
+        UserSchema: {
+            id: number;
+            name: string;
+            email: string;
+            /** @enum {string} */
+            role: "ADMIN" | "USER" | "HOST" | "MANAGER";
+            isActive?: boolean;
+            password: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: date-time */
+            lastLogin: string;
+        };
+        CreateUserSchema: {
+            name: string;
+            email: string;
+            /** @enum {string} */
+            role: "ADMIN" | "USER" | "HOST" | "MANAGER";
+            password: string;
+        };
+        IdParamSchema: {
+            id: string;
+        };
+        UserParamSchema: {
+            id?: number;
+            email?: string;
+            name?: string;
+            page?: number;
+            pageSize?: number;
+            /** @enum {string} */
+            sortBy?: "id" | "name" | "email" | "role" | "createdAt" | "updatedAt";
+            /** @enum {string} */
+            sortOrder?: "asc" | "desc";
+            role: Record<string, never>;
+            isActive: Record<string, never>;
+            createdAfter?: Record<string, never>;
+            createdBefore?: Record<string, never>;
+        };
+        UpdateUserSchema: {
+            name?: string;
+            email?: string;
+            /** @enum {string} */
+            role?: "ADMIN" | "USER" | "HOST" | "MANAGER";
+            isActive?: boolean;
+            /** Format: date-time */
+            lastLogin: string;
+        };
+        UserLoginSchema: {
+            email: string;
+            password: string;
+        };
         LoginRequest: {
             email: string;
             password: string;
@@ -228,4 +1511,1413 @@ export interface components {
     pathItems: never;
 }
 export type $defs = Record<string, never>;
-export type operations = Record<string, never>;
+export interface operations {
+    AuthenticationController_login: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    email: string;
+                    password: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuthenticationController_logout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuthenticationController_refreshToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuthenticationController_me: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    DrinkItemsController_getDrinkItems: {
+        parameters: {
+            query?: {
+                id?: number;
+                name?: string;
+                price?: number;
+                description?: string;
+                ingredients?: Record<string, never>;
+                isAvailable?: boolean;
+                popularityScore?: number;
+                image?: string;
+                category?: Record<string, never>;
+                volume?: number;
+                alcoholPercentage?: number;
+                isCarbonated?: Record<string, never>;
+                tempriture?: Record<string, never>;
+                page?: number;
+                pageSize?: number;
+                sortOrder?: "asc" | "desc";
+                sortBy?: "id" | "name" | "price" | "popularityScore" | "ingredients" | "isAvailable" | "popularityScore" | "createdAt" | "updatedAt" | "category" | "volume" | "alcoholPercentage" | "isCarbonated" | "tempriture";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    DrinkItemsController_createDrinkItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name: string;
+                    price: number;
+                    description: string;
+                    ingredients: Record<string, never>;
+                    isAvailable?: boolean;
+                    popularityScore?: number;
+                    image?: string;
+                    category: Record<string, never>;
+                    volume: number;
+                    alcoholPercentage: number;
+                    isCarbonated: Record<string, never>;
+                    tempriture: Record<string, never>;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    DrinkItemsController_getDrinkItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    DrinkItemsController_deleteDrinkItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    DrinkItemsController_updateDrinkItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name?: string;
+                    price?: number;
+                    description?: string;
+                    ingredients?: Record<string, never>;
+                    isAvailable?: boolean;
+                    popularityScore?: number;
+                    image?: string;
+                    category?: Record<string, never>;
+                    volume?: number;
+                    alcoholPercentage?: number;
+                    isCarbonated?: Record<string, never>;
+                    tempriture?: Record<string, never>;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FoodItemsController_getFoodItems: {
+        parameters: {
+            query?: {
+                id?: number;
+                name?: string;
+                price?: number;
+                description?: string;
+                ingredients?: Record<string, never>;
+                isAvailable?: boolean;
+                popularityScore?: number;
+                image?: string;
+                category?: Record<string, never>;
+                type?: "APPETIZER" | "MAIN_COURSE" | "DESSERT" | "SIDES" | "SAUCE" | "OTHER";
+                isVegan?: boolean;
+                isGlutenFree?: boolean;
+                isVegetarian?: boolean;
+                allergies?: Record<string, never>;
+                preparationTime?: number;
+                spicyLevel?: "NOT_SPICY" | "MILD" | "MEDIUM" | "HOT" | "EXTRA_HOT";
+                calories?: number;
+                page?: number;
+                pageSize?: number;
+                sortOrder?: "asc" | "desc";
+                sortBy?: "id" | "name" | "price" | "popularityScore" | "ingredients" | "isAvailable" | "popularityScore" | "createdAt" | "updatedAt" | "type" | "category" | "allergies" | "preparationTime" | "spicyLevel" | "calories" | "isVegan" | "isGlutenFree";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FoodItemsController_createFoodItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name: string;
+                    price: number;
+                    description: string;
+                    ingredients: Record<string, never>;
+                    isAvailable?: boolean;
+                    popularityScore?: number;
+                    image?: string;
+                    category: Record<string, never>;
+                    /** @enum {string} */
+                    type: "APPETIZER" | "MAIN_COURSE" | "DESSERT" | "SIDES" | "SAUCE" | "OTHER";
+                    isVegan?: boolean;
+                    isGlutenFree?: boolean;
+                    isVegetarian?: boolean;
+                    allergies: Record<string, never>;
+                    preparationTime?: number;
+                    /** @enum {string} */
+                    spicyLevel?: "NOT_SPICY" | "MILD" | "MEDIUM" | "HOT" | "EXTRA_HOT";
+                    calories?: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FoodItemsController_getFoodItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FoodItemsController_deleteFoodItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FoodItemsController_updateFoodItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name?: string;
+                    price?: number;
+                    description?: string;
+                    ingredients?: Record<string, never>;
+                    isAvailable?: boolean;
+                    popularityScore?: number;
+                    image?: string;
+                    category?: Record<string, never>;
+                    /** @enum {string} */
+                    type?: "APPETIZER" | "MAIN_COURSE" | "DESSERT" | "SIDES" | "SAUCE" | "OTHER";
+                    isVegan?: boolean;
+                    isGlutenFree?: boolean;
+                    isVegetarian?: boolean;
+                    allergies?: Record<string, never>;
+                    preparationTime?: number;
+                    /** @enum {string} */
+                    spicyLevel?: "NOT_SPICY" | "MILD" | "MEDIUM" | "HOT" | "EXTRA_HOT";
+                    calories?: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrdersController_getOrders: {
+        parameters: {
+            query?: {
+                id?: number;
+                tableNumbers?: Record<string, never>;
+                guestsCount?: number;
+                allergies?: Record<string, never>;
+                serverId?: Record<string, never>;
+                serverName?: string;
+                status?: Record<string, never>;
+                minAmount?: number;
+                maxAmount?: number;
+                page?: number;
+                pageSize?: number;
+                sortBy?: "id" | "tableNumber" | "guestsCount" | "orderTime" | "updatedAt" | "status" | "totalAmount";
+                sortOrder?: "asc" | "desc";
+                dateFrom?: string;
+                dateTo?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrdersController_createOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    tableNumber: number;
+                    guestsCount: number;
+                    allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
+                    serverId: number;
+                    totalAmount?: number;
+                    /** @enum {string} */
+                    status?: "AWAITING" | "RECEIVED" | "SERVED" | "CANCELED" | "DISPUTED" | "READY_TO_PAY" | "COMPLETED";
+                    comments: string;
+                    /** Format: date-time */
+                    completionTime: string;
+                    discount?: number;
+                    foodItems?: {
+                        guestNumber: number;
+                        items: {
+                            id?: number;
+                            price: number;
+                            discount?: number;
+                            itemId: number;
+                            finalPrice?: number;
+                            specialRequest: string;
+                            allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
+                            printed?: boolean;
+                            fired?: boolean;
+                            guestNumber?: number;
+                            /** @enum {string} */
+                            paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
+                        }[];
+                    }[];
+                    drinkItems?: {
+                        guestNumber: number;
+                        items: {
+                            id?: number;
+                            price: number;
+                            discount?: number;
+                            itemId: number;
+                            finalPrice?: number;
+                            specialRequest: string;
+                            allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
+                            printed?: boolean;
+                            fired?: boolean;
+                            guestNumber?: number;
+                            /** @enum {string} */
+                            paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
+                        }[];
+                    }[];
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrdersController_getOrderMeta: {
+        parameters: {
+            query?: {
+                id?: number;
+                tableNumbers?: Record<string, never>;
+                guestsCount?: number;
+                allergies?: Record<string, never>;
+                serverId?: Record<string, never>;
+                serverName?: string;
+                status?: Record<string, never>;
+                minAmount?: number;
+                maxAmount?: number;
+                page?: number;
+                pageSize?: number;
+                sortBy?: "id" | "tableNumber" | "guestsCount" | "orderTime" | "updatedAt" | "status" | "totalAmount";
+                sortOrder?: "asc" | "desc";
+                dateFrom?: string;
+                dateTo?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrdersController_getOrderById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrdersController_deleteOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrdersController_updateOrderProperties: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    tableNumber?: number;
+                    guestsCount?: number;
+                    allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
+                    totalAmount?: number;
+                    /** @enum {string} */
+                    status?: "AWAITING" | "RECEIVED" | "SERVED" | "CANCELED" | "DISPUTED" | "READY_TO_PAY" | "COMPLETED";
+                    comments: string;
+                    discount?: number;
+                    tip?: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrdersController_updateOrderItems: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    foodItems?: {
+                        guestNumber: number;
+                        items: {
+                            price: number;
+                            discount?: number;
+                            itemId: number;
+                            finalPrice?: number;
+                            specialRequest: string;
+                            allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
+                            printed?: boolean;
+                            fired?: boolean;
+                            /** @enum {string} */
+                            paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
+                        }[];
+                    }[];
+                    drinkItems?: {
+                        guestNumber: number;
+                        items: {
+                            price: number;
+                            discount?: number;
+                            itemId: number;
+                            finalPrice?: number;
+                            specialRequest: string;
+                            allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
+                            printed?: boolean;
+                            fired?: boolean;
+                            /** @enum {string} */
+                            paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
+                        }[];
+                    }[];
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrdersController_orderItemsPrint: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrdersController_orderItemsCall: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentController_getPayments: {
+        parameters: {
+            query?: {
+                id?: number;
+                amount?: number;
+                tax?: number;
+                tip?: number;
+                serviceCharge?: number;
+                paymentType?: Record<string, never>;
+                createdAt?: string;
+                completedAt?: string;
+                orderId?: number;
+                status?: Record<string, never>;
+                page?: number;
+                pageSize?: number;
+                sortBy?: "id" | "amount" | "paymentType" | "createdAt" | "completedAt" | "orderId";
+                sortOrder?: "asc" | "desc";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentController_getPayment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentController_createPayment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentController_completePayment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentController_refundPayment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    reason: string;
+                    /** Format: date-time */
+                    createdAt?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentController_cancelPayment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReservationController_getAllReservations: {
+        parameters: {
+            query?: {
+                page?: number;
+                pageSize?: number;
+                sortOrder?: "asc" | "desc";
+                name?: string;
+                email?: string;
+                phone?: string;
+                status?: Record<string, never>;
+                guestsCount?: number;
+                time?: Record<string, never>;
+                tables?: Record<string, never>;
+                isActive?: Record<string, never>;
+                sortBy?: string;
+                guestsCountMin?: number;
+                guestsCountMax?: number;
+                timeStart?: Record<string, never>;
+                timeEnd?: Record<string, never>;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReservationController_createReservation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    guestsCount: number;
+                    time: Record<string, never>;
+                    name: string;
+                    email?: string;
+                    phone: string;
+                    status?: Record<string, never>;
+                    tables: Record<string, never>;
+                    comments?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReservationController_getReservationById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReservationController_updateReservation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    id?: number;
+                    guestsCount?: number;
+                    time?: Record<string, never>;
+                    name?: string;
+                    email?: string;
+                    phone?: string;
+                    status?: Record<string, never>;
+                    tables?: Record<string, never>;
+                    comments?: string;
+                    /** Format: date-time */
+                    createdAt?: string;
+                    /** Format: date-time */
+                    updatedAt?: string;
+                    isActive?: Record<string, never>;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReservationController_deleteReservation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReservationController_updateReservationStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    status?: Record<string, never>;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReservationController_updateReservationTime: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    time: Record<string, never>;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReservationController_updateReservationTables: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    tables: Record<string, never>;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReservationController_updateReservationGuestInfo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    email?: string;
+                    name?: string;
+                    phone?: string;
+                    guestsCount?: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReservationController_updateReservationComment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    comments?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TableController_getTables: {
+        parameters: {
+            query?: {
+                id?: Record<string, never>;
+                tableNumber?: number;
+                minCapacity?: number;
+                maxCapacity?: number;
+                isOccupied?: Record<string, never>;
+                status?: Record<string, never>;
+                serverId?: number;
+                page?: number;
+                pageSize?: number;
+                sortBy?: string;
+                sortOrder?: "asc" | "desc";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TableController_createTable: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    tableNumber: Record<string, never>;
+                    capacity: Record<string, never>;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TableController_getTableById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: Record<string, never>;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TableController_updateTable: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    tableNumber?: Record<string, never>;
+                    capacity?: Record<string, never>;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TableController_deleteTable: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: Record<string, never>;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TableController_clearTable: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: Record<string, never>;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TableController_assignTableToServer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    serverId: number;
+                    isPrimary?: boolean;
+                    assignedTables: number[];
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TableController_seatGuests: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    tableNumber: number;
+                    guests: number;
+                    reservationId?: number;
+                    SeatingType?: Record<string, never>;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UserController_getUsers: {
+        parameters: {
+            query?: {
+                id?: number;
+                email?: string;
+                name?: string;
+                page?: number;
+                pageSize?: number;
+                sortBy?: "id" | "name" | "email" | "role" | "createdAt" | "updatedAt";
+                sortOrder?: "asc" | "desc";
+                role?: Record<string, never>;
+                isActive?: Record<string, never>;
+                createdAfter?: Record<string, never>;
+                createdBefore?: Record<string, never>;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UserController_createUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name: string;
+                    email: string;
+                    /** @enum {string} */
+                    role: "ADMIN" | "USER" | "HOST" | "MANAGER";
+                    password: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UserController_updateUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name?: string;
+                    email?: string;
+                    /** @enum {string} */
+                    role?: "ADMIN" | "USER" | "HOST" | "MANAGER";
+                    isActive?: boolean;
+                    /** Format: date-time */
+                    lastLogin: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UserController_deleteUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                email: string;
+                name: string;
+                page: number;
+                pageSize: number;
+                sortBy: "id" | "name" | "email" | "role" | "createdAt" | "updatedAt";
+                sortOrder: "asc" | "desc";
+                role: Record<string, never>;
+                isActive: Record<string, never>;
+                createdAfter: Record<string, never>;
+                createdBefore: Record<string, never>;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+}

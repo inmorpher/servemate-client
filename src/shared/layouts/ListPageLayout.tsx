@@ -4,7 +4,6 @@ import { FiltersPortalContext } from '@/app/(protected)/layout';
 import { LayoutGrid, List, X } from 'lucide-react';
 import { ReactNode, useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { components } from '../api/openapi-types';
 import { Button } from '../components/button';
 import { Drawer } from '../components/drawer';
 import useMediaQuery from '../hooks/useMediaQuery';
@@ -63,9 +62,6 @@ export function ListPageLayout({
 	const hasActiveFilters = Boolean(activeFilters?.length || onClearFilters);
 	const hasToolbarContent = Boolean(toolbarActions || showViewToggle);
 	const showMobileFiltersToggle = isMobile && Boolean(filters);
-
-	type Order = components['schemas']['Order'];
-	const order: Order;
 
 	const filtersPanel =
 		!isMobile && filters && target

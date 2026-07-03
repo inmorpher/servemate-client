@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/shared/utils/classNames';
+import { useEffect, useMemo, useState } from 'react';
 
 interface PriceRangeFilterProps {
 	minValue: number;
@@ -19,8 +19,7 @@ interface PricePreset {
 
 const formatCurrency = (value: number) => `$${value.toFixed(2)}`;
 
-const clampValue = (value: number, min: number, max: number) =>
-	Math.min(max, Math.max(min, value));
+const clampValue = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
 const normalizeRange = (min: number, max: number, absoluteMin: number, absoluteMax: number) => {
 	const safeMin = clampValue(min, absoluteMin, absoluteMax);
@@ -90,12 +89,19 @@ const buildPresets = (absoluteMin: number, absoluteMax: number): PricePreset[] =
 	return presets;
 };
 
-export const PriceRangeFilter = ({ minValue, maxValue, value, onChange }: PriceRangeFilterProps) => {
+export const PriceRangeFilter = ({
+	minValue,
+	maxValue,
+	value,
+	onChange,
+}: PriceRangeFilterProps) => {
 	const [selectedPreset, setSelectedPreset] = useState('');
 	const presets = useMemo(() => buildPresets(minValue, maxValue), [minValue, maxValue]);
 
 	useEffect(() => {
-		const matchedPreset = presets.find((preset) => preset.min === value[0] && preset.max === value[1]);
+		const matchedPreset = presets.find(
+			(preset) => preset.min === value[0] && preset.max === value[1],
+		);
 		setSelectedPreset(matchedPreset?.id ?? '');
 	}, [presets, value]);
 
@@ -124,13 +130,13 @@ export const PriceRangeFilter = ({ minValue, maxValue, value, onChange }: PriceR
 
 	return (
 		<div className='space-y-3'>
-			<label className='block text-sm text-ctp-subtext0'>
+			<label className='text-ctp-subtext0 block text-sm'>
 				<span className='mb-1 block text-xs'>Quick ranges</span>
 				<select
 					value={selectedPreset}
 					onChange={(event) => handlePresetChange(event.target.value)}
 					className={cn(
-						'w-full rounded-md border border-ctp-surface1 bg-ctp-surface0 px-3 py-2 text-sm text-ctp-text focus:outline-none focus:ring-2 focus:ring-ctp-blue',
+						'border-ctp-surface1 bg-ctp-surface0 text-ctp-text focus:ring-ctp-blue w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none',
 					)}
 				>
 					<option value=''>Custom</option>
@@ -143,7 +149,7 @@ export const PriceRangeFilter = ({ minValue, maxValue, value, onChange }: PriceR
 			</label>
 
 			<div className='flex items-center gap-2'>
-				<label className='flex-1 text-xs text-ctp-subtext0'>
+				<label className='text-ctp-subtext0 flex-1 text-xs'>
 					<span className='mb-1 block'>Min</span>
 					<input
 						type='number'
@@ -153,14 +159,14 @@ export const PriceRangeFilter = ({ minValue, maxValue, value, onChange }: PriceR
 						value={value[0]}
 						onChange={(event) => handleInputChange(0, event.target.value)}
 						className={cn(
-							'w-full rounded-md border border-ctp-surface1 bg-ctp-surface0 px-2 py-2 text-sm text-ctp-text focus:outline-none focus:ring-2 focus:ring-ctp-blue',
+							'border-ctp-surface1 bg-ctp-surface0 text-ctp-text focus:ring-ctp-blue w-full rounded-md border px-2 py-2 text-sm focus:ring-2 focus:outline-none',
 						)}
 					/>
 				</label>
 
-				<span className='pt-5 text-ctp-subtext0'>–</span>
+				<span className='text-ctp-subtext0 pt-5'>–</span>
 
-				<label className='flex-1 text-xs text-ctp-subtext0'>
+				<label className='text-ctp-subtext0 flex-1 text-xs'>
 					<span className='mb-1 block'>Max</span>
 					<input
 						type='number'
@@ -170,7 +176,7 @@ export const PriceRangeFilter = ({ minValue, maxValue, value, onChange }: PriceR
 						value={value[1]}
 						onChange={(event) => handleInputChange(1, event.target.value)}
 						className={cn(
-							'w-full rounded-md border border-ctp-surface1 bg-ctp-surface0 px-2 py-2 text-sm text-ctp-text focus:outline-none focus:ring-2 focus:ring-ctp-blue',
+							'border-ctp-surface1 bg-ctp-surface0 text-ctp-text focus:ring-ctp-blue w-full rounded-md border px-2 py-2 text-sm focus:ring-2 focus:outline-none',
 						)}
 					/>
 				</label>

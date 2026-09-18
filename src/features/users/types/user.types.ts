@@ -1,4 +1,5 @@
-import type { components } from '@/shared/api/openapi-types';
+import type { paths } from '@/shared/api/api-types';
 
-export type User = components['schemas']['UserSchema'];
+export type User =
+	paths['/api/users']['get']['responses']['200']['content']['application/json']['users'][number];
 export type UserListItem = User;

@@ -3407,8 +3407,8 @@ export interface operations {
             };
         };
         responses: {
-            /** @description No content */
-            204: {
+            /** @description Entity created */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6832,8 +6832,8 @@ export interface operations {
             };
         };
         responses: {
-            /** @description No content */
-            204: {
+            /** @description Entity created */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };

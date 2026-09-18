@@ -1,9 +1,11 @@
-import type { components } from '@/shared/api/openapi-types';
+import type { paths } from '@/shared/api/api-types';
 
-export type AuthLoginRequest = components['schemas']['LoginRequest'];
-export type AuthLoginResponse = components['schemas']['LoginResponse'];
-export type AuthUser = components['schemas']['UserSchema'];
+export type AuthLoginRequest =
+	paths['/api/auth/login']['post']['requestBody']['content']['application/json'];
+export type AuthLoginResponse =
+	paths['/api/auth/login']['post']['responses']['200']['content']['application/json'];
 
-export interface AuthMeResponse {
-	user: AuthUser;
-}
+export type AuthMeResponse =
+	paths['/api/auth/me']['get']['responses']['200']['content']['application/json'];
+
+export type AuthUser = AuthMeResponse['user'];

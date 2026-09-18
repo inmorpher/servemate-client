@@ -20,7 +20,7 @@ export async function buildServiceRequest(
 	headers.set('Authorization', `Bearer ${accessToken}`);
 
 	// Очищаем проблематичные заголовки
-	['host', 'content-length'].forEach((header) => headers.delete(header));
+	['host', 'content-length', 'accept-encoding'].forEach((header) => headers.delete(header));
 
 	const rawBody = isMethodWithBody(request.method) ? await request.text() : undefined;
 	const body = rawBody && rawBody.trim().length > 0 ? rawBody : undefined;

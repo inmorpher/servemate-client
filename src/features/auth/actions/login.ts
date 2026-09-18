@@ -2,7 +2,6 @@
 
 import { getSession } from '@/app/lib/session';
 import { jwtDecode } from 'jwt-decode';
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 export interface ILoginFormInputs {
@@ -56,13 +55,10 @@ export async function loginAction(formData: ILoginFormInputs, callbackUrl: strin
 		// Save session
 		await session.save();
 
-		const cookieStore = await cookies();
-		const savedCookie = cookieStore.get('servemate-session');
-
-		//Redirect to dashboard
-		redirect(callbackUrl);
 	} catch (error) {
 		console.error('[loginAction] Error:', error);
 		throw error instanceof Error ? error : new Error('Unknown error while logging in');
 	}
+
+	redirect(callbackUrl);
 }

@@ -18,7 +18,7 @@ import { formatDate, getRoleColor } from '../utils/userHelpers';
  * - Uses memoization to prevent unnecessary re-renders.
  */
 const UserCard = memo(function UserCard({ user }: { user: UserListItem }) {
-	const roleColor = getRoleColor(user.role);
+	const roleColor = getRoleColor(user.role, 'text');
 	const formattedCreatedAt = formatDate(user.createdAt);
 	const formattedUpdatedAt = formatDate(user.updatedAt);
 	const formattedLastLogin = user.lastLogin ? formatDate(user.lastLogin) : null;
@@ -27,14 +27,18 @@ const UserCard = memo(function UserCard({ user }: { user: UserListItem }) {
 		<Card>
 			<Card.ColorIndicator color={roleColor} />
 			<Card.Wrapper>
-				<div className='flex items-center gap-3 mb-2'>
+				<div className='mb-2 flex items-center gap-3'>
 					<Card.Text type='heading'>{user.name}</Card.Text>
-					<Card.Text className='text-xs font-medium text-ctp-subtext1'>{user.id}</Card.Text>
-					<Card.Text className={`px-2 py-1 text-xs font-medium rounded-full ${roleColor}`}>
+					<Card.Text className='text-ctp-subtext1 text-xs font-medium'>
+						{user.id}
+					</Card.Text>
+					<Card.Text
+						className={`rounded-full px-2 py-1 text-xs font-medium ${roleColor}`}
+					>
 						{user.role}
 					</Card.Text>
 					<Card.Text
-						className={`px-1 py-1 text-xs font-medium rounded-full ${
+						className={`rounded-full px-1 py-1 text-xs font-medium ${
 							user.isActive
 								? 'bg-ctp-green bg-opacity-20 text-ctp-green'
 								: 'bg-ctp-red bg-opacity-20 text-ctp-red'
@@ -46,7 +50,7 @@ const UserCard = memo(function UserCard({ user }: { user: UserListItem }) {
 
 				<Card.Text type='text'>{user.email.toLowerCase()}</Card.Text>
 
-				<div className='flex flex-wrap gap-4 text-ctp-subtext1 text-xs'>
+				<div className='text-ctp-subtext1 flex flex-wrap gap-4 text-xs'>
 					<Card.Text>Created: {formattedCreatedAt}</Card.Text>
 					<Card.Text>Updated: {formattedUpdatedAt}</Card.Text>
 					{formattedLastLogin && <Card.Text>Last login: {formattedLastLogin}</Card.Text>}

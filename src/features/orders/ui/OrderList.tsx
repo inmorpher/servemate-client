@@ -1,246 +1,189 @@
 'use client';
 
-import { orderSearchOptions } from '@/features/search/model/ordersOptions';
-import { cn } from '@/shared/utils/classNames';
-import { OrderSearchCriteria, OrderSearchListResult } from '@servemate/dto';
+import { ActionMenu } from '@/shared/components/action-menu/ActionMenu';
+import { Table } from '@/shared/components/table';
+import { OrderSearchCriteria, OrderSearchListResult, OrderSortOptions } from '@servemate/dto';
+import { Pencil, Phone, Printer, Trash2 } from 'lucide-react';
+import { useCallback } from 'react';
+import { useCallOrderItems } from '../hooks/useCallOrderItems';
+import { useDeleteOrder } from '../hooks/useDeleteOrder';
+import { usePrintOrderItems } from '../hooks/usePrintOrderItems';
 import { formatCurrency, formatDate, getStatusColor } from '../utils/orderHelpers';
-import { OrderCard } from './OrderCard';
+export type OrderListItem = OrderSearchListResult['orders'][number];
 
-interface OrderListProps {
+export interface OrderListProps {
+	orders: OrderListItem[] | undefined;
 	isLoading?: boolean;
-	orders: OrderSearchListResult['orders'] | undefined;
-
-	totalCount?: number;
-	isFetching?: boolean;
-	filters?: Partial<OrderSearchCriteria>;
+	sortBy?: OrderSearchCriteria['sortBy'];
+	sortOrder?: OrderSearchCriteria['sortOrder'];
 	onSortChange: (sortBy: NonNullable<OrderSearchCriteria['sortBy']>) => void;
+	onEditOrder?: (order: OrderListItem) => void;
 }
 
-type OrderListItem = OrderSearchListResult['orders'][number];
-
-type OrderSortKey = NonNullable<OrderSearchCriteria['sortBy']>;
-
-type OrderColumn = (typeof columns)[number];
-
-const columns: Array<{ label: string; sortBy: OrderSortKey; alignRight?: boolean }> = [
-	{ label: 'Order', sortBy: 'id' as OrderSortKey },
-	{ label: 'Status', sortBy: 'status' as OrderSortKey },
-	{ label: 'Table', sortBy: 'tableNumber' as OrderSortKey },
-	{ label: 'Guests', sortBy: 'guestsCount' as OrderSortKey },
-	{ label: 'Total', sortBy: 'totalAmount' as OrderSortKey, alignRight: true },
-	{ label: 'Time', sortBy: 'orderTime' as OrderSortKey, alignRight: true },
-];
-
-const getSortLabel = (sortBy: OrderSortKey) => {
-	return (
-		orderSearchOptions.sortOptions.find((option) => option.value === sortBy)?.label ?? sortBy
-	);
-};
-
-const isActiveSort = (
-	currentSortBy: Partial<OrderSearchCriteria>['sortBy'],
-	currentSortOrder: Partial<OrderSearchCriteria>['sortOrder'],
-	sortBy: OrderSortKey,
-) => (currentSortBy === sortBy ? currentSortOrder : undefined);
-
-const OrderCell = ({ order, column }: { order: OrderListItem; column: OrderColumn }) => {
-	switch (column.sortBy) {
-		case 'id':
-			return <span className='font-semibold'>Order #{order.id}</span>;
-		case 'status':
-			return (
-				<span
-					className={cn(
-						'inline-flex rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap',
-						getStatusColor(order.status),
-					)}
-				>
-					{orderSearchOptions.statuses.find((option) => option.value === order.status)
-						?.label || order.status}
-				</span>
-			);
-		case 'tableNumber':
-			return <span className='font-semibold'>{order.tableNumber}</span>;
-		case 'guestsCount':
-			return <span className='font-semibold'>{order.guestsCount}</span>;
-		case 'totalAmount':
-			return (
-				<span className='text-ctp-green font-semibold'>
-					{formatCurrency(order.totalAmount)}
-				</span>
-			);
-		case 'orderTime':
-			return <span className='text-ctp-subtext1 text-sm'>{formatDate(order.orderTime)}</span>;
-		default:
-			return null;
-	}
-};
+const columns = [
+	{ label: 'Order', sortBy: OrderSortOptions.ID },
+	{ label: 'Status', sortBy: OrderSortOptions.STATUS },
+	{ label: 'Table', sortBy: OrderSortOptions.TABLE_NUMBER },
+	{ label: 'Guests', sortBy: OrderSortOptions.GUESTS_NUMBER },
+	{ label: 'Total', sortBy: OrderSortOptions.TOTAL_AMOUNT },
+	{ label: 'Time', sortBy: OrderSortOptions.ORDER_TIME },
+] as const satisfies ReadonlyArray<{
+	label: string;
+	sortBy: NonNullable<OrderSearchCriteria['sortBy']>;
+}>;
 
 export const OrderList = ({
-	isLoading,
 	orders,
-
-	totalCount,
-	isFetching,
-	filters,
+	isLoading,
 	onSortChange,
+	sortBy,
+	sortOrder,
+	onEditOrder,
 }: OrderListProps) => {
-	const activeSortBy = filters?.sortBy;
-	const activeSortOrder = filters?.sortOrder;
+	const deleteOrderMutation = useDeleteOrder();
+	const printOrderItemsMutation = usePrintOrderItems();
+	const callOrderItemsMutation = useCallOrderItems();
+
+	const isActiveColumn = useCallback(
+		(columnSortBy: NonNullable<OrderSearchCriteria['sortBy']>) => sortBy === columnSortBy,
+		[sortBy],
+	);
+
+	const handleDeleteOrder = async (orderId: number) => {
+		const shouldDelete = globalThis.confirm(`Delete order #${orderId}?`);
+		if (!shouldDelete) {
+			return;
+		}
+
+		await deleteOrderMutation.mutateAsync({ id: String(orderId) });
+	};
+
+	const handlePrintOrderItems = async (orderId: number) => {
+		await printOrderItemsMutation.mutateAsync({ id: String(orderId) });
+	};
+
+	const handleCallOrderItems = async (orderId: number) => {
+		await callOrderItemsMutation.mutateAsync({ id: String(orderId) });
+	};
 
 	return (
-		<div className='space-y-4'>
-			<div className='flex flex-wrap items-center justify-between gap-3'>
-				{totalCount !== undefined && (
-					<div className='text-ctp-subtext1 text-sm'>
-						Found <span className='text-ctp-text font-bold'>{totalCount}</span> orders
-					</div>
-				)}
-
-				{activeSortBy && (
-					<div className='text-ctp-subtext1 text-xs'>
-						Sorted by{' '}
-						<span className='text-ctp-text font-medium'>
-							{getSortLabel(activeSortBy)}
-						</span>{' '}
-						({activeSortOrder || 'asc'})
-					</div>
-				)}
-			</div>
-
-			<div className='space-y-3 md:hidden'>
-				{isLoading && !orders ? (
-					<div className='space-y-4'>
-						{Array.from({ length: 4 }).map((_, index) => (
-							<div
-								key={index}
-								className='bg-ctp-surface0 border-ctp-surface1 animate-pulse rounded-xl border p-4'
-							>
-								<div className='flex items-start justify-between gap-3'>
-									<div className='space-y-2'>
-										<div className='bg-ctp-surface1 h-5 w-28 rounded' />
-										<div className='bg-ctp-surface1 h-4 w-20 rounded' />
-									</div>
-									<div className='bg-ctp-surface1 h-5 w-16 rounded' />
-								</div>
-								<div className='mt-4 grid grid-cols-2 gap-3'>
-									<div className='bg-ctp-surface1 h-4 rounded' />
-									<div className='bg-ctp-surface1 h-4 rounded' />
-									<div className='bg-ctp-surface1 h-4 rounded' />
-									<div className='bg-ctp-surface1 h-4 rounded' />
-								</div>
-							</div>
-						))}
-					</div>
-				) : !orders || orders.length === 0 ? (
-					<div className='text-ctp-subtext1 bg-ctp-surface0 border-ctp-surface1 rounded-xl border border-dashed px-4 py-8 text-center text-sm'>
-						No orders found
-					</div>
-				) : (
-					<div className='space-y-4'>
-						{orders.map((order) => (
-							<OrderCard key={order.id} order={order} />
-						))}
-					</div>
-				)}
-			</div>
-
-			<div className='border-ctp-surface1 bg-ctp-surface0 hidden overflow-x-auto rounded-xl border md:block'>
-				<div role='table' className='min-w-215'>
-					<div
-						role='row'
-						className='bg-ctp-surface1/60 text-ctp-subtext0 grid grid-cols-[1.4fr_1fr_0.8fr_0.8fr_1fr_1fr] gap-3 border-b px-4 py-3 text-xs font-semibold tracking-wide uppercase'
-					>
+		<div className='border-ctp-surface1 bg-ctp-surface0 max-w-full overflow-x-auto rounded-xl border'>
+			<Table className='text-ctp-text w-full table-fixed'>
+				<colgroup>
+					<col style={{ width: '5rem' }} />
+					<col style={{ width: '10rem' }} />
+					<col style={{ width: '8rem' }} />
+					<col style={{ width: '8rem' }} />
+					<col style={{ width: '8rem' }} />
+					<col style={{ width: '8rem' }} />
+					<col style={{ width: '5rem' }} />
+				</colgroup>
+				<Table.Head>
+					<Table.Row className='bg-ctp-surface1/60 text-ctp-subtext0 divide-amber-50 p-0'>
 						{columns.map((column) => {
-							const sortState = isActiveSort(
-								activeSortBy,
-								activeSortOrder,
-								column.sortBy,
-							);
-
+							const isActiveSort = isActiveColumn(column.sortBy);
 							return (
-								<button
+								<Table.HeaderCell
 									key={column.label}
-									type='button'
-									role='columnheader'
-									aria-sort={
-										sortState === 'asc'
-											? 'ascending'
-											: sortState === 'desc'
-												? 'descending'
-												: 'none'
-									}
-									className={cn(
-										'hover:text-ctp-text flex items-center gap-2 text-left transition-colors',
-										column.alignRight && 'justify-end text-right',
-									)}
+									isSortable
+									isSorted={isActiveSort ? (sortOrder ?? undefined) : undefined}
+									data-active={isActiveSort}
 									onClick={() => onSortChange(column.sortBy)}
+									className='group/column cursor-pointer'
 								>
-									<span>{column.label}</span>
-									<span className='text-ctp-subtext1 text-[10px] font-medium'>
-										{sortState === 'asc'
-											? '↑'
-											: sortState === 'desc'
-												? '↓'
-												: '↕'}
-									</span>
-								</button>
+									{column.label}
+								</Table.HeaderCell>
 							);
 						})}
-					</div>
+						<Table.HeaderCell className='w-15' key={'column-actions'}>
+							<span className='sr-only'>actions</span>
+						</Table.HeaderCell>
+					</Table.Row>
+				</Table.Head>
 
-					{isLoading && !orders ? (
-						<div className='divide-ctp-surface1 animate-pulse divide-y'>
-							{Array.from({ length: 6 }).map((_, index) => (
-								<div
-									key={index}
-									className='grid grid-cols-[1.4fr_1fr_0.8fr_0.8fr_1fr_1fr] gap-3 px-4 py-4'
+				{isLoading ? (
+					<Table.Skeleton rows={10} columns={columns.length} />
+				) : (
+					<Table.Body>
+						{orders?.map((order) => (
+							<Table.Row key={order.id}>
+								<Table.Cell data-active={isActiveColumn(OrderSortOptions.ID)}>
+									#{order.id}
+								</Table.Cell>
+
+								<Table.Cell
+									className={getStatusColor(order.status)}
+									data-active={isActiveColumn(OrderSortOptions.STATUS)}
 								>
-									{Array.from({ length: columns.length }).map((__, cellIndex) => (
-										<div
-											key={cellIndex}
-											className={cn(
-												'bg-ctp-surface1 h-4 rounded',
-												cellIndex === columns.length - 1 && 'ml-auto w-24',
-												cellIndex === columns.length - 2 && 'ml-auto w-20',
-												cellIndex === 0 && 'w-36',
-											)}
-										/>
-									))}
-								</div>
-							))}
-						</div>
-					) : !orders || orders.length === 0 ? (
-						<div className='text-ctp-subtext1 px-4 py-8 text-center text-sm'>
-							No orders found
-						</div>
-					) : (
-						<div className='divide-ctp-surface1 divide-y'>
-							{orders.map((order) => (
-								<div
-									key={order.id}
-									role='row'
-									className={cn(
-										'grid grid-cols-[1.4fr_1fr_0.8fr_0.8fr_1fr_1fr] gap-3 px-4 py-4 text-sm transition-colors',
-										isFetching && 'opacity-80',
-										'hover:bg-ctp-surface1/40',
-									)}
+									{order.status}
+								</Table.Cell>
+								<Table.Cell
+									data-active={isActiveColumn(OrderSortOptions.TABLE_NUMBER)}
 								>
-									{columns.map((column) => (
-										<div
-											key={column.label}
-											role='cell'
-											className={cn(column.alignRight && 'text-right')}
-										>
-											<OrderCell order={order} column={column} />
-										</div>
-									))}
-								</div>
-							))}
-						</div>
-					)}
-				</div>
-			</div>
+									{order.tableNumber}
+								</Table.Cell>
+								<Table.Cell
+									data-active={isActiveColumn(OrderSortOptions.GUESTS_NUMBER)}
+								>
+									{order.guestsCount}
+								</Table.Cell>
+								<Table.Cell
+									className='text-ctp-green font-semibold'
+									data-active={isActiveColumn(OrderSortOptions.TOTAL_AMOUNT)}
+								>
+									{formatCurrency(order.totalAmount)} |{' '}
+									{formatCurrency(order.tip)} | {formatCurrency(order.discount)}
+								</Table.Cell>
+								<Table.Cell
+									className='text-monospace text-ctp-subtext0'
+									align='justify'
+									data-active={isActiveColumn(OrderSortOptions.ORDER_TIME)}
+								>
+									{formatDate(order.orderTime)}
+								</Table.Cell>
+								<Table.Cell truncate={false}>
+									<ActionMenu
+										orientation='horizontal'
+										items={[
+											{
+												label: 'Edit order',
+												icon: <Pencil size={16} />,
+												onClick: () => {
+													onEditOrder?.(order);
+												},
+												variant: 'default',
+											},
+											{
+												label: 'Print items',
+												icon: <Printer className='h-4 w-4' />,
+												onClick: () => {
+													void handlePrintOrderItems(order.id);
+												},
+											},
+											{
+												label: 'Call items',
+												icon: <Phone className='h-4 w-4' />,
+												onClick: () => {
+													void handleCallOrderItems(order.id);
+												},
+											},
+											{
+												label: 'Delete order',
+												icon: <Trash2 className='h-4 w-4' />,
+												onClick: () => {
+													void handleDeleteOrder(order.id);
+												},
+												variant: 'destructive',
+											},
+										]}
+										ariaLabel={`Actions for order #${order.id}`}
+									/>
+								</Table.Cell>
+							</Table.Row>
+						))}
+					</Table.Body>
+				)}
+			</Table>
 		</div>
 	);
 };

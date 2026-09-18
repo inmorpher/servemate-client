@@ -1,97 +1,60 @@
 'use client';
 
+import { Button } from '@/shared/components/button';
 import { Pagination } from '@/shared/components/pagination';
-import { useTabs } from '@/shared/components/tabs/store/useTabs';
 import { Tab } from '@/shared/components/tabs/types/tabs.type';
+import { useListPageState } from '@/shared/hooks/useListPageState';
 import { ListError } from '@/shared/layouts/Error';
-import { ListPageLayout } from '@/shared/layouts/ListPageLayout2';
+import { ListPageLayout } from '@/shared/layouts/ListPageLayout';
 import { OrderSearchCriteria } from '@servemate/dto';
-import OrderFilters from './OrderFilters';
-import { OrderListTest } from './OrderListTest';
 import { useGetOrdersAndMeta } from '../hooks/useGetOrdersAndMeta';
+import OrderFilters from './OrderFilters';
+import { OrderList } from './OrderList';
 
-const OrdersListPage = () => {
-	const currentTab: Tab<OrderSearchCriteria> | undefined = useTabs((state) =>
-		state.getTabById(state.activeTabId),
-	);
-	const updateTab = useTabs((state) => state.updateTab);
-	const filters = currentTab?.filters;
-	const handleSortChange = (sortBy: NonNullable<OrderSearchCriteria['sortBy']>) => {
-		if (!currentTab) {
-			return;
-		}
+export const OrdersListPage = ({ tabId }: { tabId: Tab['id'] }) => {
+	const { filters, handleSortChange, handlePageChange, handlePageSizeChange } =
+		useListPageState<OrderSearchCriteria>({ tabId });
 
-		const nextSortOrder =
-			filters?.sortBy === sortBy && filters?.sortOrder === 'desc' ? 'asc' : 'desc';
+	const { orders } = useGetOrdersAndMeta(filters || {});
+	const { data, error, isError, isLoading, refetch } = orders;
 
-		updateTab(currentTab.id, {
-			filters: {
-				...(filters || {}),
-				sortBy,
-				sortOrder: nextSortOrder,
-				page: 1,
-			},
-		});
-	};
-
-	const { orders, ordersMeta } = useGetOrdersAndMeta(filters || {});
-	const { data, error, isError, isLoading, isFetching, refetch } = orders;
-
-	if (isError || currentTab === undefined) {
+	if (isError) {
 		return <ListError error={error?.message} refetch={refetch} isLoading={isLoading} />;
 	}
 
 	return (
-		<ListPageLayout>
-			<ListPageLayout.Filters>
-				<OrderFilters />
-			</ListPageLayout.Filters>
-
-			<ListPageLayout.Content>
-				{/* <OrderList
-					filters={filters}
-					isFetching={isFetching}
-					isLoading={isLoading}
+		<ListPageLayout
+			title='Orders'
+			description='Manage and review all orders in one place.'
+			actions={
+				<>
+					<Button variant='outline' size='sm'>
+						Export
+					</Button>
+					<Button size='sm'>Create order</Button>
+				</>
+			}
+			filters={<OrderFilters />}
+			content={
+				<OrderList
 					orders={data?.orders}
-					totalCount={data?.totalCount}
+					isLoading={isLoading}
 					onSortChange={handleSortChange}
-				/> */}
-				{
-					<OrderListTest
-						orders={data?.orders}
-						isLoading={isLoading}
-						onSortChange={handleSortChange}
-						sortBy={filters?.sortBy}
-						sortOrder={filters?.sortOrder}
-					/>
-				}
-			</ListPageLayout.Content>
-
-			<ListPageLayout.Footer>
+					sortBy={filters?.sortBy}
+					sortOrder={filters?.sortOrder}
+				/>
+			}
+			footer={
 				<Pagination
 					totalCount={data?.totalCount || 0}
 					totalPages={data?.totalPages || 0}
 					currentPage={filters?.page || 1}
 					pageSize={filters?.pageSize || 10}
-					onPageSizeChange={(pageSize) =>
-						updateTab(currentTab?.id, {
-							filters: {
-								...(filters || {}),
-								pageSize,
-							},
-						})
-					}
-					onPageChange={(page) =>
-						updateTab(currentTab?.id, {
-							filters: {
-								...(filters || {}),
-								page,
-							},
-						})
-					}
+					onPageSizeChange={handlePageSizeChange}
+					onPageChange={handlePageChange}
 				/>
-			</ListPageLayout.Footer>
-		</ListPageLayout>
+			}
+		/>
 	);
 };
 

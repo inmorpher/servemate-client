@@ -2,7 +2,7 @@ export type TabFilters<T> = {
 	[key in keyof T]?: T[key];
 };
 
-export type TabEntities = 'users' | 'orders' | 'products' | 'dashboard' | string;
+export type TabEntities = 'users' | 'orders' | 'products' | 'dashboard' | 'settings' | 'cpanel';
 
 export type Tab<T = {}> = {
 	id: string;

@@ -23,6 +23,8 @@ export const TabButton = ({
 
 	return (
 		<div
+			role='tab'
+			aria-selected={isActive}
 			draggable='true'
 			className={cn(
 				'group ring-ctp-overlay0 focus-within:ring-ctp-blue relative flex h-8 min-w-41 items-center gap-0.5 rounded-lg px-2 ring-1 transition-all duration-300 in-[dragging]:cursor-grabbing',

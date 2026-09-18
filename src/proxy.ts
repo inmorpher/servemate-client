@@ -5,7 +5,7 @@ import { getSession, ISessionData } from './app/lib/session';
 export default async function Proxy(request: NextRequest) {
 	const pathname = request.nextUrl.pathname;
 
-	const publicRoutes = ['/', '/login', '/refresh'];
+	const publicRoutes = ['/login', '/refresh'];
 
 	if (publicRoutes.includes(pathname)) {
 		return NextResponse.next();
@@ -25,7 +25,6 @@ export default async function Proxy(request: NextRequest) {
 	if (pathname === '/') {
 		return NextResponse.redirect(new URL('/cpanel', request.url));
 	}
-
 	return NextResponse.next();
 }
 

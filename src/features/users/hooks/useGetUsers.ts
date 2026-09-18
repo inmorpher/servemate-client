@@ -1,6 +1,5 @@
 'use client';
 
-import { buildQueryParams } from '@/shared/utils/buildQueryParams';
 import { UserListResult, UserSearchCriteria } from '@servemate/dto';
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { usersApiClient } from '../api';
@@ -13,7 +12,7 @@ export const useGetUsers = (
 	userSearchCriteria: Partial<UserSearchCriteria> = {},
 ): UseGetUsersReturn => {
 	const usersData = useQuery({
-		queryKey: ['users', buildQueryParams(userSearchCriteria)],
+		queryKey: ['users', userSearchCriteria],
 		queryFn: () => usersApiClient.getUsers(userSearchCriteria as UserSearchCriteria),
 		placeholderData: keepPreviousData,
 		staleTime: 5 * 60 * 1000,

@@ -2,14 +2,12 @@
 
 import { orderSearchOptions } from '@/features/search/model/ordersOptions';
 import { SearchChip } from '@/features/search/ui/SearchChip';
-import { DateRangePicker } from '@/shared/components/date-range-picker';
 import { Filter } from '@/shared/components/filter/index';
-import RangeSlider from '@/shared/components/slider/ui/Slider';
-
 import FilterReset from '@/shared/components/filter/ui/FilterReset';
 import { useOrderFilters } from '../hooks/useOrderFilters';
+import { PriceRangeFilter } from './PriceRangeFilter';
 
-const OrderFilters = () => {
+export const OrderFilters = () => {
 	const {
 		metaData,
 		filters,
@@ -18,14 +16,13 @@ const OrderFilters = () => {
 		handleStatusToggle,
 		handleTableNumber,
 		handleRangeChange,
-		handleClearFilters,
 	} = useOrderFilters();
 
 	return (
-		<Filter className='max-h-dvh'>
+		<Filter>
 			<FilterReset filters={filters} />
 			{/* Date Range Filter */}
-			{metaData?.dates && (
+			{/* {metaData?.dates && (
 				<Filter.Group label='Order Date'>
 					<DateRangePicker
 						dates={{
@@ -37,6 +34,25 @@ const OrderFilters = () => {
 								: metaData.dates.max,
 						}}
 						onRangeChange={handleRangeChange}
+					/>
+				</Filter.Group>
+			)} */}
+			{metaData?.dates && (
+				<Filter.Group label='Order Date'>
+					<Filter.DateRange
+						from={
+							filters?.dateFrom
+								? new Date(filters.dateFrom).toISOString().split('T')[0]
+								: undefined
+						}
+						to={
+							filters?.dateTo
+								? new Date(filters.dateTo).toISOString().split('T')[0]
+								: undefined
+						}
+						min={new Date(metaData.dates.min).toISOString().split('T')[0]}
+						max={new Date(metaData.dates.max).toISOString().split('T')[0]}
+						onChange={(range) => handleRangeChange({ from: range.from, to: range.to })}
 					/>
 				</Filter.Group>
 			)}
@@ -57,13 +73,12 @@ const OrderFilters = () => {
 			{/* Price Range Filter */}
 			{metaData?.prices && (
 				<Filter.Group label='Price Range'>
-					<RangeSlider
-						key={filters?.minAmount && filters?.maxAmount ? 'active' : 'reset'}
+					<PriceRangeFilter
 						minValue={metaData.prices.min}
 						maxValue={metaData.prices.max}
 						onChange={handlePriceRangeChange}
 						value={
-							filters?.minAmount && filters?.maxAmount
+							filters?.minAmount !== undefined && filters?.maxAmount !== undefined
 								? [filters.minAmount, filters.maxAmount]
 								: [metaData.prices.min, metaData.prices.max]
 						}
@@ -93,6 +108,9 @@ const OrderFilters = () => {
 					</SearchChip>
 				))}
 			</Filter.Group>
+			{
+				/////// Additional filters can be added here in the future
+			}
 		</Filter>
 	);
 };

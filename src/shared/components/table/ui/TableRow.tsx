@@ -6,7 +6,7 @@ export const TableRow = ({ className, isSelected, ref, ...props }: TableRowProps
 		<tr
 			ref={ref}
 			className={cn(
-				'border-ctp-surface1 hover:bg-ctp-surface1/40 divide-x border-b transition-colors',
+				'border-ctp-surface1 hover:bg-ctp-surface1 group divide-x border-b',
 				isSelected && 'bg-ctp-surface1/60',
 				className,
 			)}

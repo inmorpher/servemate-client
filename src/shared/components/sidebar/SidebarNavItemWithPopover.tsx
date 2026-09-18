@@ -1,11 +1,13 @@
 'use client';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/components/popover';
-import { useTabs } from '@/shared/components/tabs/store/useTabs';
+import { useSidebarNavigation } from '@/shared/hooks/useSidebarNavigation';
 import { ReactNode, useState } from 'react';
 
+import { TabEntities } from '../tabs/types/tabs.type';
+
 interface SidebarNavItemWithPopoverProps {
-	entity: string;
+	entity: TabEntities;
 	label: string;
 	icon: ReactNode;
 	color: string;
@@ -17,11 +19,11 @@ export const SidebarNavItemWithPopover = ({
 	icon,
 	color,
 }: SidebarNavItemWithPopoverProps) => {
-	const { addTab } = useTabs();
+	const { navigateToItem } = useSidebarNavigation();
 	const [isOpen, setIsOpen] = useState(false);
 
 	const handleClick = () => {
-		addTab({ title: entity, entity: entity });
+		navigateToItem({ entity, label, href: `/${entity}` });
 		setIsOpen(false);
 	};
 

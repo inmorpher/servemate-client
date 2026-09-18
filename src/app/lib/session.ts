@@ -20,17 +20,21 @@ const defaultSession: ISessionData = {
 	refreshCount: 0,
 };
 
+const sessionSecret = process.env.SESSION_SECRET;
+
+if (!sessionSecret || sessionSecret.length < 32) {
+	throw new Error('SESSION_SECRET must be configured and at least 32 characters long');
+}
+
 const sessionOptions: SessionOptions = {
-	password: process.env.SESSION_SECRET || 'complex_password_at_least_32_characters_long',
+	password: sessionSecret,
 	cookieName: 'servemate_session',
 	cookieOptions: {
-		secure: false, // Set to true in production
+		secure: process.env.NODE_ENV === 'production',
 		httpOnly: true,
 		sameSite: 'lax',
 		path: '/',
 		maxAge: 60 * 60 * 24 * 7, // 7 days
-		domain: process.env.NODE_ENV === 'development' ? undefined : 'your-domain.com',
-		// domain: process.env.SESSION_COOKIE_DOMAIN, // Uncomment if you need to set a specific domain
 	},
 	ttl: 60 * 60 * 24 * 7, // 7 days
 };
@@ -39,9 +43,7 @@ export async function getSession(): Promise<IronSession<ISessionData>> {
 	const session = await getIronSession<ISessionData>(await cookies(), sessionOptions);
 
 	if (!session.isLoggedIn) {
-		if (!session.isLoggedIn) {
-			Object.assign(session, defaultSession);
-		}
+		Object.assign(session, defaultSession);
 	}
 
 	return session;

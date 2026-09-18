@@ -39,5 +39,6 @@ export type TableEmptyStateProps = ComponentPropsWithoutRef<'tr'> & {
 };
 
 export type TableProps = ComponentPropsWithoutRef<'table'> & {
+	isVertiacal?: boolean;
 	ref?: Ref<HTMLTableElement>;
 };

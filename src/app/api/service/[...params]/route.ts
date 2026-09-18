@@ -3,6 +3,34 @@ import { ApiError } from './errors';
 import { buildServiceRequest } from './request-utils';
 import { forceRefreshToken, getValidatedTokenFromSession } from './token-utils';
 
+function getResponseHeaders(response: Response): Headers {
+	const headers = new Headers(response.headers);
+
+	['content-encoding', 'content-length', 'transfer-encoding'].forEach((header) => {
+		headers.delete(header);
+	});
+
+	return headers;
+}
+
+async function forwardResponse(response: Response): Promise<Response> {
+	const headers = getResponseHeaders(response);
+
+	if (response.status === 204 || response.status === 205 || response.status === 304) {
+		return new Response(null, {
+			status: response.status,
+			statusText: response.statusText,
+			headers,
+		});
+	}
+
+	return new Response(await response.text(), {
+		status: response.status,
+		statusText: response.statusText,
+		headers,
+	});
+}
+
 async function handler(
 	request: NextRequest,
 	{ params }: { params: Promise<{ params: string[] }> },
@@ -40,29 +68,10 @@ async function handler(
 				return NextResponse.redirect(new URL('/login', request.url));
 			}
 
-			return new Response(await retryResponse.text(), {
-				status: retryResponse.status,
-				headers: retryResponse.headers,
-			});
+			return forwardResponse(retryResponse);
 		}
 
-		if (response.status === 204 || response.status === 205 || response.status === 304) {
-			return new Response(null, {
-				status: response.status,
-				statusText: response.statusText,
-				headers: response.headers,
-			});
-		}
-
-		const responseData = await response.text();
-
-		const nextResponse = new Response(responseData, {
-			status: response.status,
-			statusText: response.statusText,
-			headers: response.headers,
-		});
-
-		return nextResponse;
+		return forwardResponse(response);
 	} catch (error) {
 		if (error instanceof ApiError) {
 			if (error.shouldRedirect) {

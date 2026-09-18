@@ -1,11 +1,8 @@
-export default async function Dashboard() {
+export default function Dashboard() {
 	return (
-		<div className='flex h-screen flex-col items-center justify-center'>
-			<h1 className='mb-4 text-2xl font-bold'>Dashboard</h1>
-			<p className='text-lg'>Welcome to the dashboard!</p>
-			<button className='mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600'>
-				Load Dashboard Data
-			</button>
+		<div className='flex h-full flex-col items-center justify-center'>
+			<h1 className='text-ctp-mauve mb-4 text-2xl font-bold'>Dashboard</h1>
+			<p className='text-ctp-subtext0 text-lg'>Dashboard widgets will appear here.</p>
 		</div>
 	);
 }

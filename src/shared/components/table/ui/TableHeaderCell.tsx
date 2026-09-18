@@ -16,7 +16,7 @@ export const TableHeaderCell = ({
 			ref={ref}
 			scope='col'
 			className={cn(
-				'border-ctp-surface1 bg-ctp-surface1/60 text-m px-4 py-3 text-left font-semibold tracking-wide uppercase',
+				'border-ctp-surface1 bg-ctp-surface0 text-m px-4 py-3 text-left font-semibold tracking-wide uppercase',
 				alignRight && 'text-right',
 				isSortable && 'select-none',
 				className,

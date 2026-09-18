@@ -1,15 +1,16 @@
 'use client';
 
-import { logoutAction } from '@/features/auth/actions/logout';
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/components/popover';
-import { BarChart3, LogOut, Settings, ShoppingCart, Users } from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
+import { useSidebarNavigation } from '@/shared/hooks/useSidebarNavigation';
+import { TabEntities } from '@/shared/components/tabs/types/tabs.type';
+import { BarChart3, Settings, ShoppingCart, Users } from 'lucide-react';
+import { type ReactNode, useState } from 'react';
 
 interface AppItem {
 	id: string;
 	label: string;
-	icon: React.ReactNode;
+	entity: TabEntities;
+	icon: ReactNode;
 	href: string;
 	color: string;
 }
@@ -18,6 +19,7 @@ const appItems: AppItem[] = [
 	{
 		id: 'dashboard',
 		label: 'Dashboard',
+		entity: 'dashboard',
 		icon: <BarChart3 className='h-6 w-6' />,
 		href: '/dashboard',
 		color: 'bg-ctp-blue',
@@ -25,6 +27,7 @@ const appItems: AppItem[] = [
 	{
 		id: 'cpanel',
 		label: 'cPanel',
+		entity: 'cpanel',
 		icon: <ShoppingCart className='h-6 w-6' />,
 		href: '/cpanel',
 		color: 'bg-ctp-mauve',
@@ -32,6 +35,7 @@ const appItems: AppItem[] = [
 	{
 		id: 'users',
 		label: 'Users',
+		entity: 'users',
 		icon: <Users className='h-6 w-6' />,
 		href: '/users',
 		color: 'bg-ctp-green',
@@ -39,20 +43,15 @@ const appItems: AppItem[] = [
 	{
 		id: 'orders',
 		label: 'Orders',
+		entity: 'orders',
 		icon: <ShoppingCart className='h-6 w-6' />,
 		href: '/orders',
 		color: 'bg-ctp-yellow',
 	},
 	{
-		id: 'account',
-		label: 'Account',
-		icon: <Users className='h-6 w-6' />,
-		href: '/account',
-		color: 'bg-ctp-peach',
-	},
-	{
 		id: 'settings',
 		label: 'Settings',
+		entity: 'settings',
 		icon: <Settings className='h-6 w-6' />,
 		href: '/settings',
 		color: 'bg-ctp-sky',
@@ -61,6 +60,12 @@ const appItems: AppItem[] = [
 
 export const AppLauncherPopover = () => {
 	const [isOpen, setIsOpen] = useState(false);
+	const { navigateToItem } = useSidebarNavigation();
+
+	const handleAppClick = (app: AppItem) => {
+		navigateToItem({ entity: app.entity, label: app.label, href: app.href });
+		setIsOpen(false);
+	};
 
 	return (
 		<Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -69,6 +74,7 @@ export const AppLauncherPopover = () => {
 					className='text-ctp-text hover:bg-ctp-surface1 flex items-center justify-center rounded-md p-2 transition-colors'
 					aria-label='App Launcher'
 					title='App Launcher'
+					type='button'
 				>
 					<div className='grid grid-cols-3 gap-1'>
 						<div className='bg-ctp-text h-1.5 w-1.5 rounded-sm'></div>
@@ -93,38 +99,24 @@ export const AppLauncherPopover = () => {
 				<div className='space-y-3'>
 					<h2 className='text-ctp-text px-2 text-sm font-semibold'>Applications</h2>
 
-					{/* 3x3 Grid */}
 					<div className='grid grid-cols-3 gap-3'>
 						{appItems.map((app) => (
-							<Link key={app.id} href={app.href}>
-								<button
-									onClick={() => setIsOpen(false)}
-									className={`flex aspect-square w-full flex-col items-center justify-center rounded-lg ${app.color} text-ctp-base p-2 transition-opacity hover:opacity-90`}
-									title={app.label}
-								>
-									<div className='mb-2 flex h-8 w-8 items-center justify-center'>
-										{app.icon}
-									</div>
-									<span className='line-clamp-2 text-center text-xs font-medium'>
-										{app.label}
-									</span>
-								</button>
-							</Link>
+							<button
+								key={app.id}
+								type='button'
+								onClick={() => handleAppClick(app)}
+								className={`flex aspect-square w-full flex-col items-center justify-center rounded-lg ${app.color} text-ctp-base p-2 transition-opacity hover:opacity-90`}
+								title={app.label}
+							>
+								<div className='mb-2 flex h-8 w-8 items-center justify-center'>
+									{app.icon}
+								</div>
+								<span className='line-clamp-2 text-center text-xs font-medium'>
+									{app.label}
+								</span>
+							</button>
 						))}
 					</div>
-
-					{/* Logout button */}
-					<div className='bg-ctp-surface1 mt-4 h-px' />
-					<button
-						onClick={async () => {
-							await logoutAction();
-							setIsOpen(false);
-						}}
-						className='hover:bg-ctp-surface1 text-ctp-red flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors'
-					>
-						<LogOut className='h-4 w-4' />
-						<span>Logout</span>
-					</button>
 				</div>
 			</PopoverContent>
 		</Popover>

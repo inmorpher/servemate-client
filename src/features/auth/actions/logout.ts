@@ -12,7 +12,9 @@ export async function logoutAction(): Promise<{ success: boolean }> {
 				method: 'POST',
 				headers: {
 					Authorization: `Bearer ${session.accessToken}`,
+					'Content-Type': 'application/json',
 				},
+				body: JSON.stringify({ refreshToken: session.refreshToken }),
 				cache: 'no-store',
 			});
 		}

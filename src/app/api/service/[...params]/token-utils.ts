@@ -1,4 +1,4 @@
-import { getSession } from '@/app/lib/session';
+import { destroySession, getSession } from '@/app/lib/session';
 import { updateSessionWithTokens } from '@/app/lib/session-update';
 import { jwtDecode } from 'jwt-decode';
 import { CONFIG } from './config';
@@ -80,6 +80,7 @@ async function refreshTokenInternal(session: SessionData): Promise<TokenResponse
 	});
 
 	if (!response.ok) {
+		await destroySession();
 		throw new ApiError('Token refresh failed', 401, true);
 	}
 

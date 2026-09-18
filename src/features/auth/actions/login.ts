@@ -55,10 +55,10 @@ export async function loginAction(formData: ILoginFormInputs, callbackUrl: strin
 		// Save session
 		await session.save();
 
-		//Redirect to dashboard
-		redirect(callbackUrl);
 	} catch (error) {
 		console.error('[loginAction] Error:', error);
 		throw error instanceof Error ? error : new Error('Unknown error while logging in');
 	}
+
+	redirect(callbackUrl);
 }

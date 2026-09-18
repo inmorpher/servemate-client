@@ -1,7 +1,7 @@
 'use server';
 
 import { CONFIG } from '@/app/api/service/[...params]/config';
-import { getSession } from '@/app/lib/session';
+import { destroySession, getSession } from '@/app/lib/session';
 import { updateSessionWithTokens } from '@/app/lib/session-update';
 
 export async function refreshSessionAction() {
@@ -19,6 +19,7 @@ export async function refreshSessionAction() {
 		});
 
 		if (!response.ok) {
+			await destroySession();
 			return { success: false, error: 'Token refresh failed' };
 		}
 

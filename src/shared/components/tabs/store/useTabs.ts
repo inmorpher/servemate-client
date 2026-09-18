@@ -103,7 +103,7 @@ export const useTabs = create<TabsStore>()(
 					);
 
 					if (cleanFields.filters) {
-						cleanFields.filters = Object.fromEntries(
+						const cleanedFilters = Object.fromEntries(
 							Object.entries(cleanFields.filters).filter(
 								([_, value]) =>
 									value !== undefined &&
@@ -113,7 +113,8 @@ export const useTabs = create<TabsStore>()(
 							),
 						);
 
-						// If after cleaning filters is empty, set it to undefined to clear filters
+						cleanFields.filters =
+							Object.keys(cleanedFilters).length > 0 ? cleanedFilters : undefined;
 					}
 
 					const newTabs = tabs.map((t) =>

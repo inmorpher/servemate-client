@@ -1,3 +1,4 @@
+import { components } from '@/shared/api/openapi-types';
 import { apiRequest } from '@/shared/utils/apiRequest';
 import {
 	OrderCreateDTO,
@@ -19,6 +20,8 @@ export type OrderApiClient = {
 	callOrderItems: (id: string) => Promise<void>;
 	deleteOrder: (id: string) => Promise<void>;
 };
+
+type UserResponse2 = components['schemas']['UserSchema'];
 
 const requestVoid = async <TBody>(
 	endpoint: string,

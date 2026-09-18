@@ -2,7 +2,6 @@
 
 import { orderSearchOptions } from '@/features/search/model/ordersOptions';
 import { SearchChip } from '@/features/search/ui/SearchChip';
-import { DateRangePicker } from '@/shared/components/date-range-picker';
 import { Filter } from '@/shared/components/filter/index';
 import FilterReset from '@/shared/components/filter/ui/FilterReset';
 import { useOrderFilters } from '../hooks/useOrderFilters';
@@ -23,7 +22,7 @@ export const OrderFilters = () => {
 		<Filter>
 			<FilterReset filters={filters} />
 			{/* Date Range Filter */}
-			{metaData?.dates && (
+			{/* {metaData?.dates && (
 				<Filter.Group label='Order Date'>
 					<DateRangePicker
 						dates={{
@@ -35,6 +34,25 @@ export const OrderFilters = () => {
 								: metaData.dates.max,
 						}}
 						onRangeChange={handleRangeChange}
+					/>
+				</Filter.Group>
+			)} */}
+			{metaData?.dates && (
+				<Filter.Group label='Order Date'>
+					<Filter.DateRange
+						from={
+							filters?.dateFrom
+								? new Date(filters.dateFrom).toISOString().split('T')[0]
+								: undefined
+						}
+						to={
+							filters?.dateTo
+								? new Date(filters.dateTo).toISOString().split('T')[0]
+								: undefined
+						}
+						min={new Date(metaData.dates.min).toISOString().split('T')[0]}
+						max={new Date(metaData.dates.max).toISOString().split('T')[0]}
+						onChange={(range) => handleRangeChange({ from: range.from, to: range.to })}
 					/>
 				</Filter.Group>
 			)}
@@ -60,7 +78,7 @@ export const OrderFilters = () => {
 						maxValue={metaData.prices.max}
 						onChange={handlePriceRangeChange}
 						value={
-							filters?.minAmount && filters?.maxAmount
+							filters?.minAmount !== undefined && filters?.maxAmount !== undefined
 								? [filters.minAmount, filters.maxAmount]
 								: [metaData.prices.min, metaData.prices.max]
 						}

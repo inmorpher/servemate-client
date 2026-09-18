@@ -38,22 +38,6 @@ const UserClientPage = ({ tabId }: { tabId: Tab['id'] }) => {
 					<Button size='sm'>Add user</Button>
 				</>
 			}
-			activeFilters={[
-				{ id: 'role', label: 'Role: Client', onRemove: () => undefined },
-				{ id: 'status', label: 'Status: Active', onRemove: () => undefined },
-			]}
-			onClearFilters={() => undefined}
-			toolbarActions={
-				<>
-					<Button variant='outline' size='sm'>
-						Filters
-					</Button>
-					<Button variant='ghost' size='sm'>
-						Sort
-					</Button>
-				</>
-			}
-			showViewToggle
 			filters={<UserSearchBar />}
 			content={
 				<UsersList

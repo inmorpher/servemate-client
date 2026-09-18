@@ -29,9 +29,6 @@ const nextConfig: NextConfig = {
 	reactCompiler: {
 		compilationMode: 'all',
 	},
-	experimental: {
-		viewTransition: true,
-	},
 };
 
 export default nextConfig;

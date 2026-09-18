@@ -1,9 +1,10 @@
 'use client';
 
 import { useTabs } from '@/shared/components/tabs/store/useTabs';
+import { TabEntities } from '@/shared/components/tabs/types/tabs.type';
 
 interface UseSidebarNavigationParams {
-	entity: string;
+	entity: TabEntities;
 	label: string;
 	href?: string;
 }

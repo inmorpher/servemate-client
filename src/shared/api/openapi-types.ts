@@ -603,906 +603,45 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        arrayQueryParamSchema: Record<string, never>;
-        listPropsSchema: {
-            page?: number;
-            pageSize?: number;
-            totalPages: number;
-            totalCount: number;
-        };
-        searchCriteriaSchema: {
-            page?: number;
-            pageSize?: number;
-            /** @enum {string} */
-            sortOrder?: "asc" | "desc";
-        };
-        baseItemSchema: {
-            id: number;
-            name: string;
-            price: number;
-            description: string;
-            ingredients: Record<string, never>;
-            isAvailable?: boolean;
-            popularityScore?: number;
-            image?: string;
-        };
-        drinkItemSchema: {
-            id: number;
-            name: string;
-            price: number;
-            description: string;
-            ingredients: Record<string, never>;
-            isAvailable?: boolean;
-            popularityScore?: number;
-            image?: string;
-            category: Record<string, never>;
-            volume: number;
-            alcoholPercentage: number;
-            isCarbonated: Record<string, never>;
-            tempriture: Record<string, never>;
-        };
-        foodItemSchema: {
-            id: number;
-            name: string;
-            price: number;
-            description: string;
-            ingredients: Record<string, never>;
-            isAvailable?: boolean;
-            popularityScore?: number;
-            image?: string;
-            category: Record<string, never>;
-            /** @enum {string} */
-            type: "APPETIZER" | "MAIN_COURSE" | "DESSERT" | "SIDES" | "SAUCE" | "OTHER";
-            isVegan?: boolean;
-            isGlutenFree?: boolean;
-            isVegetarian?: boolean;
-            allergies: Record<string, never>;
-            preparationTime?: number;
-            /** @enum {string} */
-            spicyLevel?: "NOT_SPICY" | "MILD" | "MEDIUM" | "HOT" | "EXTRA_HOT";
-            calories?: number;
-        };
-        createDrinkItemSchema: {
-            name: string;
-            price: number;
-            description: string;
-            ingredients: Record<string, never>;
-            isAvailable?: boolean;
-            popularityScore?: number;
-            image?: string;
-            category: Record<string, never>;
-            volume: number;
-            alcoholPercentage: number;
-            isCarbonated: Record<string, never>;
-            tempriture: Record<string, never>;
-        };
-        createFoodItemSchema: {
-            name: string;
-            price: number;
-            description: string;
-            ingredients: Record<string, never>;
-            isAvailable?: boolean;
-            popularityScore?: number;
-            image?: string;
-            category: Record<string, never>;
-            /** @enum {string} */
-            type: "APPETIZER" | "MAIN_COURSE" | "DESSERT" | "SIDES" | "SAUCE" | "OTHER";
-            isVegan?: boolean;
-            isGlutenFree?: boolean;
-            isVegetarian?: boolean;
-            allergies: Record<string, never>;
-            preparationTime?: number;
-            /** @enum {string} */
-            spicyLevel?: "NOT_SPICY" | "MILD" | "MEDIUM" | "HOT" | "EXTRA_HOT";
-            calories?: number;
-        };
-        updateDrinkItemSchema: {
-            name?: string;
-            price?: number;
-            description?: string;
-            ingredients?: Record<string, never>;
-            isAvailable?: boolean;
-            popularityScore?: number;
-            image?: string;
-            category?: Record<string, never>;
-            volume?: number;
-            alcoholPercentage?: number;
-            isCarbonated?: Record<string, never>;
-            tempriture?: Record<string, never>;
-        };
-        updateFoodItemSchema: {
-            name?: string;
-            price?: number;
-            description?: string;
-            ingredients?: Record<string, never>;
-            isAvailable?: boolean;
-            popularityScore?: number;
-            image?: string;
-            category?: Record<string, never>;
-            /** @enum {string} */
-            type?: "APPETIZER" | "MAIN_COURSE" | "DESSERT" | "SIDES" | "SAUCE" | "OTHER";
-            isVegan?: boolean;
-            isGlutenFree?: boolean;
-            isVegetarian?: boolean;
-            allergies?: Record<string, never>;
-            preparationTime?: number;
-            /** @enum {string} */
-            spicyLevel?: "NOT_SPICY" | "MILD" | "MEDIUM" | "HOT" | "EXTRA_HOT";
-            calories?: number;
-        };
-        searchFoodItemsSchema: {
-            id?: number;
-            name?: string;
-            price?: number;
-            description?: string;
-            ingredients?: Record<string, never>;
-            isAvailable?: boolean;
-            popularityScore?: number;
-            image?: string;
-            category?: Record<string, never>;
-            /** @enum {string} */
-            type?: "APPETIZER" | "MAIN_COURSE" | "DESSERT" | "SIDES" | "SAUCE" | "OTHER";
-            isVegan?: boolean;
-            isGlutenFree?: boolean;
-            isVegetarian?: boolean;
-            allergies?: Record<string, never>;
-            preparationTime?: number;
-            /** @enum {string} */
-            spicyLevel?: "NOT_SPICY" | "MILD" | "MEDIUM" | "HOT" | "EXTRA_HOT";
-            calories?: number;
-            page?: number;
-            pageSize?: number;
-            /** @enum {string} */
-            sortOrder?: "asc" | "desc";
-            /** @enum {string} */
-            sortBy?: "id" | "name" | "price" | "popularityScore" | "ingredients" | "isAvailable" | "popularityScore" | "createdAt" | "updatedAt" | "type" | "category" | "allergies" | "preparationTime" | "spicyLevel" | "calories" | "isVegan" | "isGlutenFree";
-        };
-        searchDrinkItemsSchema: {
-            id?: number;
-            name?: string;
-            price?: number;
-            description?: string;
-            ingredients?: Record<string, never>;
-            isAvailable?: boolean;
-            popularityScore?: number;
-            image?: string;
-            category?: Record<string, never>;
-            volume?: number;
-            alcoholPercentage?: number;
-            isCarbonated?: Record<string, never>;
-            tempriture?: Record<string, never>;
-            page?: number;
-            pageSize?: number;
-            /** @enum {string} */
-            sortOrder?: "asc" | "desc";
-            /** @enum {string} */
-            sortBy?: "id" | "name" | "price" | "popularityScore" | "ingredients" | "isAvailable" | "popularityScore" | "createdAt" | "updatedAt" | "category" | "volume" | "alcoholPercentage" | "isCarbonated" | "tempriture";
-        };
-        foodItemsListSchema: {
-            page?: number;
-            pageSize?: number;
-            totalPages: number;
-            totalCount: number;
-            items: {
-                id: number;
-                name: string;
-                price: number;
-                description: string;
-                ingredients: Record<string, never>;
-                isAvailable?: boolean;
-                popularityScore?: number;
-                image?: string;
-                category: Record<string, never>;
-                /** @enum {string} */
-                type: "APPETIZER" | "MAIN_COURSE" | "DESSERT" | "SIDES" | "SAUCE" | "OTHER";
-                isVegan?: boolean;
-                isGlutenFree?: boolean;
-                isVegetarian?: boolean;
-                allergies: Record<string, never>;
-                preparationTime?: number;
-                /** @enum {string} */
-                spicyLevel?: "NOT_SPICY" | "MILD" | "MEDIUM" | "HOT" | "EXTRA_HOT";
-                calories?: number;
-            }[];
-        };
-        drinkItemsListSchema: {
-            page?: number;
-            pageSize?: number;
-            totalPages: number;
-            totalCount: number;
-            items: {
-                id: number;
-                name: string;
-                price: number;
-                description: string;
-                ingredients: Record<string, never>;
-                isAvailable?: boolean;
-                popularityScore?: number;
-                image?: string;
-                category: Record<string, never>;
-                volume: number;
-                alcoholPercentage: number;
-                isCarbonated: Record<string, never>;
-                tempriture: Record<string, never>;
-            }[];
-        };
-        orderItemSchema: {
-            id: number;
-            price: number;
-            discount?: number;
-            itemId: number;
-            finalPrice?: number;
-            specialRequest: string;
-            allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-            printed?: boolean;
-            fired?: boolean;
-            guestNumber: number;
-            /** @enum {string} */
-            paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
-            foodItem?: {
-                name: string;
-                id: number;
-            };
-            drinkItem?: {
-                name: string;
-                id: number;
-            };
-        };
-        OrderSchema: {
-            id: number;
-            tableNumber: number;
-            orderNumber: number;
-            guestsCount: number;
-            /** Format: date-time */
-            orderTime: string;
-            /** Format: date-time */
-            updatedAt: string;
-            allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-            serverId: number;
-            totalAmount?: number;
-            /** @enum {string} */
-            status?: "AWAITING" | "RECEIVED" | "SERVED" | "CANCELED" | "DISPUTED" | "READY_TO_PAY" | "COMPLETED";
-            comments: string;
-            /** Format: date-time */
-            completionTime: string;
-            discount?: number;
-            tip?: number;
-            shiftId: string;
-        };
-        OrderSearchSchema: {
-            id?: number;
-            tableNumbers: Record<string, never>;
-            guestsCount?: number;
-            allergies: Record<string, never>;
-            serverId?: Record<string, never>;
-            serverName?: string;
-            status?: Record<string, never>;
-            minAmount?: number;
-            maxAmount?: number;
-            page?: number;
-            pageSize?: number;
-            /** @enum {string} */
-            sortBy?: "id" | "tableNumber" | "guestsCount" | "orderTime" | "updatedAt" | "status" | "totalAmount";
-            /** @enum {string} */
-            sortOrder?: "asc" | "desc";
-            /** Format: date-time */
-            dateFrom?: string;
-            /** Format: date-time */
-            dateTo?: string;
-        };
-        foodAndDrinkSchema: {
-            foodItemId: number;
-            quantity: number;
-            price: number;
-            guestNumber: number;
-        };
-        OrderCreateSchema: {
-            tableNumber: number;
-            guestsCount: number;
-            allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-            serverId: number;
-            totalAmount?: number;
-            /** @enum {string} */
-            status?: "AWAITING" | "RECEIVED" | "SERVED" | "CANCELED" | "DISPUTED" | "READY_TO_PAY" | "COMPLETED";
-            comments: string;
-            /** Format: date-time */
-            completionTime: string;
-            discount?: number;
-            foodItems?: {
-                guestNumber: number;
-                items: {
-                    id?: number;
-                    price: number;
-                    discount?: number;
-                    itemId: number;
-                    finalPrice?: number;
-                    specialRequest: string;
-                    allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-                    printed?: boolean;
-                    fired?: boolean;
-                    guestNumber?: number;
-                    /** @enum {string} */
-                    paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
-                }[];
-            }[];
-            drinkItems?: {
-                guestNumber: number;
-                items: {
-                    id?: number;
-                    price: number;
-                    discount?: number;
-                    itemId: number;
-                    finalPrice?: number;
-                    specialRequest: string;
-                    allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-                    printed?: boolean;
-                    fired?: boolean;
-                    guestNumber?: number;
-                    /** @enum {string} */
-                    paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
-                }[];
-            }[];
-        };
-        OrderFullSingleSchema: {
-            id: number;
-            tableNumber: number;
-            guestsCount: number;
-            /** Format: date-time */
-            orderTime: string;
-            /** Format: date-time */
-            updatedAt: string;
-            allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-            serverId: number;
-            totalAmount?: number;
-            /** @enum {string} */
-            status?: "AWAITING" | "RECEIVED" | "SERVED" | "CANCELED" | "DISPUTED" | "READY_TO_PAY" | "COMPLETED";
-            comments: string;
-            /** Format: date-time */
-            completionTime: string;
-            discount?: number;
-            tip?: number;
-            shiftId: string;
-            server: {
-                name: string;
-                id: number;
-            };
-            foodItems: {
-                guestNumber: number;
-                items: {
-                    id?: number;
-                    price: number;
-                    discount?: number;
-                    itemId: number;
-                    finalPrice?: number;
-                    specialRequest: string;
-                    allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-                    printed?: boolean;
-                    fired?: boolean;
-                    guestNumber?: number;
-                    /** @enum {string} */
-                    paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
-                }[];
-            }[];
-            drinkItems: {
-                guestNumber: number;
-                items: {
-                    id?: number;
-                    price: number;
-                    discount?: number;
-                    itemId: number;
-                    finalPrice?: number;
-                    specialRequest: string;
-                    allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-                    printed?: boolean;
-                    fired?: boolean;
-                    guestNumber?: number;
-                    /** @enum {string} */
-                    paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
-                }[];
-            }[];
-        };
-        OrderUpdateProps: {
-            tableNumber?: number;
-            guestsCount?: number;
-            allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-            totalAmount?: number;
-            /** @enum {string} */
-            status?: "AWAITING" | "RECEIVED" | "SERVED" | "CANCELED" | "DISPUTED" | "READY_TO_PAY" | "COMPLETED";
-            comments: string;
-            discount?: number;
-            tip?: number;
-        };
-        OrderUpdateItemsSchema: {
-            foodItems?: {
-                guestNumber: number;
-                items: {
-                    price: number;
-                    discount?: number;
-                    itemId: number;
-                    finalPrice?: number;
-                    specialRequest: string;
-                    allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-                    printed?: boolean;
-                    fired?: boolean;
-                    /** @enum {string} */
-                    paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
-                }[];
-            }[];
-            drinkItems?: {
-                guestNumber: number;
-                items: {
-                    price: number;
-                    discount?: number;
-                    itemId: number;
-                    finalPrice?: number;
-                    specialRequest: string;
-                    allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-                    printed?: boolean;
-                    fired?: boolean;
-                    /** @enum {string} */
-                    paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
-                }[];
-            }[];
-        };
-        OrderItemIdsSchema: Record<string, never>;
-        OrderIds: Record<string, never>;
-        PrepareItems: {
-            foodItems?: {
-                id?: number;
-                price?: number;
-                discount?: number;
-                itemId?: number;
-                finalPrice?: number;
-                specialRequest?: string;
-                allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-                printed?: boolean;
-                fired?: boolean;
-                guestNumber?: number;
-                /** @enum {string} */
-                paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
-                foodItem?: {
-                    name: string;
-                    id: number;
-                };
-            }[];
-            drinkItems?: {
-                id?: number;
-                price?: number;
-                discount?: number;
-                itemId?: number;
-                finalPrice?: number;
-                specialRequest?: string;
-                allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-                printed?: boolean;
-                fired?: boolean;
-                guestNumber?: number;
-                /** @enum {string} */
-                paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
-                drinkItem?: {
-                    name: string;
-                    id: number;
-                };
-            }[];
-        };
-        OrderMeta: {
-            statuses: ("AWAITING" | "RECEIVED" | "SERVED" | "CANCELED" | "DISPUTED" | "READY_TO_PAY" | "COMPLETED")[];
-            allergies: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-            maxGuests: number;
-            prices: {
-                min: number;
-                max: number;
-            };
-            dates: {
-                min: string;
-                max: string;
-            };
-            tableNumbers: number[];
-            filtered: {
-                maxGuests: number;
-                prices: {
-                    min: number;
-                    max: number;
-                };
-                dates: {
-                    min: string;
-                    max: string;
-                };
-                tableNumbers: number[];
-            };
-        };
-        PaymentSchema: {
-            id: number;
-            amount: number;
-            tax?: number;
-            tip?: number;
-            serviceCharge?: number;
-            paymentType: Record<string, never>;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            completedAt: string;
-            orderId: number;
-            status: Record<string, never>;
-        };
-        PartialPaymentSchema: {
-            id?: number;
-            amount?: number;
-            tax?: number;
-            tip?: number;
-            serviceCharge?: number;
-            paymentType?: Record<string, never>;
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            completedAt?: string;
-            orderId?: number;
-            status?: Record<string, never>;
-        };
-        PaymentSearchSchema: {
-            id?: number;
-            amount?: number;
-            tax?: number;
-            tip?: number;
-            serviceCharge?: number;
-            paymentType?: Record<string, never>;
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            completedAt?: string;
-            orderId?: number;
-            status?: Record<string, never>;
-            page?: number;
-            pageSize?: number;
-            /** @enum {string} */
-            sortBy?: "id" | "amount" | "paymentType" | "createdAt" | "completedAt" | "orderId";
-            /** @enum {string} */
-            sortOrder?: "asc" | "desc";
-        };
-        RefundSchema: {
-            reason: string;
-            /** Format: date-time */
-            createdAt?: string;
-        };
-        ReservationSchema: {
-            id: number;
-            guestsCount: number;
-            time: Record<string, never>;
-            name: string;
-            email?: string;
-            phone: string;
-            status?: Record<string, never>;
-            tables: Record<string, never>;
-            comments?: string;
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            updatedAt: string;
-            isActive?: Record<string, never>;
-        };
-        ReservationSearchCriteria: {
-            page?: number;
-            pageSize?: number;
-            /** @enum {string} */
-            sortOrder?: "asc" | "desc";
-            name?: string;
-            email?: string;
-            phone?: string;
-            status?: Record<string, never>;
-            guestsCount?: number;
-            time?: Record<string, never>;
-            tables?: Record<string, never>;
-            isActive?: Record<string, never>;
-            sortBy?: string;
-            guestsCountMin?: number;
-            guestsCountMax?: number;
-            timeStart?: Record<string, never>;
-            timeEnd?: Record<string, never>;
-        };
-        CreateReservationSchema: {
-            guestsCount: number;
-            time: Record<string, never>;
-            name: string;
-            email?: string;
-            phone: string;
-            status?: Record<string, never>;
-            tables: Record<string, never>;
-            comments?: string;
-        };
-        ReservationWithTablesSchema: {
-            id: number;
-            guestsCount: number;
-            time: Record<string, never>;
-            name: string;
-            email?: string;
-            phone: string;
-            status?: Record<string, never>;
-            tables: {
-                id: number;
-                tableNumber: number;
-            }[];
-            comments?: string;
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            updatedAt: string;
-            isActive?: Record<string, never>;
-        };
-        ReservationConflict: {
-            reservationId: number;
-            time: Record<string, never>;
-            tables: {
-                id: number;
-                tableNumber: number;
-            }[];
-        };
-        ReservationDetailedSchema: {
-            reservation: {
-                id: number;
-                guestsCount: number;
-                time: Record<string, never>;
-                name: string;
-                email?: string;
-                phone: string;
-                status?: Record<string, never>;
-                tables: {
-                    id: number;
-                    tableNumber: number;
-                }[];
-                comments?: string;
-                /** Format: date-time */
-                createdAt?: string;
-                /** Format: date-time */
-                updatedAt: string;
-                isActive?: Record<string, never>;
-            };
-            conflict: {
-                reservationId: number;
-                time: Record<string, never>;
-                tables: {
-                    id: number;
-                    tableNumber: number;
-                }[];
-            }[];
-        };
-        UpdateReservationSchema: {
-            guestsCount?: number;
-            time?: Record<string, never>;
-            name?: string;
-            email?: string;
-            phone?: string;
-            status?: Record<string, never>;
-            tables?: Record<string, never>;
-            comments?: string;
-            isActive?: Record<string, never>;
-        };
-        ReservationGuestInfoSchema: {
-            email?: string;
-            name?: string;
-            phone?: string;
-            guestsCount?: number;
-        };
-        TableBaseTableSchema: {
-            id: number;
-            tableNumber: number;
-            capacity: number;
-            additionalCapacity: number;
-            isOccupied: boolean;
-            /** @enum {string} */
-            status: "AVAILABLE" | "OCCUPIED" | "RESERVED" | "ORDERING" | "SERVING" | "PAYMENT";
-            guests: number;
-            originalCapacity: number;
-        };
-        TableSeatingSchema: {
-            tableNumber: number;
-            guests: number;
-            reservationId?: number;
-            SeatingType?: Record<string, never>;
-        };
-        TableAssignmentSchema: {
-            serverId: number;
-            isPrimary?: boolean;
-            assignedTables: number[];
-        };
-        TableSchema: {
-            id: number;
-            tableNumber: number;
-            capacity: number;
-            additionalCapacity: number;
-            isOccupied: boolean;
-            /** @enum {string} */
-            status: "AVAILABLE" | "OCCUPIED" | "RESERVED" | "ORDERING" | "SERVING" | "PAYMENT";
-            guests: number;
-            originalCapacity: number;
-            orders?: {
-                id: number;
-                /** Format: date-time */
-                orderTime: string;
-                /** @enum {string} */
-                status?: "AWAITING" | "RECEIVED" | "SERVED" | "CANCELED" | "DISPUTED" | "READY_TO_PAY" | "COMPLETED";
-            }[];
-            assignment?: {
-                serverId: number;
-                isPrimary?: boolean;
-            }[];
-        };
-        TableSearchCriteriaSchema: {
-            id: Record<string, never>;
-            tableNumber?: number;
-            minCapacity?: number;
-            maxCapacity?: number;
-            isOccupied: Record<string, never>;
-            status?: Record<string, never>;
-            serverId?: number;
-            page?: number;
-            pageSize?: number;
-            sortBy?: string;
-            /** @enum {string} */
-            sortOrder?: "asc" | "desc";
-        };
-        TableCreateSchema: {
-            tableNumber: Record<string, never>;
-            capacity: Record<string, never>;
-        };
-        TableUpdatesSchema: {
-            tableNumber?: Record<string, never>;
-            capacity?: Record<string, never>;
-        };
-        TableIdSchema: {
-            id: Record<string, never>;
-        };
-        UserSchema: {
-            id: number;
-            name: string;
-            email: string;
-            /** @enum {string} */
-            role: "ADMIN" | "USER" | "HOST" | "MANAGER";
-            isActive?: boolean;
-            password: string;
-            /** Format: date-time */
-            createdAt?: string;
-            /** Format: date-time */
-            updatedAt?: string;
-            /** Format: date-time */
-            lastLogin: string;
-        };
-        CreateUserSchema: {
-            name: string;
-            email: string;
-            /** @enum {string} */
-            role: "ADMIN" | "USER" | "HOST" | "MANAGER";
-            password: string;
-        };
-        IdParamSchema: {
-            id: string;
-        };
-        UserParamSchema: {
-            id?: number;
-            email?: string;
-            name?: string;
-            page?: number;
-            pageSize?: number;
-            /** @enum {string} */
-            sortBy?: "id" | "name" | "email" | "role" | "createdAt" | "updatedAt";
-            /** @enum {string} */
-            sortOrder?: "asc" | "desc";
-            role: Record<string, never>;
-            isActive: Record<string, never>;
-            createdAfter?: Record<string, never>;
-            createdBefore?: Record<string, never>;
-        };
-        UpdateUserSchema: {
-            name?: string;
-            email?: string;
-            /** @enum {string} */
-            role?: "ADMIN" | "USER" | "HOST" | "MANAGER";
-            isActive?: boolean;
-            /** Format: date-time */
-            lastLogin: string;
-        };
-        UserLoginSchema: {
-            email: string;
-            password: string;
-        };
-        LoginRequest: {
-            email: string;
-            password: string;
-        };
-        LoginResponse: {
-            accessToken?: string;
-            refreshToken?: string;
-            expiresIn?: string;
-        };
-        Table: {
-            id: number;
-            tableNumber: number;
-            capacity: number;
-            additionalCapacity: number;
-            isOccupied: boolean;
-            /** @enum {string} */
-            status: "AVAILABLE" | "OCCUPIED" | "RESERVED" | "ORDERING" | "SERVING" | "PAYMENT";
-            guests: number;
-            originalCapacity: number;
-            orders?: {
-                id: number;
-                /** Format: date-time */
-                orderTime: string;
-                /** @enum {string} */
-                status?: "AWAITING" | "RECEIVED" | "SERVED" | "CANCELED" | "DISPUTED" | "READY_TO_PAY" | "COMPLETED";
-            }[];
-            assignment?: {
-                serverId: number;
-                isPrimary?: boolean;
-            }[];
-        };
-        TableAssignment: {
-            serverId: number;
-            isPrimary?: boolean;
-            assignedTables: number[];
-        };
-        Order: {
-            id: number;
-            tableNumber: number;
-            orderNumber: number;
-            guestsCount: number;
-            /** Format: date-time */
-            orderTime: string;
-            /** Format: date-time */
-            updatedAt: string;
-            allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-            serverId: number;
-            totalAmount?: number;
-            /** @enum {string} */
-            status?: "AWAITING" | "RECEIVED" | "SERVED" | "CANCELED" | "DISPUTED" | "READY_TO_PAY" | "COMPLETED";
-            comments: string;
-            /** Format: date-time */
-            completionTime: string;
-            discount?: number;
-            tip?: number;
-            shiftId: string;
-        };
-        TablesResponse: {
-            id: number;
-            tableNumber: number;
-            capacity: number;
-            additionalCapacity: number;
-            isOccupied: boolean;
-            /** @enum {string} */
-            status: "AVAILABLE" | "OCCUPIED" | "RESERVED" | "ORDERING" | "SERVING" | "PAYMENT";
-            guests: number;
-            originalCapacity: number;
-            orders?: {
-                id: number;
-                /** Format: date-time */
-                orderTime: string;
-                /** @enum {string} */
-                status?: "AWAITING" | "RECEIVED" | "SERVED" | "CANCELED" | "DISPUTED" | "READY_TO_PAY" | "COMPLETED";
-            }[];
-            assignment?: {
-                serverId: number;
-                isPrimary?: boolean;
-            }[];
-        }[];
-        OrdersResponse: {
-            id: number;
-            tableNumber: number;
-            orderNumber: number;
-            guestsCount: number;
-            /** Format: date-time */
-            orderTime: string;
-            /** Format: date-time */
-            updatedAt: string;
-            allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-            serverId: number;
-            totalAmount?: number;
-            /** @enum {string} */
-            status?: "AWAITING" | "RECEIVED" | "SERVED" | "CANCELED" | "DISPUTED" | "READY_TO_PAY" | "COMPLETED";
-            comments: string;
-            /** Format: date-time */
-            completionTime: string;
-            discount?: number;
-            tip?: number;
-            shiftId: string;
-        }[];
+        UserSchema: Record<string, never>;
+        UserLoginSchema: Record<string, never>;
+        CreateUserSchema: Record<string, never>;
+        UpdateUserSchema: Record<string, never>;
+        UserParamSchema: Record<string, never>;
+        drinkItemSchema: Record<string, never>;
+        foodItemSchema: Record<string, never>;
+        createDrinkItemSchema: Record<string, never>;
+        createFoodItemSchema: Record<string, never>;
+        updateDrinkItemSchema: Record<string, never>;
+        updateFoodItemSchema: Record<string, never>;
+        searchDrinkItemsSchema: Record<string, never>;
+        searchFoodItemsSchema: Record<string, never>;
+        drinkItemsListSchema: Record<string, never>;
+        foodItemsListSchema: Record<string, never>;
+        OrderSchema: Record<string, never>;
+        OrderSearchSchema: Record<string, never>;
+        OrderCreateSchema: Record<string, never>;
+        OrderFullSingleSchema: Record<string, never>;
+        OrderUpdateProps: Record<string, never>;
+        OrderUpdateItemsSchema: Record<string, never>;
+        OrderMeta: Record<string, never>;
+        PaymentSchema: Record<string, never>;
+        PaymentSearchSchema: Record<string, never>;
+        RefundSchema: Record<string, never>;
+        ReservationSchema: Record<string, never>;
+        CreateReservationSchema: Record<string, never>;
+        UpdateReservationSchema: Record<string, never>;
+        ReservationWithTablesSchema: Record<string, never>;
+        ReservationDetailedSchema: Record<string, never>;
+        ReservationSearchCriteria: Record<string, never>;
+        TableBaseTableSchema: Record<string, never>;
+        TableSchema: Record<string, never>;
+        TableSearchCriteriaSchema: Record<string, never>;
+        TableCreateSchema: Record<string, never>;
+        TableUpdatesSchema: Record<string, never>;
+        TableIdSchema: Record<string, never>;
+        TableAssignmentSchema: Record<string, never>;
+        TableSeatingSchema: Record<string, never>;
     };
     responses: never;
     parameters: never;
@@ -1521,10 +660,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    email: string;
-                    password: string;
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -1594,23 +730,7 @@ export interface operations {
     DrinkItemsController_getDrinkItems: {
         parameters: {
             query?: {
-                id?: number;
-                name?: string;
-                price?: number;
-                description?: string;
-                ingredients?: Record<string, never>;
-                isAvailable?: boolean;
-                popularityScore?: number;
-                image?: string;
-                category?: Record<string, never>;
-                volume?: number;
-                alcoholPercentage?: number;
-                isCarbonated?: Record<string, never>;
-                tempriture?: Record<string, never>;
-                page?: number;
-                pageSize?: number;
-                sortOrder?: "asc" | "desc";
-                sortBy?: "id" | "name" | "price" | "popularityScore" | "ingredients" | "isAvailable" | "popularityScore" | "createdAt" | "updatedAt" | "category" | "volume" | "alcoholPercentage" | "isCarbonated" | "tempriture";
+                value?: Record<string, never>;
             };
             header?: never;
             path?: never;
@@ -1636,20 +756,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    name: string;
-                    price: number;
-                    description: string;
-                    ingredients: Record<string, never>;
-                    isAvailable?: boolean;
-                    popularityScore?: number;
-                    image?: string;
-                    category: Record<string, never>;
-                    volume: number;
-                    alcoholPercentage: number;
-                    isCarbonated: Record<string, never>;
-                    tempriture: Record<string, never>;
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -1667,7 +774,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: number;
+                value: Record<string, never>;
             };
             cookie?: never;
         };
@@ -1687,7 +794,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: number;
+                value: Record<string, never>;
             };
             cookie?: never;
         };
@@ -1711,20 +818,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    name?: string;
-                    price?: number;
-                    description?: string;
-                    ingredients?: Record<string, never>;
-                    isAvailable?: boolean;
-                    popularityScore?: number;
-                    image?: string;
-                    category?: Record<string, never>;
-                    volume?: number;
-                    alcoholPercentage?: number;
-                    isCarbonated?: Record<string, never>;
-                    tempriture?: Record<string, never>;
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -1740,27 +834,7 @@ export interface operations {
     FoodItemsController_getFoodItems: {
         parameters: {
             query?: {
-                id?: number;
-                name?: string;
-                price?: number;
-                description?: string;
-                ingredients?: Record<string, never>;
-                isAvailable?: boolean;
-                popularityScore?: number;
-                image?: string;
-                category?: Record<string, never>;
-                type?: "APPETIZER" | "MAIN_COURSE" | "DESSERT" | "SIDES" | "SAUCE" | "OTHER";
-                isVegan?: boolean;
-                isGlutenFree?: boolean;
-                isVegetarian?: boolean;
-                allergies?: Record<string, never>;
-                preparationTime?: number;
-                spicyLevel?: "NOT_SPICY" | "MILD" | "MEDIUM" | "HOT" | "EXTRA_HOT";
-                calories?: number;
-                page?: number;
-                pageSize?: number;
-                sortOrder?: "asc" | "desc";
-                sortBy?: "id" | "name" | "price" | "popularityScore" | "ingredients" | "isAvailable" | "popularityScore" | "createdAt" | "updatedAt" | "type" | "category" | "allergies" | "preparationTime" | "spicyLevel" | "calories" | "isVegan" | "isGlutenFree";
+                value?: Record<string, never>;
             };
             header?: never;
             path?: never;
@@ -1786,26 +860,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    name: string;
-                    price: number;
-                    description: string;
-                    ingredients: Record<string, never>;
-                    isAvailable?: boolean;
-                    popularityScore?: number;
-                    image?: string;
-                    category: Record<string, never>;
-                    /** @enum {string} */
-                    type: "APPETIZER" | "MAIN_COURSE" | "DESSERT" | "SIDES" | "SAUCE" | "OTHER";
-                    isVegan?: boolean;
-                    isGlutenFree?: boolean;
-                    isVegetarian?: boolean;
-                    allergies: Record<string, never>;
-                    preparationTime?: number;
-                    /** @enum {string} */
-                    spicyLevel?: "NOT_SPICY" | "MILD" | "MEDIUM" | "HOT" | "EXTRA_HOT";
-                    calories?: number;
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -1823,7 +878,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: number;
+                value: Record<string, never>;
             };
             cookie?: never;
         };
@@ -1843,7 +898,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: number;
+                value: Record<string, never>;
             };
             cookie?: never;
         };
@@ -1867,26 +922,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    name?: string;
-                    price?: number;
-                    description?: string;
-                    ingredients?: Record<string, never>;
-                    isAvailable?: boolean;
-                    popularityScore?: number;
-                    image?: string;
-                    category?: Record<string, never>;
-                    /** @enum {string} */
-                    type?: "APPETIZER" | "MAIN_COURSE" | "DESSERT" | "SIDES" | "SAUCE" | "OTHER";
-                    isVegan?: boolean;
-                    isGlutenFree?: boolean;
-                    isVegetarian?: boolean;
-                    allergies?: Record<string, never>;
-                    preparationTime?: number;
-                    /** @enum {string} */
-                    spicyLevel?: "NOT_SPICY" | "MILD" | "MEDIUM" | "HOT" | "EXTRA_HOT";
-                    calories?: number;
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -1902,21 +938,7 @@ export interface operations {
     OrdersController_getOrders: {
         parameters: {
             query?: {
-                id?: number;
-                tableNumbers?: Record<string, never>;
-                guestsCount?: number;
-                allergies?: Record<string, never>;
-                serverId?: Record<string, never>;
-                serverName?: string;
-                status?: Record<string, never>;
-                minAmount?: number;
-                maxAmount?: number;
-                page?: number;
-                pageSize?: number;
-                sortBy?: "id" | "tableNumber" | "guestsCount" | "orderTime" | "updatedAt" | "status" | "totalAmount";
-                sortOrder?: "asc" | "desc";
-                dateFrom?: string;
-                dateTo?: string;
+                value?: Record<string, never>;
             };
             header?: never;
             path?: never;
@@ -1942,53 +964,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    tableNumber: number;
-                    guestsCount: number;
-                    allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-                    serverId: number;
-                    totalAmount?: number;
-                    /** @enum {string} */
-                    status?: "AWAITING" | "RECEIVED" | "SERVED" | "CANCELED" | "DISPUTED" | "READY_TO_PAY" | "COMPLETED";
-                    comments: string;
-                    /** Format: date-time */
-                    completionTime: string;
-                    discount?: number;
-                    foodItems?: {
-                        guestNumber: number;
-                        items: {
-                            id?: number;
-                            price: number;
-                            discount?: number;
-                            itemId: number;
-                            finalPrice?: number;
-                            specialRequest: string;
-                            allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-                            printed?: boolean;
-                            fired?: boolean;
-                            guestNumber?: number;
-                            /** @enum {string} */
-                            paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
-                        }[];
-                    }[];
-                    drinkItems?: {
-                        guestNumber: number;
-                        items: {
-                            id?: number;
-                            price: number;
-                            discount?: number;
-                            itemId: number;
-                            finalPrice?: number;
-                            specialRequest: string;
-                            allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-                            printed?: boolean;
-                            fired?: boolean;
-                            guestNumber?: number;
-                            /** @enum {string} */
-                            paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
-                        }[];
-                    }[];
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -2004,21 +980,7 @@ export interface operations {
     OrdersController_getOrderMeta: {
         parameters: {
             query?: {
-                id?: number;
-                tableNumbers?: Record<string, never>;
-                guestsCount?: number;
-                allergies?: Record<string, never>;
-                serverId?: Record<string, never>;
-                serverName?: string;
-                status?: Record<string, never>;
-                minAmount?: number;
-                maxAmount?: number;
-                page?: number;
-                pageSize?: number;
-                sortBy?: "id" | "tableNumber" | "guestsCount" | "orderTime" | "updatedAt" | "status" | "totalAmount";
-                sortOrder?: "asc" | "desc";
-                dateFrom?: string;
-                dateTo?: string;
+                value?: Record<string, never>;
             };
             header?: never;
             path?: never;
@@ -2031,7 +993,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": Record<string, never>;
+                };
             };
         };
     };
@@ -2040,7 +1004,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: number;
+                value: Record<string, never>;
             };
             cookie?: never;
         };
@@ -2060,7 +1024,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: number;
+                value: Record<string, never>;
             };
             cookie?: never;
         };
@@ -2084,17 +1048,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    tableNumber?: number;
-                    guestsCount?: number;
-                    allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-                    totalAmount?: number;
-                    /** @enum {string} */
-                    status?: "AWAITING" | "RECEIVED" | "SERVED" | "CANCELED" | "DISPUTED" | "READY_TO_PAY" | "COMPLETED";
-                    comments: string;
-                    discount?: number;
-                    tip?: number;
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -2116,38 +1070,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    foodItems?: {
-                        guestNumber: number;
-                        items: {
-                            price: number;
-                            discount?: number;
-                            itemId: number;
-                            finalPrice?: number;
-                            specialRequest: string;
-                            allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-                            printed?: boolean;
-                            fired?: boolean;
-                            /** @enum {string} */
-                            paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
-                        }[];
-                    }[];
-                    drinkItems?: {
-                        guestNumber: number;
-                        items: {
-                            price: number;
-                            discount?: number;
-                            itemId: number;
-                            finalPrice?: number;
-                            specialRequest: string;
-                            allergies?: ("GLUTEN" | "DAIRY" | "EGG" | "PEANUT" | "TREENUT" | "FISH" | "SHELLFISH" | "SOY" | "SESAME" | "CELERY" | "MUSTARD" | "LUPIN" | "SULPHITES" | "MOLLUSCS")[];
-                            printed?: boolean;
-                            fired?: boolean;
-                            /** @enum {string} */
-                            paymentStatus?: "NONE" | "PAID" | "REFUNDED" | "CANCELLED" | "PENDING";
-                        }[];
-                    }[];
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -2207,20 +1130,7 @@ export interface operations {
     PaymentController_getPayments: {
         parameters: {
             query?: {
-                id?: number;
-                amount?: number;
-                tax?: number;
-                tip?: number;
-                serviceCharge?: number;
-                paymentType?: Record<string, never>;
-                createdAt?: string;
-                completedAt?: string;
-                orderId?: number;
-                status?: Record<string, never>;
-                page?: number;
-                pageSize?: number;
-                sortBy?: "id" | "amount" | "paymentType" | "createdAt" | "completedAt" | "orderId";
-                sortOrder?: "asc" | "desc";
+                value?: Record<string, never>;
             };
             header?: never;
             path?: never;
@@ -2242,7 +1152,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: number;
+                value: Record<string, never>;
             };
             cookie?: never;
         };
@@ -2262,7 +1172,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: number;
+                value: Record<string, never>;
             };
             cookie?: never;
         };
@@ -2282,7 +1192,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: number;
+                value: Record<string, never>;
             };
             cookie?: never;
         };
@@ -2306,11 +1216,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    reason: string;
-                    /** Format: date-time */
-                    createdAt?: string;
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -2328,7 +1234,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: number;
+                value: Record<string, never>;
             };
             cookie?: never;
         };
@@ -2346,22 +1252,7 @@ export interface operations {
     ReservationController_getAllReservations: {
         parameters: {
             query?: {
-                page?: number;
-                pageSize?: number;
-                sortOrder?: "asc" | "desc";
-                name?: string;
-                email?: string;
-                phone?: string;
-                status?: Record<string, never>;
-                guestsCount?: number;
-                time?: Record<string, never>;
-                tables?: Record<string, never>;
-                isActive?: Record<string, never>;
-                sortBy?: string;
-                guestsCountMin?: number;
-                guestsCountMax?: number;
-                timeStart?: Record<string, never>;
-                timeEnd?: Record<string, never>;
+                value?: Record<string, never>;
             };
             header?: never;
             path?: never;
@@ -2387,16 +1278,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    guestsCount: number;
-                    time: Record<string, never>;
-                    name: string;
-                    email?: string;
-                    phone: string;
-                    status?: Record<string, never>;
-                    tables: Record<string, never>;
-                    comments?: string;
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -2414,7 +1296,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: number;
+                value: Record<string, never>;
             };
             cookie?: never;
         };
@@ -2438,22 +1320,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    id?: number;
-                    guestsCount?: number;
-                    time?: Record<string, never>;
-                    name?: string;
-                    email?: string;
-                    phone?: string;
-                    status?: Record<string, never>;
-                    tables?: Record<string, never>;
-                    comments?: string;
-                    /** Format: date-time */
-                    createdAt?: string;
-                    /** Format: date-time */
-                    updatedAt?: string;
-                    isActive?: Record<string, never>;
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -2471,7 +1338,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: number;
+                value: Record<string, never>;
             };
             cookie?: never;
         };
@@ -2495,9 +1362,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    status?: Record<string, never>;
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -2519,9 +1384,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    time: Record<string, never>;
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -2543,9 +1406,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    tables: Record<string, never>;
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -2567,12 +1428,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    email?: string;
-                    name?: string;
-                    phone?: string;
-                    guestsCount?: number;
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -2594,9 +1450,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    comments?: string;
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -2612,17 +1466,7 @@ export interface operations {
     TableController_getTables: {
         parameters: {
             query?: {
-                id?: Record<string, never>;
-                tableNumber?: number;
-                minCapacity?: number;
-                maxCapacity?: number;
-                isOccupied?: Record<string, never>;
-                status?: Record<string, never>;
-                serverId?: number;
-                page?: number;
-                pageSize?: number;
-                sortBy?: string;
-                sortOrder?: "asc" | "desc";
+                value?: Record<string, never>;
             };
             header?: never;
             path?: never;
@@ -2648,10 +1492,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    tableNumber: Record<string, never>;
-                    capacity: Record<string, never>;
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -2669,7 +1510,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: Record<string, never>;
+                value: Record<string, never>;
             };
             cookie?: never;
         };
@@ -2693,10 +1534,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    tableNumber?: Record<string, never>;
-                    capacity?: Record<string, never>;
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -2714,7 +1552,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: Record<string, never>;
+                value: Record<string, never>;
             };
             cookie?: never;
         };
@@ -2734,7 +1572,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: Record<string, never>;
+                value: Record<string, never>;
             };
             cookie?: never;
         };
@@ -2758,11 +1596,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    serverId: number;
-                    isPrimary?: boolean;
-                    assignedTables: number[];
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -2784,12 +1618,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    tableNumber: number;
-                    guests: number;
-                    reservationId?: number;
-                    SeatingType?: Record<string, never>;
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -2805,17 +1634,7 @@ export interface operations {
     UserController_getUsers: {
         parameters: {
             query?: {
-                id?: number;
-                email?: string;
-                name?: string;
-                page?: number;
-                pageSize?: number;
-                sortBy?: "id" | "name" | "email" | "role" | "createdAt" | "updatedAt";
-                sortOrder?: "asc" | "desc";
-                role?: Record<string, never>;
-                isActive?: Record<string, never>;
-                createdAfter?: Record<string, never>;
-                createdBefore?: Record<string, never>;
+                value?: Record<string, never>;
             };
             header?: never;
             path?: never;
@@ -2841,13 +1660,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    name: string;
-                    email: string;
-                    /** @enum {string} */
-                    role: "ADMIN" | "USER" | "HOST" | "MANAGER";
-                    password: string;
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -2869,15 +1682,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": {
-                    name?: string;
-                    email?: string;
-                    /** @enum {string} */
-                    role?: "ADMIN" | "USER" | "HOST" | "MANAGER";
-                    isActive?: boolean;
-                    /** Format: date-time */
-                    lastLogin: string;
-                };
+                "application/json": Record<string, never>;
             };
         };
         responses: {
@@ -2895,17 +1700,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                id: number;
-                email: string;
-                name: string;
-                page: number;
-                pageSize: number;
-                sortBy: "id" | "name" | "email" | "role" | "createdAt" | "updatedAt";
-                sortOrder: "asc" | "desc";
-                role: Record<string, never>;
-                isActive: Record<string, never>;
-                createdAfter: Record<string, never>;
-                createdBefore: Record<string, never>;
+                value: Record<string, never>;
             };
             cookie?: never;
         };

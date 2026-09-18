@@ -1,69 +1,50 @@
 'use client';
 
+import { useGetOrdersMeta } from '@/features/orders/hooks/useGetOrdersMeta';
+import { useState } from 'react';
+import { FilterDateRange } from './FilterDateRange';
+
 export default function DatePickerPage() {
+	const { data: metaData } = useGetOrdersMeta();
+
+	console.log('metaData', metaData);
+
+	const [range, setRange] = useState<{ from: string | undefined; to: string | undefined }>({
+		from: undefined,
+		to: undefined,
+	});
+
+	const min = metaData?.dates?.min
+		? new Date(metaData.dates.min).toISOString().split('T')[0]
+		: undefined;
+
+	const max = metaData?.dates?.max
+		? new Date(metaData.dates.max).toISOString().split('T')[0]
+		: undefined;
+
+	const activeFilters = () => {
+		const items: { id: string; label: string; onRemove?: () => void }[] = [];
+
+		if (range.from) {
+			items.push({
+				id: 'date-from',
+				label: `From: ${range.from}`,
+				onRemove: () => setRange((prev) => ({ ...prev, from: undefined })),
+			});
+		}
+
+		if (range.to) {
+			items.push({
+				id: 'date-to',
+				label: `To: ${range.to}`,
+				onRemove: () => setRange((prev) => ({ ...prev, to: undefined })),
+			});
+		}
+
+		return items;
+	};
+
 	return (
-		<div className='flex w-full'>
-			<div className='mb-4 w-30 items-center gap-4 bg-amber-300'>some content</div>
-			<div className='w-full overflow-x-auto'>
-				<table className='w-100 border-collapse border-spacing-0 border border-slate-400'>
-					<tr>
-						<th>First Name</th>
-						<th>Last Name</th>
-						<th>Points</th>
-						<th>Points</th>
-						<th>Points</th>
-						<th>Points</th>
-						<th>Points</th>
-						<th>Points</th>
-						<th>Points</th>
-						<th>Points</th>
-						<th>Points</th>
-						<th>Points</th>
-					</tr>
-					<tr>
-						<td>Jill</td>
-						<td>Smith</td>
-						<td>50</td>
-						<td>50</td>
-						<td>50</td>
-						<td>50</td>
-						<td>50</td>
-						<td>50</td>
-						<td>50</td>
-						<td>50</td>
-						<td>50</td>
-						<td>50</td>
-					</tr>
-					<tr>
-						<td>Eve</td>
-						<td>Jackson</td>
-						<td>94</td>
-						<td>94</td>
-						<td>94</td>
-						<td>94</td>
-						<td>94</td>
-						<td>94</td>
-						<td>94</td>
-						<td>94</td>
-						<td>94</td>
-						<td>94</td>
-					</tr>
-					<tr>
-						<td>Adam</td>
-						<td>Johnson</td>
-						<td>67</td>
-						<td>67</td>
-						<td>67</td>
-						<td>67</td>
-						<td>67</td>
-						<td>67</td>
-						<td>67</td>
-						<td>67</td>
-						<td>67</td>
-						<td>67</td>
-					</tr>
-				</table>
-			</div>
-		</div>
+		<FilterDateRange from={range.from} to={range.to} min={min} max={max} onChange={setRange} />
 	);
 }

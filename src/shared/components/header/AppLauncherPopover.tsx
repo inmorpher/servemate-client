@@ -2,13 +2,14 @@
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/components/popover';
 import { useSidebarNavigation } from '@/shared/hooks/useSidebarNavigation';
+import { TabEntities } from '@/shared/components/tabs/types/tabs.type';
 import { BarChart3, Settings, ShoppingCart, Users } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 
 interface AppItem {
 	id: string;
 	label: string;
-	entity: string;
+	entity: TabEntities;
 	icon: ReactNode;
 	href: string;
 	color: string;
@@ -46,14 +47,6 @@ const appItems: AppItem[] = [
 		icon: <ShoppingCart className='h-6 w-6' />,
 		href: '/orders',
 		color: 'bg-ctp-yellow',
-	},
-	{
-		id: 'account',
-		label: 'Account',
-		entity: 'account',
-		icon: <Users className='h-6 w-6' />,
-		href: '/account',
-		color: 'bg-ctp-peach',
 	},
 	{
 		id: 'settings',

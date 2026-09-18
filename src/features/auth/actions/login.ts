@@ -2,7 +2,6 @@
 
 import { getSession } from '@/app/lib/session';
 import { jwtDecode } from 'jwt-decode';
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 export interface ILoginFormInputs {
@@ -55,9 +54,6 @@ export async function loginAction(formData: ILoginFormInputs, callbackUrl: strin
 
 		// Save session
 		await session.save();
-
-		const cookieStore = await cookies();
-		const savedCookie = cookieStore.get('servemate-session');
 
 		//Redirect to dashboard
 		redirect(callbackUrl);

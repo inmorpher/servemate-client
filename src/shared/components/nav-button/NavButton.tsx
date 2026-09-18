@@ -33,6 +33,8 @@ export const NavButton = ({
 
 	return (
 		<div
+			role='tab'
+			aria-selected={isActive}
 			className={cn(
 				'group corner-squircle gap-1/2 bg-ctp-surface2 flex min-w-41 items-center rounded-lg px-2 py-1 text-sm transition-all duration-300',
 				isActive
@@ -61,6 +63,7 @@ export const NavButton = ({
 							: 'hover:bg-ctp-surface2 text-ctp-subtext',
 					)}
 					title='Close Tab'
+					aria-label={`Close ${label} tab`}
 				>
 					<X size={16} />
 				</button>

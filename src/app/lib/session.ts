@@ -39,9 +39,7 @@ export async function getSession(): Promise<IronSession<ISessionData>> {
 	const session = await getIronSession<ISessionData>(await cookies(), sessionOptions);
 
 	if (!session.isLoggedIn) {
-		if (!session.isLoggedIn) {
-			Object.assign(session, defaultSession);
-		}
+		Object.assign(session, defaultSession);
 	}
 
 	return session;

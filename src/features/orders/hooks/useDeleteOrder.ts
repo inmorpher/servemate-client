@@ -9,18 +9,14 @@ export const useDeleteOrder = () => {
 
 	return useMutation({
 		onMutate: async ({ id }: { id: string }) => {
-			await queryClient.cancelQueries({
-				queryKey: ['orders'],
-				predicate: ({ queryKey }) => queryKey[1] !== 'meta',
-			});
+			await queryClient.cancelQueries({ queryKey: ['orders'] });
 
 			const previousOrdersQueries = queryClient.getQueriesData<OrderSearchListResult>({
 				queryKey: ['orders'],
-				predicate: ({ queryKey }) => queryKey[1] !== 'meta',
 			});
 
 			queryClient.setQueriesData<OrderSearchListResult>(
-				{ queryKey: ['orders'], predicate: ({ queryKey }) => queryKey[1] !== 'meta' },
+				{ queryKey: ['orders'] },
 				(currentData) => {
 					if (!currentData?.orders) {
 						return currentData;

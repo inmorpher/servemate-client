@@ -18,9 +18,13 @@ export type UsersApiClient = {
 	deleteUser: (id: string) => Promise<void>;
 };
 
-const requestVoid = async (endpoint: string, method: 'DELETE') => {
-	await apiRequest<null>(endpoint, {
-		method,
+const requestVoid = async <TBody = unknown>(
+	endpoint: string,
+	options: { method: 'POST' | 'PUT' | 'PATCH' | 'DELETE'; body?: TBody },
+): Promise<void> => {
+	await apiRequest<null, TBody>(endpoint, {
+		method: options.method,
+		body: options.body,
 		responseMode: 'void',
 	});
 };
@@ -36,20 +40,18 @@ export const usersApiClient: UsersApiClient = {
 			responseMode: 'json',
 		}),
 	createUser: async (body) => {
-		await apiRequest<null, CreateUserDto>(usersEndpoints.list, {
+		await requestVoid<CreateUserDto>(usersEndpoints.list, {
 			method: 'POST',
 			body,
-			responseMode: 'void',
 		});
 	},
 	updateUser: async (id, body) => {
-		await apiRequest<null, UpdateUserDto>(usersEndpoints.detail(id), {
+		await requestVoid<UpdateUserDto>(usersEndpoints.detail(id), {
 			method: 'PUT',
 			body,
-			responseMode: 'void',
 		});
 	},
 	deleteUser: async (id) => {
-		await requestVoid(usersEndpoints.delete(id), 'DELETE');
+		await requestVoid(usersEndpoints.delete(id), { method: 'DELETE' });
 	},
 };

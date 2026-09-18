@@ -4,8 +4,10 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/shared/components/pop
 import { useSidebarNavigation } from '@/shared/hooks/useSidebarNavigation';
 import { ReactNode, useState } from 'react';
 
+import { TabEntities } from '../tabs/types/tabs.type';
+
 interface SidebarNavItemWithPopoverProps {
-	entity: string;
+	entity: TabEntities;
 	label: string;
 	icon: ReactNode;
 	color: string;

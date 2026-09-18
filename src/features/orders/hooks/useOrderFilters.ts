@@ -49,19 +49,19 @@ export const useOrderFilters = () => {
 	const handleAllergyToggle = (allergy: string) => {
 		const currentAllergies: Allergies[] = filters?.allergies || [];
 
-		const mewAllergies = currentAllergies.includes(allergy as Allergies)
+		const newAllergies = currentAllergies.includes(allergy as Allergies)
 			? currentAllergies.filter((a) => a !== allergy)
 			: [...currentAllergies, allergy as Allergies];
 
 		updateTab(currentTab.id, {
-			filters: { ...filters, allergies: mewAllergies },
+			filters: { ...filters, allergies: newAllergies },
 		});
 	};
 
-	const handleStatusToggle = (status: string) => {
-		const current: OrderState | '' = filters?.status || '';
+	const handleStatusToggle = (status: OrderState) => {
+		const current = filters?.status;
 
-		const newStatus = current === status ? '' : status;
+		const newStatus = current === status ? undefined : status;
 
 		updateTab(currentTab.id, {
 			filters: { ...filters, status: newStatus },
@@ -79,15 +79,12 @@ export const useOrderFilters = () => {
 		});
 	};
 
-	const handleRangeChange = (range: {
-		startDate: Date | undefined;
-		endDate: Date | undefined;
-	}) => {
+	const handleRangeChange = (range: { from?: string; to?: string }) => {
 		updateTab(currentTab.id, {
 			filters: {
 				...filters,
-				dateFrom: range.startDate?.toISOString(),
-				dateTo: range.endDate?.toISOString(),
+				dateFrom: range.from,
+				dateTo: range.to,
 			},
 		});
 	};

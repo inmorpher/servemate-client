@@ -1,7 +1,6 @@
 'use client';
 
 import { ActionMenu } from '@/shared/components/action-menu/ActionMenu';
-import { Button } from '@/shared/components/button';
 import { Table } from '@/shared/components/table';
 import { OrderSearchCriteria, OrderSearchListResult, OrderSortOptions } from '@servemate/dto';
 import { Pencil, Phone, Printer, Trash2 } from 'lucide-react';
@@ -90,15 +89,9 @@ export const OrderList = ({
 									isSorted={isActiveSort ? (sortOrder ?? undefined) : undefined}
 									data-active={isActiveSort}
 									onClick={() => onSortChange(column.sortBy)}
-									className='group/column'
+									className='group/column cursor-pointer'
 								>
-									<Button
-										variant='ghost'
-										size='bare'
-										className='h-10 w-full px-0 py-0'
-									>
-										{column.label}
-									</Button>
+									{column.label}
 								</Table.HeaderCell>
 							);
 						})}

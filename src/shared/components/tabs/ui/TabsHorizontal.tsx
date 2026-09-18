@@ -5,11 +5,15 @@ import { startTransition } from 'react';
 import { HoverCardComponent } from '../../hover-card';
 import { useTabs } from '../store/useTabs';
 import { TabButton } from './TabButton';
+import { components } from '@/shared/api/api-types';
 
 type TabsHorizontalProps = {
 	isMobile?: boolean;
 };
 
+
+type CreateUserBody = components['schemas']['CreateUserSchema'];
+type UserResponse = components['schemas']['UserResponseSchema'];
 export const TabsHorizontal = ({ isMobile = false }: TabsHorizontalProps) => {
 	const { tabs, activeTabId, setActiveTab, removeTab } = useTabs();
 
@@ -25,6 +29,7 @@ export const TabsHorizontal = ({ isMobile = false }: TabsHorizontalProps) => {
 
 	return (
 		<div
+			role='tablist'
 			className={`ml-1.5 gap-4 self-end overflow-x-auto p-1 lg:flex ${isMobile ? 'lg:flex' : 'hidden'}`}
 		>
 			{tabs.map((tab) => {

@@ -34,22 +34,6 @@ export const OrdersListPage = ({ tabId }: { tabId: Tab['id'] }) => {
 					<Button size='sm'>Create order</Button>
 				</>
 			}
-			activeFilters={[
-				{ id: 'status', label: 'Status: Active', onRemove: () => undefined },
-				{ id: 'date', label: 'Date: Today', onRemove: () => undefined },
-			]}
-			onClearFilters={() => undefined}
-			toolbarActions={
-				<>
-					<Button variant='outline' size='sm'>
-						Filters
-					</Button>
-					<Button variant='ghost' size='sm'>
-						Sort
-					</Button>
-				</>
-			}
-			showViewToggle
 			filters={<OrderFilters />}
 			content={
 				<OrderList

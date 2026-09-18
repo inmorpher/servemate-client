@@ -14,7 +14,7 @@ export const SidebarNavigation = () => {
 			/>
 			<SidebarNavItemWithPopover
 				entity='orders'
-				label='orders'
+				label='Orders'
 				icon={<ShoppingCart className='h-5 w-5' />}
 				color='bg-ctp-mauve'
 			/>

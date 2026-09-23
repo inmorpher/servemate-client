@@ -7,11 +7,13 @@ import {
 	UserListResult,
 	UserSearchCriteria,
 } from '@servemate/dto';
+import type { UserMeta } from '../types';
 
 import { usersEndpoints } from './endpoints';
 
 export type UsersApiClient = {
 	getUsers: (params?: UserSearchCriteria) => Promise<UserListResult>;
+	getMeta: () => Promise<UserMeta>;
 	getUser: (id: string) => Promise<UserListItem>;
 	createUser: (body: CreateUserDto) => Promise<void>;
 	updateUser: (id: string, body: UpdateUserDto) => Promise<void>;
@@ -33,6 +35,10 @@ export const usersApiClient: UsersApiClient = {
 	getUsers: (params) =>
 		apiRequest<UserListResult>(usersEndpoints.list, {
 			params,
+			responseMode: 'json',
+		}),
+	getMeta: () =>
+		apiRequest<UserMeta>(usersEndpoints.meta, {
 			responseMode: 'json',
 		}),
 	getUser: (id) =>

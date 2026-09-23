@@ -1,4 +1,7 @@
 {
 	"cSpell.words": ["refreshtoken", "Sonner"],
-	"keyboard.dispatch": "keyCode"
+	"keyboard.dispatch": "keyCode",
+	"chat.tools.terminal.autoApprove": {
+		"pnpm": true
+	}
 }

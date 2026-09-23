@@ -19,9 +19,22 @@ function UserSearchBar() {
 		handleCreatedBeforeChange,
 		handleClearFilters,
 		hasFilters,
+		metaData,
 	} = useUserFilters();
 	const isLoading = false;
 	const criteria = filters || {};
+	const roles = metaData
+		? userSearchOptions.roles.filter((option) => metaData.roles.includes(option.value))
+		: userSearchOptions.roles;
+	const statuses = metaData
+		? userSearchOptions.statuses.filter((option) =>
+				metaData.activeStates.includes(option.value === 'true'),
+			)
+		: userSearchOptions.statuses;
+	const createdAtRange = metaData?.createdAtRange;
+	const disabledCreatedAtDates = createdAtRange
+		? [{ before: new Date(createdAtRange.min) }, { after: new Date(createdAtRange.max) }]
+		: undefined;
 
 	return (
 		<Filter className='max-h-dvh'>
@@ -66,7 +79,7 @@ function UserSearchBar() {
 			</Filter.Group>
 
 			<Filter.Group label='Role'>
-				{userSearchOptions.roles.map((option) => (
+				{roles.map((option) => (
 					<SearchChip
 						key={option.value}
 						isActive={criteria.role === option.value}
@@ -78,7 +91,7 @@ function UserSearchBar() {
 			</Filter.Group>
 
 			<Filter.Group label='Status'>
-				{userSearchOptions.statuses.map((option) => {
+				{statuses.map((option) => {
 					const statusValue = option.value === 'true';
 
 					return (
@@ -100,6 +113,7 @@ function UserSearchBar() {
 						value={criteria.createdAfter ? new Date(criteria.createdAfter) : undefined}
 						placeholder='Select start date'
 						onChange={handleCreatedAfterChange}
+						disabled={disabledCreatedAtDates}
 					/>
 					<DatePickerField
 						label='Created before'
@@ -108,6 +122,7 @@ function UserSearchBar() {
 						}
 						placeholder='Select end date'
 						onChange={handleCreatedBeforeChange}
+						disabled={disabledCreatedAtDates}
 					/>
 				</div>
 			</Filter.Group>

@@ -4,6 +4,7 @@ import { Button } from '@/shared/components/button';
 import { Pagination } from '@/shared/components/pagination';
 import { Tab } from '@/shared/components/tabs/types/tabs.type';
 import { useListPageState } from '@/shared/hooks/useListPageState';
+import { ListError } from '@/shared/layouts/Error';
 import { ListPageLayout } from '@/shared/layouts/ListPageLayout';
 import { UserSearchCriteria } from '@servemate/dto';
 import { useGetUsers } from '../hooks/useUsers';
@@ -22,7 +23,11 @@ const UserClientPage = ({ tabId }: { tabId: Tab['id'] }) => {
 	const { filters, handleSortChange, handlePageChange, handlePageSizeChange } =
 		useListPageState<UserSearchCriteria>({ tabId });
 
-	const { isLoading, data } = useGetUsers(filters || {});
+	const { isLoading, data, error, isError, refetch } = useGetUsers(filters || {});
+
+	if (isError) {
+		return <ListError error={error?.message} refetch={refetch} isLoading={isLoading} />;
+	}
 
 	const { users, totalCount, totalPages, page, pageSize } = data || {};
 

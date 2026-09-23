@@ -29,22 +29,16 @@ export const UsersTable = ({
 	<div className='border-ctp-surface1 shadow-soft max-w-full min-w-0 overflow-x-auto overflow-y-auto border'>
 		<Table className='text-ctp-text w-full min-w-230 table-fixed'>
 			<UsersTableColGroup />
+			<UserTableHead sortBy={sortBy} sortOrder={sortOrder} onSortChange={onSortChange} />
 			{isLoading ? (
 				<Table.Skeleton rows={10} columns={USER_COLUMN_COUNT} />
 			) : (
-				<>
-					<UserTableHead
-						sortBy={sortBy}
-						sortOrder={sortOrder}
-						onSortChange={onSortChange}
-					/>
-					<UserTableBody
-						users={users}
-						isLoading={isLoading}
-						sortBy={sortBy}
-						onDelete={onDeleteUser ? onDeleteUser : () => {}}
-					/>
-				</>
+				<UserTableBody
+					users={users}
+					isLoading={isLoading}
+					sortBy={sortBy}
+					onDelete={onDeleteUser ? onDeleteUser : () => {}}
+				/>
 			)}
 		</Table>
 	</div>

@@ -5,8 +5,11 @@ import { Tab } from '@/shared/components/tabs/types/tabs.type';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { UserSearchCriteria } from '@servemate/dto';
 import { useEffect, useState } from 'react';
+import type { UserMeta } from '../types';
+import { useGetUsersMeta } from './useGetUsersMeta';
 
 export type UseUserFiltersReturn = {
+	metaData: UserMeta | undefined;
 	filters: Partial<UserSearchCriteria> | undefined;
 	nameValue: string;
 	emailValue: string;
@@ -21,6 +24,7 @@ export type UseUserFiltersReturn = {
 };
 
 export const useUserFilters = (): UseUserFiltersReturn => {
+	const { data: metaData } = useGetUsersMeta();
 	const currentTab: Tab<UserSearchCriteria> | undefined = useTabs((state) =>
 		state.getTabById(state.activeTabId),
 	);
@@ -148,6 +152,7 @@ export const useUserFilters = (): UseUserFiltersReturn => {
 	);
 
 	return {
+		metaData,
 		filters,
 		nameValue,
 		emailValue,

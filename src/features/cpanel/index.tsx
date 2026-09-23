@@ -25,7 +25,7 @@ const CPanelIndex = () => {
 
 	return (
 		<Suspense fallback={<div className='p-4'>Loading...</div>}>
-			{ActiveComponent ? (
+			{activeTab && ActiveComponent ? (
 				<ViewTransition>
 					<ActiveComponent tabId={activeTab.id} />
 				</ViewTransition>

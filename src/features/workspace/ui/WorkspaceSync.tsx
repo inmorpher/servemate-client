@@ -83,8 +83,11 @@ export const WorkspaceSync = () => {
 			);
 		}
 
-		if (data.activeTab.type === 'users' && data.activeTabMeta) {
-			queryClient.setQueryData(['users', 'meta'], data.activeTabMeta);
+		if (
+			data.activeTabMeta &&
+			(data.activeTab.type === 'users' || data.activeTab.type === 'orders')
+		) {
+			queryClient.setQueryData([data.activeTab.type, 'meta'], data.activeTabMeta);
 		}
 	}, [data, queryClient]);
 

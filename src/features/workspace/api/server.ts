@@ -21,12 +21,14 @@ export const getWorkspaceBootstrapOnServer = async (): Promise<WorkspaceBootstra
 	}
 
 	const bootstrap = (await response.json()) as WorkspaceBootstrap;
-	if (bootstrap.activeTab?.type !== 'users') {
+	const activeTabType = bootstrap.activeTab?.type;
+	if (activeTabType !== 'users' && activeTabType !== 'orders') {
 		return bootstrap;
 	}
 
 	try {
-		const metaResponse = await fetch(`${CONFIG.API_BASE_URL}/users/meta`, {
+		const metaEndpoint = activeTabType === 'users' ? 'users' : 'orders';
+		const metaResponse = await fetch(`${CONFIG.API_BASE_URL}/${metaEndpoint}/meta`, {
 			headers: {
 				Authorization: `Bearer ${session.accessToken}`,
 			},

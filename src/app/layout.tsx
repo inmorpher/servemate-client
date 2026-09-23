@@ -44,8 +44,14 @@ export default async function RootLayout({
 				queryFn: getWorkspaceBootstrapOnServer,
 				retry: false,
 			});
-			if (bootstrap.activeTabMeta) {
-				queryClient.setQueryData(['users', 'meta'], bootstrap.activeTabMeta);
+			if (
+				bootstrap.activeTabMeta &&
+				(bootstrap.activeTab?.type === 'users' || bootstrap.activeTab?.type === 'orders')
+			) {
+				queryClient.setQueryData(
+					[bootstrap.activeTab.type, 'meta'],
+					bootstrap.activeTabMeta,
+				);
 			}
 			dehydratedState = dehydrate(queryClient);
 		} catch {

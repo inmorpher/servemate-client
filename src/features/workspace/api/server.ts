@@ -20,5 +20,28 @@ export const getWorkspaceBootstrapOnServer = async (): Promise<WorkspaceBootstra
 		throw new Error('Failed to fetch workspace bootstrap');
 	}
 
-	return response.json() as Promise<WorkspaceBootstrap>;
+	const bootstrap = (await response.json()) as WorkspaceBootstrap;
+	if (bootstrap.activeTab?.type !== 'users') {
+		return bootstrap;
+	}
+
+	try {
+		const metaResponse = await fetch(`${CONFIG.API_BASE_URL}/users/meta`, {
+			headers: {
+				Authorization: `Bearer ${session.accessToken}`,
+			},
+			cache: 'no-store',
+		});
+
+		if (!metaResponse.ok) {
+			return bootstrap;
+		}
+
+		return {
+			...bootstrap,
+			activeTabMeta: await metaResponse.json(),
+		};
+	} catch {
+		return bootstrap;
+	}
 };

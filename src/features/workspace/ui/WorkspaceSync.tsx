@@ -69,15 +69,22 @@ export const WorkspaceSync = () => {
 	}, [data, hydrateWorkspace, markSynced]);
 
 	useEffect(() => {
-		if (!data?.activeTab || data.activeTabData === undefined) {
+		if (!data?.activeTab) {
 			return;
 		}
 
-		if (data.activeTab.type === 'users' || data.activeTab.type === 'orders') {
+		if (
+			data.activeTabData !== undefined &&
+			(data.activeTab.type === 'users' || data.activeTab.type === 'orders')
+		) {
 			queryClient.setQueryData(
 				[data.activeTab.type, data.activeTab.state ?? {}],
 				data.activeTabData,
 			);
+		}
+
+		if (data.activeTab.type === 'users' && data.activeTabMeta) {
+			queryClient.setQueryData(['users', 'meta'], data.activeTabMeta);
 		}
 	}, [data, queryClient]);
 

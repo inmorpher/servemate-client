@@ -39,11 +39,14 @@ export default async function RootLayout({
 	if (session.isLoggedIn) {
 		try {
 			const queryClient = new QueryClient();
-			await queryClient.query({
+			const bootstrap = await queryClient.fetchQuery({
 				queryKey: workspaceQueryKey,
 				queryFn: getWorkspaceBootstrapOnServer,
 				retry: false,
 			});
+			if (bootstrap.activeTabMeta) {
+				queryClient.setQueryData(['users', 'meta'], bootstrap.activeTabMeta);
+			}
 			dehydratedState = dehydrate(queryClient);
 		} catch {
 			// Client-side auth handling remains the fallback for protected routes.

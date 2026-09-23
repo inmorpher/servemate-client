@@ -15,7 +15,6 @@ export const useSidebarStore = create<SidebarState>((set) => ({
 	pathname: '/',
 	setIsOpen: (isOpen: boolean) =>
 		set(() => {
-			// Закрываем сайдбар на мобильных устройствах
 			if (typeof window !== 'undefined' && window.innerWidth < 1024) {
 				return { isOpen };
 			}
@@ -23,14 +22,12 @@ export const useSidebarStore = create<SidebarState>((set) => ({
 		}),
 	toggleSidebar: () =>
 		set((state) => {
-			// Переключение только на мобильных устройствах
 			if (typeof window !== 'undefined' && window.innerWidth < 1024) {
 				return { isOpen: !state.isOpen };
 			}
 			return {};
 		}),
 	setPathname: (pathname: string) => {
-		// Закрываем сайдбар при изменении маршрута на мобильных устройствах
 		set((state) => {
 			if (typeof window !== 'undefined' && window.innerWidth < 1024) {
 				return { pathname, isOpen: false };

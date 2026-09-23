@@ -1,35 +1,14 @@
 'use client';
 
-import { SidebarNavItemWithPopover } from '@/shared/components/sidebar/SidebarNavItemWithPopover';
-import { BarChart3, Settings, ShoppingCart, Users } from 'lucide-react';
+import { sidebarItems } from '@/features/sidebar/config/sidebarItems';
+import { SidebarNavItem } from '@/shared/components/sidebar/SidebarNavItem';
 
 export const SidebarNavigation = () => {
 	return (
-		<nav className='flex flex-col items-center gap-5'>
-			<SidebarNavItemWithPopover
-				entity='dashboard'
-				label='Dashboard'
-				icon={<BarChart3 className='h-5 w-5' />}
-				color='bg-ctp-blue'
-			/>
-			<SidebarNavItemWithPopover
-				entity='orders'
-				label='Orders'
-				icon={<ShoppingCart className='h-5 w-5' />}
-				color='bg-ctp-mauve'
-			/>
-			<SidebarNavItemWithPopover
-				entity='users'
-				label='Users'
-				icon={<Users className='h-5 w-5' />}
-				color='bg-ctp-green'
-			/>
-			<SidebarNavItemWithPopover
-				entity='settings'
-				label='Settings'
-				icon={<Settings className='h-5 w-5' />}
-				color='bg-ctp-sky'
-			/>
-		</nav>
+		<div className='flex flex-col items-center gap-3'>
+			{sidebarItems.map((item) => (
+				<SidebarNavItem key={item.id} item={item} />
+			))}
+		</div>
 	);
 };

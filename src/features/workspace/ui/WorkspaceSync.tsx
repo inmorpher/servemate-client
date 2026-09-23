@@ -6,13 +6,16 @@ import { useEffect, useRef } from 'react';
 import { workspaceApiClient, workspaceQueryKey } from '../api/client';
 import { useUpdateWorkspace, useWorkspaceBootstrap } from '../hooks/useWorkspace';
 import { useWorkspaceSyncStore } from '../store/useWorkspaceSyncStore';
+import type { WorkspaceSettings } from '../types';
 
 const WORKSPACE_SAVE_DELAY = 500;
 
 export const WorkspaceSync = () => {
 	const { data } = useWorkspaceBootstrap();
+	const workspaceSettings = data?.workspace.settings;
+	const hasWorkspaceData = Boolean(data);
 	const queryClient = useQueryClient();
-	const { mutate: updateWorkspace } = useUpdateWorkspace();
+	const { mutate: updateWorkspace, mutateAsync: updateWorkspaceAsync } = useUpdateWorkspace();
 	const tabs = useTabs((state) => state.tabs);
 	const activeTabId = useTabs((state) => state.activeTabId);
 	const hydrateWorkspace = useTabs((state) => state.hydrateWorkspace);
@@ -21,6 +24,7 @@ export const WorkspaceSync = () => {
 	const setRetry = useWorkspaceSyncStore((state) => state.setRetry);
 	const hydratedRef = useRef(false);
 	const skipNextSaveRef = useRef(false);
+	const settingsRef = useRef<WorkspaceSettings>({});
 
 	useEffect(() => {
 		setRetry(async () => {
@@ -29,16 +33,29 @@ export const WorkspaceSync = () => {
 				const latest = await queryClient.fetchQuery({
 					queryKey: workspaceQueryKey,
 					queryFn: workspaceApiClient.getBootstrap,
+					staleTime: 0,
 				});
-				hydrateWorkspace(latest.workspace);
-				skipNextSaveRef.current = true;
+				const current = useTabs.getState();
+				await updateWorkspaceAsync({
+					tabs: current.tabs.map((tab, order) => ({
+						id: tab.id,
+						title: tab.title,
+						type: tab.entity,
+						state: tab.filters,
+						pinned: tab.pinned,
+						order,
+					})),
+					activeTabId: current.activeTabId || undefined,
+					settings: latest.workspace.settings ?? {},
+				});
+				settingsRef.current = latest.workspace.settings ?? {};
 				markSynced(Date.now());
 			} catch {
 				setSyncStatus('error');
 			}
 		});
 		return () => setRetry(null);
-	}, [hydrateWorkspace, markSynced, queryClient, setRetry, setSyncStatus]);
+	}, [markSynced, queryClient, setRetry, setSyncStatus, updateWorkspaceAsync]);
 
 	useEffect(() => {
 		if (!data || hydratedRef.current) {
@@ -65,7 +82,11 @@ export const WorkspaceSync = () => {
 	}, [data, queryClient]);
 
 	useEffect(() => {
-		if (!data || !hydratedRef.current) {
+		settingsRef.current = workspaceSettings ?? {};
+	}, [workspaceSettings]);
+
+	useEffect(() => {
+		if (!hasWorkspaceData || !hydratedRef.current) {
 			return;
 		}
 		if (skipNextSaveRef.current) {
@@ -87,7 +108,7 @@ export const WorkspaceSync = () => {
 						order,
 					})),
 					activeTabId: activeTabId || undefined,
-					settings: data.workspace.settings ?? {},
+					settings: settingsRef.current,
 				},
 				{
 					onSuccess: () => markSynced(Date.now()),
@@ -97,7 +118,7 @@ export const WorkspaceSync = () => {
 		}, WORKSPACE_SAVE_DELAY);
 
 		return () => window.clearTimeout(timeoutId);
-	}, [activeTabId, data, markSynced, setSyncStatus, tabs, updateWorkspace]);
+	}, [activeTabId, hasWorkspaceData, markSynced, setSyncStatus, tabs, updateWorkspace]);
 
 	return null;
 };

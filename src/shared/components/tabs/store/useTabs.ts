@@ -2,7 +2,7 @@
 import { nanoid } from 'nanoid';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { Tab, TabsStore } from '../types/tabs.type';
+import { isTabEntity, Tab, TabsStore } from '../types/tabs.type';
 
 const MAX_TABS = 10;
 export const useTabs = create<TabsStore>()(
@@ -100,7 +100,7 @@ export const useTabs = create<TabsStore>()(
 					// Filter out undefined values to prevent overwriting with undefined
 					const cleanFields = Object.fromEntries(
 						Object.entries(fields).filter(([_, value]) => value !== undefined),
-					);
+					) as Partial<Omit<Tab, 'id'>>;
 
 					if (cleanFields.filters) {
 						const cleanedFilters = Object.fromEntries(
@@ -125,6 +125,37 @@ export const useTabs = create<TabsStore>()(
 
 				clearTabs: () => {
 					set({ tabs: [], activeTabId: '' });
+				},
+				hydrateWorkspace: (workspace) => {
+					const tabs = workspace.tabs
+						.slice()
+						.sort((firstTab, secondTab) => firstTab.order - secondTab.order)
+						.flatMap((workspaceTab) => {
+							if (!isTabEntity(workspaceTab.type)) {
+								return [];
+							}
+
+							return [
+								{
+									id: workspaceTab.id,
+									title: workspaceTab.title,
+									entity: workspaceTab.type,
+									filters: workspaceTab.state,
+									pinned: workspaceTab.pinned,
+									timestamp: Date.now(),
+								},
+							];
+						});
+					const activeTabId =
+						workspace.activeTabId &&
+						tabs.some((tab) => tab.id === workspace.activeTabId)
+							? workspace.activeTabId
+							: (tabs[0]?.id ?? '');
+
+					set({
+						tabs,
+						activeTabId,
+					});
 				},
 
 				clearFilters: (tabId: string) => {

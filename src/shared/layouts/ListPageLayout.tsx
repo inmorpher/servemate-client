@@ -1,6 +1,6 @@
 'use client';
 
-import { FiltersPortalContext } from '@/app/(protected)/layout';
+import { FiltersPortalContext } from '@/shared/contexts/FiltersPortalContext';
 import { LayoutGrid, List, X } from 'lucide-react';
 import { ReactNode, useContext, useState } from 'react';
 import { createPortal } from 'react-dom';

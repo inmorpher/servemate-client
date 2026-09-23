@@ -6,7 +6,7 @@
 		"dev": "next dev --turbopack --hostname 0.0.0.0 --port 3000",
 		"build": "next build",
 		"start": "next start",
-		"lint": "next lint",
+		"lint": "eslint .",
 		"api:generate": "openapi-typescript http://192.168.2.80:3000/docs/openapi.json -o src/shared/api/api-types.ts"
 	},
 	"dependencies": {
@@ -47,7 +47,7 @@
 		"@types/node": "^25.8.0",
 		"@types/react": "19.2.17",
 		"@types/react-dom": "19.2.3",
-		"eslint": "^10.3.0",
+		"eslint": "^9.39.5",
 		"eslint-config-next": "16.2.7",
 		"openapi-typescript": "^7.13.0",
 		"prettier": "^3.5.3",

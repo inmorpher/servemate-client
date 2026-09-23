@@ -1,3 +1,4 @@
+import { TabEntities } from '@/shared/components/tabs/types/tabs.type';
 import { FC, ReactNode } from 'react';
 
 export interface ISidebarProps {
@@ -16,7 +17,7 @@ export interface ISidebarNavProps {
 }
 
 export interface ISidebarNavItemProps {
-	entity: string;
+	entity: TabEntities;
 	icon?: string;
 	label: string;
 }

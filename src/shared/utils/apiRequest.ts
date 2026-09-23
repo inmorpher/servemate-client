@@ -2,6 +2,16 @@ import { buildApiUrl } from './buildApiUrl';
 
 export type ApiResponseMode = 'auto' | 'json' | 'text' | 'void';
 
+export class ApiRequestError extends Error {
+	constructor(
+		message: string,
+		public readonly status: number,
+	) {
+		super(message);
+		this.name = 'ApiRequestError';
+	}
+}
+
 type ApiRequestOptions<TBody> = {
 	method?: string;
 	params?: Record<string, unknown>;
@@ -51,7 +61,7 @@ export const apiRequest = async <TResponse = unknown, TBody = unknown>(
 
 	if (!response.ok) {
 		const errorMessage = await response.text().catch(() => '');
-		throw new Error(errorMessage || 'Failed to fetch data');
+		throw new ApiRequestError(errorMessage || 'Failed to fetch data', response.status);
 	}
 
 	if (responseMode === 'void' || response.status === 204) {

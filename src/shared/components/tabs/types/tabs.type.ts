@@ -4,6 +4,18 @@ export type TabFilters<T> = {
 
 export type TabEntities = 'users' | 'orders' | 'products' | 'dashboard' | 'settings' | 'cpanel';
 
+const TAB_ENTITIES: readonly TabEntities[] = [
+	'users',
+	'orders',
+	'products',
+	'dashboard',
+	'settings',
+	'cpanel',
+];
+
+export const isTabEntity = (value: string): value is TabEntities =>
+	TAB_ENTITIES.includes(value as TabEntities);
+
 export type Tab<T = {}> = {
 	id: string;
 	title: string;
@@ -11,6 +23,15 @@ export type Tab<T = {}> = {
 	pinned?: boolean;
 	entity: TabEntities;
 	filters?: TabFilters<T>;
+};
+
+export type WorkspaceTabState = {
+	id: string;
+	title: string;
+	type: string;
+	state?: Record<string, unknown>;
+	pinned?: boolean;
+	order: number;
 };
 
 export type TabsStore = {
@@ -27,4 +48,5 @@ export type TabsStore = {
 	updateTab: (tabId: string, fields: Partial<Tab>) => void;
 	clearFilters: (tabId: string) => void;
 	clearTabs: () => void;
+	hydrateWorkspace: (workspace: { tabs: WorkspaceTabState[]; activeTabId?: string }) => void;
 };

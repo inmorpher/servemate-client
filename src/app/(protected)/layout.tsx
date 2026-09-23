@@ -2,14 +2,16 @@
 
 import { Logo } from '@/shared/components/logo';
 import Sidebar from '@/shared/components/sidebar/Sidebar';
+import { FiltersPortalContext } from '@/shared/contexts/FiltersPortalContext';
 
 import { SidebarNavigation } from './SidebarNavigation';
 
+import { WorkspaceSync } from '@/features/workspace/ui/WorkspaceSync';
 import { AppLauncherPopover } from '@/shared/components/header/AppLauncherPopover';
 import { HeaderActionsMenu } from '@/shared/components/header/HeaderActionsMenu';
 import { TabsDropdown, TabsHorizontal } from '@/shared/components/tabs';
 import { useDrawerStore } from '@/shared/store/useDrawerStore';
-import { createContext, ReactNode, useCallback, useState } from 'react';
+import { ReactNode, useCallback, useState } from 'react';
 
 /**
  * ProtectedLayout
@@ -38,10 +40,6 @@ import { createContext, ReactNode, useCallback, useState } from 'react';
  * @see {@link ListPageLayout} - Sub-layout for list-based pages
  * @see {@link src/shared/components/header} - Header components
  */
-export const FiltersPortalContext = createContext<{ target: HTMLDivElement | null }>({
-	target: null,
-});
-
 interface ProtectedLayoutProps {
 	/** React node(s) to render in the main content area */
 	children: ReactNode;
@@ -58,6 +56,7 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
 	}, []);
 	return (
 		<>
+			<WorkspaceSync />
 			{/* Header with sticky positioning */}
 			<header
 				className={`bg-ctp-base sticky inset-x-0 top-0 left-0 z-40 flex w-full items-center gap-2 px-4 py-2 lg:h-14`}

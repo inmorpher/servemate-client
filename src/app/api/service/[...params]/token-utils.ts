@@ -5,8 +5,6 @@ import { CONFIG } from './config';
 import { ApiError } from './errors';
 import { DecodedToken, SessionData, TokenResponse } from './types';
 
-let refreshTokenPromise: Promise<TokenResponse> | null = null;
-
 export async function getValidatedTokenFromSession(): Promise<TokenResponse> {
 	const session = (await getSession()) as SessionData;
 

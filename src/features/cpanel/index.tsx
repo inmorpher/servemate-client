@@ -1,7 +1,7 @@
 'use client';
 
 import { TabEntities } from '@/shared/components/tabs/types/tabs.type';
-import React, { JSX, Suspense, ViewTransition } from 'react';
+import React, { JSX, Suspense } from 'react';
 import { useTabs } from '../../shared/components/tabs/store/useTabs';
 
 type TabComponentProps = {
@@ -23,18 +23,18 @@ const CPanelIndex = () => {
 	const activeTab = tabs.find((tab) => tab.id === activeTabId);
 	const ActiveComponent = activeTab ? tabComponentMap[activeTab.entity] : null;
 
+	if (!activeTab || !ActiveComponent) {
+		return (
+			<div className='flex h-full flex-col items-center justify-center p-4 text-center'>
+				<h1 className='text-ctp-mauve mb-4 text-2xl font-bold'>Control Panel</h1>
+				<p className='text-ctp-subtext0 text-lg'>Select an app from the sidebar.</p>
+			</div>
+		);
+	}
+
 	return (
 		<Suspense fallback={<div className='p-4'>Loading...</div>}>
-			{activeTab && ActiveComponent ? (
-				<ViewTransition>
-					<ActiveComponent tabId={activeTab.id} />
-				</ViewTransition>
-			) : (
-				<div className='flex h-full flex-col items-center justify-center'>
-					<h1 className='text-ctp-mauve mb-4 text-2xl font-bold'>Control Panel</h1>
-					<p className='text-ctp-subtext0 text-lg'>Select an app from the sidebar.</p>
-				</div>
-			)}
+			<ActiveComponent tabId={activeTab.id} />
 		</Suspense>
 	);
 };

@@ -1,5 +1,5 @@
 import type { TabEntities } from '@/shared/components/tabs/types/tabs.type';
-import { BarChart3, CalendarDays, ShoppingCart, Users, type LucideIcon } from 'lucide-react';
+import { BarChart3, CalendarDays, ShoppingCart, Users, Wine, type LucideIcon } from 'lucide-react';
 
 export interface SidebarNavigationItem {
 	id: string;
@@ -47,5 +47,14 @@ export const sidebarItems: SidebarNavigationItem[] = [
 		href: '/cpanel',
 		openInTab: true,
 		color: 'bg-ctp-yellow',
+	},
+	{
+		id: 'drinks',
+		label: 'Drinks',
+		entity: 'drinks',
+		icon: Wine,
+		href: '/cpanel',
+		openInTab: true,
+		color: 'bg-ctp-pink',
 	},
 ];

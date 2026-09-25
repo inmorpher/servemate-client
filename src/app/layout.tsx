@@ -2,6 +2,7 @@ import { workspaceQueryKey } from '@/features/workspace/api/client';
 import { getWorkspaceBootstrapOnServer } from '@/features/workspace/api/server';
 import { QueryProvider } from '@/providers/QueryProvider';
 import { Toaster } from '@/shared/components/toaster/ToasterProvider';
+import { buildApiQueryKey } from '@/shared/utils/buildApiQueryKey';
 import { dehydrate, QueryClient } from '@tanstack/react-query';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
@@ -39,11 +40,17 @@ export default async function RootLayout({
 	if (session.isLoggedIn) {
 		try {
 			const queryClient = new QueryClient();
-			await queryClient.query({
+			const bootstrap = await queryClient.fetchQuery({
 				queryKey: workspaceQueryKey,
 				queryFn: getWorkspaceBootstrapOnServer,
 				retry: false,
 			});
+			if (bootstrap.activeTab && bootstrap.activeTabData !== undefined) {
+				queryClient.setQueryData(
+					buildApiQueryKey(bootstrap.activeTab.type, bootstrap.activeTab.state),
+					bootstrap.activeTabData,
+				);
+			}
 			dehydratedState = dehydrate(queryClient);
 		} catch {
 			// Client-side auth handling remains the fallback for protected routes.

@@ -13,6 +13,7 @@ const tabComponentMap: Partial<
 > = {
 	users: React.lazy(() => import('../users/ui/UserClientPage')),
 	orders: React.lazy(() => import('../orders/ui/OrdersListPage')),
+	reservations: React.lazy(() => import('../reservations/ui/ReservationsListPage')),
 };
 
 const CPanelIndex = () => {

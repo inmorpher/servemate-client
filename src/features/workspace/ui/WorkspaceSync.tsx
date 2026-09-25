@@ -1,6 +1,7 @@
 'use client';
 
 import { useTabs } from '@/shared/components/tabs/store/useTabs';
+import { buildApiQueryKey } from '@/shared/utils/buildApiQueryKey';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { workspaceApiClient, workspaceQueryKey } from '../api/client';
@@ -73,12 +74,10 @@ export const WorkspaceSync = () => {
 			return;
 		}
 
-		if (data.activeTab.type === 'users' || data.activeTab.type === 'orders') {
-			queryClient.setQueryData(
-				[data.activeTab.type, data.activeTab.state ?? {}],
-				data.activeTabData,
-			);
-		}
+		queryClient.setQueryData(
+			buildApiQueryKey(data.activeTab.type, data.activeTab.state),
+			data.activeTabData,
+		);
 	}, [data, queryClient]);
 
 	useEffect(() => {

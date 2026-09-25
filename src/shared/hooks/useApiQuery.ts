@@ -1,6 +1,10 @@
 import { keepPreviousData, useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { apiRequest } from '../utils/apiRequest';
-import { buildQueryParams } from '../utils/buildQueryParams';
+import { buildApiQueryKey } from '../utils/buildApiQueryKey';
+
+export type ApiQueryOptions<TData> = Omit<UseQueryOptions<TData>, 'queryKey' | 'queryFn'> & {
+	queryKeyScope?: string;
+};
 
 /**
  * useApiQuery
@@ -11,7 +15,7 @@ import { buildQueryParams } from '../utils/buildQueryParams';
  *
  * @param endpoint - The API endpoint path (passed to buildApiUrl). This, together with `params`, is used to form the query key.
  * @param params - Optional query parameters used to build the request URL. These should be serializable and stable (avoid non-primitive or inline objects) because they are included in the query key.
- * @param options - Additional react-query options (e.g. staleTime, refetchOnWindowFocus). Note: `queryKey` and `queryFn` are managed internally and cannot be overridden (type is Omit<UseQueryOptions<TData>, 'queryKey' | 'queryFn'>).
+ * @param options - Additional query options. `queryKeyScope` lets a workspace tab share its cache key with bootstrap data.
  *
  * @returns UseQueryResult<TData, Error> - The react-query result containing status flags, the parsed JSON data typed as TData, any thrown error, and utility methods like refetch.
  *
@@ -19,7 +23,7 @@ import { buildQueryParams } from '../utils/buildQueryParams';
  * - Internally constructs the request URL via buildApiUrl(endpoint, params) and performs a fetch().
  * - If the HTTP response is not ok, the hook throws an Error('Failed to fetch data').
  * - The response body is parsed as JSON and returned as TData.
- * - The query key is [endpoint, params], so results are cached per endpoint + params combination.
+ * - The query key is [queryKeyScope ?? endpoint, serialized params].
  * - The hook uses keepPreviousData as placeholderData to keep previous results visible while a refetch is in progress (helps avoid UI flicker).
  *
  * @throws Error - When the fetch response is not ok.
@@ -31,15 +35,15 @@ import { buildQueryParams } from '../utils/buildQueryParams';
 export const useApiQuery = <TData = unknown>(
 	endpoint: string,
 	params?: Record<string, unknown>,
-	options?: Omit<UseQueryOptions<TData>, 'queryKey' | 'queryFn'>,
+	options?: ApiQueryOptions<TData>,
 ) => {
-	const queryParams = params ? buildQueryParams(params) : null;
+	const { queryKeyScope = endpoint, ...queryOptions } = options ?? {};
 
 	return useQuery({
-		queryKey: [endpoint, queryParams],
+		queryKey: buildApiQueryKey(queryKeyScope, params),
 		queryFn: async () => apiRequest<TData>(endpoint, { params, responseMode: 'json' }),
 		placeholderData: keepPreviousData,
 		staleTime: 5 * 60 * 1000, //default 5 minutes
-		...options, //other options like staleTime, refetchOnWindowFocus etc.
+		...queryOptions,
 	});
 };

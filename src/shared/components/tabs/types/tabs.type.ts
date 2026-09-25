@@ -2,11 +2,19 @@ export type TabFilters<T> = {
 	[key in keyof T]?: T[key];
 };
 
-export type TabEntities = 'users' | 'orders' | 'products' | 'dashboard' | 'settings' | 'cpanel';
+export type TabEntities =
+	| 'users'
+	| 'orders'
+	| 'reservations'
+	| 'products'
+	| 'dashboard'
+	| 'settings'
+	| 'cpanel';
 
 const TAB_ENTITIES: readonly TabEntities[] = [
 	'users',
 	'orders',
+	'reservations',
 	'products',
 	'dashboard',
 	'settings',

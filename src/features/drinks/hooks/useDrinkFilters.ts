@@ -1,6 +1,6 @@
 'use client';
 
-import { useTabs } from '@/shared/components/tabs/store/useTabs';
+import { useTabs, useTabsStoreApi } from '@/shared/components/tabs/store/useTabs';
 import type { Tab } from '@/shared/components/tabs/types/tabs.type';
 import { useEffect, useRef, useState } from 'react';
 import type { DrinkSearchCriteria } from '../types';
@@ -10,6 +10,7 @@ type TextFilterKey = 'name';
 const textFilterKeys: TextFilterKey[] = ['name'];
 
 export const useDrinkFilters = (tabId: Tab['id']) => {
+	const tabsStore = useTabsStoreApi();
 	const currentTab = useTabs((state) => state.getTabById(tabId)) as
 		| Tab<DrinkSearchCriteria>
 		| undefined;
@@ -20,7 +21,7 @@ export const useDrinkFilters = (tabId: Tab['id']) => {
 	);
 
 	const updateFilters = (patch: Partial<DrinkSearchCriteria>) => {
-		const store = useTabs.getState();
+		const store = tabsStore.getState();
 		const tab = store.getTabById(tabId) as Tab<DrinkSearchCriteria> | undefined;
 		if (!tab) {
 			return;
@@ -72,7 +73,7 @@ export const useDrinkFilters = (tabId: Tab['id']) => {
 			}
 		});
 		setNameValue('');
-		useTabs.getState().clearFilters(tabId);
+		tabsStore.getState().clearFilters(tabId);
 	};
 
 	const handleNameChange = (value: string) => {

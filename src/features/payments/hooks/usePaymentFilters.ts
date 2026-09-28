@@ -1,17 +1,18 @@
 'use client';
 
-import { useTabs } from '@/shared/components/tabs/store/useTabs';
+import { useTabs, useTabsStoreApi } from '@/shared/components/tabs/store/useTabs';
 import type { Tab } from '@/shared/components/tabs/types/tabs.type';
 import type { PaymentSearchCriteria } from '../types';
 
 export const usePaymentFilters = (tabId: Tab['id']) => {
+	const tabsStore = useTabsStoreApi();
 	const currentTab = useTabs((state) => state.getTabById(tabId)) as
 		| Tab<PaymentSearchCriteria>
 		| undefined;
 	const filters = currentTab?.filters;
 
 	const updateFilters = (patch: Partial<PaymentSearchCriteria>) => {
-		const store = useTabs.getState();
+		const store = tabsStore.getState();
 		const tab = store.getTabById(tabId) as Tab<PaymentSearchCriteria> | undefined;
 		if (!tab) {
 			return;
@@ -35,7 +36,7 @@ export const usePaymentFilters = (tabId: Tab['id']) => {
 	};
 
 	const handleClearFilters = () => {
-		useTabs.getState().clearFilters(tabId);
+		tabsStore.getState().clearFilters(tabId);
 	};
 
 	const hasFilters = Boolean(filters?.status || filters?.orderId !== undefined);

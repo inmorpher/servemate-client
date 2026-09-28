@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { workspaceApiClient, workspaceMutationKey, workspaceQueryKey } from '../api/client';
 import type { WorkspaceBootstrap, WorkspaceUpdate, WorkspaceUpdateResponse } from '../types';
 
-type WorkspaceSaveInput = Omit<WorkspaceUpdate, 'expectedVersion'>;
+export type WorkspaceSaveInput = Omit<WorkspaceUpdate, 'expectedVersion'>;
 
 export const useWorkspaceBootstrap = () =>
 	useQuery<WorkspaceBootstrap>({

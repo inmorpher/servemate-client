@@ -50,10 +50,18 @@ export type WorkspaceTabState = {
 	order: number;
 };
 
-export type TabsStore = {
-	getTabById(tabId: string): Tab | undefined;
+export type WorkspaceTabsInput = {
+	tabs: WorkspaceTabState[];
+	activeTabId?: string;
+};
+
+export type TabsState = {
 	tabs: Tab[];
 	activeTabId: string;
+};
+
+export type TabsStore = TabsState & {
+	getTabById(tabId: string): Tab | undefined;
 
 	//Actions
 	addTab: (tab: Omit<Tab, 'id'>) => void;
@@ -64,5 +72,4 @@ export type TabsStore = {
 	updateTab: (tabId: string, fields: Partial<Tab>) => void;
 	clearFilters: (tabId: string) => void;
 	clearTabs: () => void;
-	hydrateWorkspace: (workspace: { tabs: WorkspaceTabState[]; activeTabId?: string }) => void;
 };

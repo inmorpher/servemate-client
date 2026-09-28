@@ -1,114 +1,42 @@
-'use client';
+import { workspaceQueryKey } from '@/features/workspace/api/client';
+import { getWorkspaceBootstrapOnServer } from '@/features/workspace/api/server';
+import type { WorkspaceBootstrap } from '@/features/workspace/types';
+import { TabsProvider } from '@/shared/components/tabs/TabsProvider';
+import { buildApiQueryKey } from '@/shared/utils/buildApiQueryKey';
+import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
+import { ReactNode } from 'react';
+import ProtectedShell from './ProtectedShell';
 
-import { Logo } from '@/shared/components/logo';
-import Sidebar from '@/shared/components/sidebar/Sidebar';
-import { FiltersPortalContext } from '@/shared/contexts/FiltersPortalContext';
+const loadWorkspace = async (): Promise<WorkspaceBootstrap | null> => {
+	try {
+		return await getWorkspaceBootstrapOnServer();
+	} catch {
+		// The app stays usable without a persisted workspace.
+		return null;
+	}
+};
 
-import { SidebarNavigation } from './SidebarNavigation';
+const ProtectedLayout = async ({ children }: { children: ReactNode }) => {
+	const bootstrap = await loadWorkspace();
+	const queryClient = new QueryClient();
 
-import { WorkspaceSync } from '@/features/workspace/ui/WorkspaceSync';
-import { AppLauncherPopover } from '@/shared/components/header/AppLauncherPopover';
-import { HeaderActionsMenu } from '@/shared/components/header/HeaderActionsMenu';
-import { TabsDropdown, TabsHorizontal } from '@/shared/components/tabs';
-import { useDrawerStore } from '@/shared/store/useDrawerStore';
-import { ReactNode, useCallback, useState } from 'react';
+	if (bootstrap) {
+		queryClient.setQueryData(workspaceQueryKey, bootstrap);
 
-/**
- * ProtectedLayout
- *
- * Main layout wrapper for authenticated/protected routes in ServeMate.
- * Provides a sticky header with navigation, app launcher, and actions menu,
- * paired with a collapsible sidebar for main navigation.
- *
- * Responsive design:
- * - **Mobile** (<lg): Shows AppLauncherPopover, TabsDropdown for navigation
- * - **Desktop** (lg+): Shows Menu toggle button, TabsHorizontal for navigation, full sidebar
- *
- * @param props - Layout configuration
- * @param props.children - Page content to render in the main area
- * @returns A responsive layout with header, sidebar, and main content area
- *
- * @example
- * ```tsx
- * // Inside app/(protected)/page.tsx
- * export default function DashboardPage() {
- *   return <ProtectedLayout><Dashboard /></ProtectedLayout>;
- * }
- * // ProtectedLayout is applied automatically via Next.js layout.tsx
- * ```
- *
- * @see {@link ListPageLayout} - Sub-layout for list-based pages
- * @see {@link src/shared/components/header} - Header components
- */
-interface ProtectedLayoutProps {
-	/** React node(s) to render in the main content area */
-	children: ReactNode;
-}
+		if (bootstrap.activeTab && bootstrap.activeTabData !== undefined) {
+			queryClient.setQueryData(
+				buildApiQueryKey(bootstrap.activeTab.type, bootstrap.activeTab.state),
+				bootstrap.activeTabData,
+			);
+		}
+	}
 
-const HEADER_HEIGHT = '14.24';
-
-const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
-	const toggle = useDrawerStore((state) => state.toggle);
-	const [portalTarget, setPortalTarget] = useState<HTMLDivElement | null>(null);
-
-	const setPortalHostRef = useCallback((node: HTMLDivElement | null) => {
-		setPortalTarget(node);
-	}, []);
 	return (
-		<>
-			<WorkspaceSync />
-			{/* Header with sticky positioning */}
-			<header
-				className={`bg-ctp-base sticky inset-x-0 top-0 left-0 z-40 flex w-full items-center gap-2 px-4 py-2 lg:h-14`}
-			>
-				{/* App Launcher - Mobile only (<lg) - used for app switcher on small screens */}
-				<div className='flex lg:hidden'>
-					<AppLauncherPopover />
-				</div>
-
-				{/* Logo container */}
-				<div className='flex'>
-					<Logo />
-				</div>
-
-				{/*
-				 * Navigation tabs with responsive toggle.
-				 * Desktop (lg+): TabsHorizontal for horizontal navigation menu
-				 * Mobile (<lg): TabsDropdown for space-efficient dropdown menu
-				 */}
-				<div className='hidden flex-1 lg:flex'>
-					<TabsHorizontal />
-				</div>
-				<div className='flex flex-1 lg:hidden'>
-					<TabsDropdown isMobile />
-				</div>
-
-				{/* Actions menu containing notifications, account, and settings */}
-				<div className='shrink justify-self-end'>
-					<HeaderActionsMenu notificationCount={0} />
-				</div>
-			</header>
-			<FiltersPortalContext.Provider value={{ target: portalTarget }}>
-				{/* Sidebar and main content container */}
-				<div className='flex min-w-0'>
-					<Sidebar>
-						<SidebarNavigation />
-					</Sidebar>
-					{/* <div className='fixed right-0 bottom-0 left-0 z-50 lg:hidden'>
-					<TabsDropdown isMobile />
-				</div> */}
-
-					<aside
-						id='filters-drawer'
-						ref={setPortalHostRef}
-						className='scrollbar-thin'
-					></aside>
-
-					{/* Main content area - flexes to fill available space */}
-					<main className='relative flex-1 overflow-hidden lg:mb-0'>{children}</main>
-				</div>
-			</FiltersPortalContext.Provider>
-		</>
+		<HydrationBoundary state={dehydrate(queryClient)}>
+			<TabsProvider initialWorkspace={bootstrap?.workspace ?? null}>
+				<ProtectedShell isWorkspaceLoaded={bootstrap !== null}>{children}</ProtectedShell>
+			</TabsProvider>
+		</HydrationBoundary>
 	);
 };
 

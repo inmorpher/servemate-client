@@ -71,15 +71,24 @@ async function deduplicatedRefresh(session: SessionData): Promise<TokenResponse>
 }
 
 async function refreshTokenInternal(session: SessionData): Promise<TokenResponse> {
-	const response = await fetch(`${CONFIG.API_BASE_URL}/auth/refresh-token`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ refreshToken: session.refreshToken }),
-	});
+	let response: Response;
+	try {
+		response = await fetch(`${CONFIG.API_BASE_URL}/auth/refresh-token`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ refreshToken: session.refreshToken }),
+			cache: 'no-store',
+		});
+	} catch {
+		throw new ApiError('Token refresh service unavailable', 503, false);
+	}
 
 	if (!response.ok) {
-		await destroySession();
-		throw new ApiError('Token refresh failed', 401, true);
+		if (response.status === 401 || response.status === 403) {
+			await destroySession();
+			throw new ApiError('Token refresh failed', 401, true);
+		}
+		throw new ApiError('Token refresh service unavailable', 503, false);
 	}
 
 	const tokenData: TokenResponse = await response.json();

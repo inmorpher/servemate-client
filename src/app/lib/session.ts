@@ -20,7 +20,9 @@ const defaultSession: ISessionData = {
 	refreshCount: 0,
 };
 
-const sessionSecret = process.env.SESSION_SECRET;
+const sessionSecret =
+	process.env.SESSION_SECRET ??
+	(process.env.NODE_ENV === 'development' ? process.env.NEXTAUTH_SECRET : undefined);
 
 if (!sessionSecret || sessionSecret.length < 32) {
 	throw new Error('SESSION_SECRET must be configured and at least 32 characters long');

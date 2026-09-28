@@ -61,6 +61,19 @@ export const apiRequest = async <TResponse = unknown, TBody = unknown>(
 
 	if (!response.ok) {
 		const errorMessage = await response.text().catch(() => '');
+		if (
+			response.status === 401 &&
+			typeof window !== 'undefined' &&
+			window.location.pathname !== '/login' &&
+			window.location.pathname !== '/refresh'
+		) {
+			const loginUrl = new URL('/login', window.location.origin);
+			loginUrl.searchParams.set(
+				'callbackUrl',
+				window.location.pathname + window.location.search + window.location.hash,
+			);
+			window.location.assign(loginUrl);
+		}
 		throw new ApiRequestError(errorMessage || 'Failed to fetch data', response.status);
 	}
 

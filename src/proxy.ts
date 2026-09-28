@@ -14,7 +14,9 @@ export default async function Proxy(request: NextRequest) {
 	const session = await getSession();
 
 	if (!session || !session.isLoggedIn) {
-		return NextResponse.redirect(new URL('/login', request.url));
+		const loginUrl = new URL('/login', request.url);
+		loginUrl.searchParams.set('callbackUrl', pathname + request.nextUrl.search);
+		return NextResponse.redirect(loginUrl);
 	}
 	if (isAccessTokenExpired(session)) {
 		const refreshUrl = new URL('/refresh', request.url);

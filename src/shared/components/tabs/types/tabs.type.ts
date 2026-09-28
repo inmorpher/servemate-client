@@ -8,6 +8,8 @@ export type TabEntities =
 	| 'reservations'
 	| 'drinks'
 	| 'food'
+	| 'tables'
+	| 'payments'
 	| 'products'
 	| 'dashboard'
 	| 'settings'
@@ -19,6 +21,8 @@ const TAB_ENTITIES: readonly TabEntities[] = [
 	'reservations',
 	'drinks',
 	'food',
+	'tables',
+	'payments',
 	'products',
 	'dashboard',
 	'settings',

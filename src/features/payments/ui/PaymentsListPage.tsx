@@ -5,16 +5,15 @@ import type { Tab } from '@/shared/components/tabs/types/tabs.type';
 import { useListPageState } from '@/shared/hooks/useListPageState';
 import { ListError } from '@/shared/layouts/Error';
 import { ListPageLayout } from '@/shared/layouts/ListPageLayout';
-import { useGetReservations } from '../hooks/useGetReservations';
-import type { ReservationSearchCriteria } from '../types';
-import { ReservationFilters } from './ReservationFilters';
-import { ReservationsTable } from './ReservationsTable';
+import { useGetPayments } from '../hooks/useGetPayments';
+import type { PaymentSearchCriteria } from '../types';
+import { PaymentFilters } from './PaymentFilters';
+import { PaymentsTable } from './PaymentsTable';
 
-const ReservationsListPage = ({ tabId }: { tabId: Tab['id'] }) => {
+const PaymentsListPage = ({ tabId }: { tabId: Tab['id'] }) => {
 	const { filters, handleSortChange, handlePageChange, handlePageSizeChange } =
-		useListPageState<ReservationSearchCriteria>({ tabId });
-	const canQuery = Boolean(filters.status?.trim()) && Boolean(filters.tables?.length);
-	const { data, error, isError, isLoading, refetch } = useGetReservations(filters);
+		useListPageState<PaymentSearchCriteria>({ tabId });
+	const { data, error, isError, isLoading, refetch } = useGetPayments(filters);
 
 	if (isError) {
 		return <ListError error={error.message} refetch={refetch} isLoading={isLoading} />;
@@ -22,14 +21,13 @@ const ReservationsListPage = ({ tabId }: { tabId: Tab['id'] }) => {
 
 	return (
 		<ListPageLayout
-			title='Reservations'
-			description='Review and manage guest reservations.'
-			filters={<ReservationFilters tabId={tabId} />}
+			title='Payments'
+			description='Review payment amounts, statuses, and linked orders.'
+			filters={<PaymentFilters tabId={tabId} />}
 			content={
-				<ReservationsTable
-					reservations={data?.list}
+				<PaymentsTable
+					payments={data?.payments}
 					isLoading={isLoading}
-					canQuery={canQuery}
 					sortBy={filters.sortBy}
 					sortOrder={filters.sortOrder}
 					onSortChange={handleSortChange}
@@ -49,4 +47,4 @@ const ReservationsListPage = ({ tabId }: { tabId: Tab['id'] }) => {
 	);
 };
 
-export default ReservationsListPage;
+export default PaymentsListPage;

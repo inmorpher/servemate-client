@@ -1,6 +1,8 @@
 'use client';
 
+import { Button } from '@/shared/components/button';
 import { Filter } from '@/shared/components/filter';
+import { useGetReservationsMeta } from '../hooks/useGetReservationsMeta';
 import { useReservationFilters } from '../hooks/useReservationFilters';
 import type { ReservationSearchCriteria } from '../types';
 
@@ -21,6 +23,13 @@ export const ReservationFilters = ({ tabId }: { tabId: string }) => {
 		handleClearFilters,
 		hasFilters,
 	} = useReservationFilters(tabId);
+	const {
+		data: meta,
+		isLoading: isMetaLoading,
+		isError: isMetaError,
+		error: metaError,
+		refetch: refetchMeta,
+	} = useGetReservationsMeta();
 
 	return (
 		<Filter className='max-h-dvh'>
@@ -32,6 +41,19 @@ export const ReservationFilters = ({ tabId }: { tabId: string }) => {
 			>
 				Clear filters
 			</button>
+			{isMetaLoading ? (
+				<p role='status' className='text-ctp-subtext0 text-sm'>
+					Loading reservation filters...
+				</p>
+			) : null}
+			{isMetaError ? (
+				<div role='alert' className='text-ctp-red space-y-2 text-sm'>
+					<p>Could not load reservation filters: {metaError.message}</p>
+					<Button variant='outline' size='sm' onClick={() => refetchMeta()}>
+						Retry
+					</Button>
+				</div>
+			) : null}
 
 			<Filter.Group label='Contact'>
 				<div className='grid w-full gap-3'>
@@ -71,23 +93,31 @@ export const ReservationFilters = ({ tabId }: { tabId: string }) => {
 				<div className='grid w-full gap-3'>
 					<label className='text-ctp-subtext1 block text-sm font-medium'>
 						Status
-						<input
+						<select
 							className={inputClassName}
 							value={filters?.status ?? ''}
+							disabled={isMetaLoading || isMetaError}
 							onChange={(event) =>
 								updateFilters({
 									status: event.currentTarget.value || undefined,
 								} as Partial<ReservationSearchCriteria>)
 							}
-							placeholder='Search by status'
-						/>
+						>
+							<option value=''>All statuses</option>
+							{meta?.statuses.map((status) => (
+								<option key={status} value={status}>
+									{status}
+								</option>
+							))}
+						</select>
 					</label>
 					<label className='text-ctp-subtext1 block text-sm font-medium'>
 						Minimum guests
 						<input
 							className={inputClassName}
 							type='number'
-							min={1}
+							min={meta?.guestsCountRange.min ?? 1}
+							max={meta?.guestsCountRange.max}
 							value={filters?.guestsCountMin ?? ''}
 							onChange={(event) =>
 								updateFilters({
@@ -103,7 +133,8 @@ export const ReservationFilters = ({ tabId }: { tabId: string }) => {
 						<input
 							className={inputClassName}
 							type='number'
-							min={1}
+							min={meta?.guestsCountRange.min ?? 1}
+							max={meta?.guestsCountRange.max}
 							value={filters?.guestsCountMax ?? ''}
 							onChange={(event) =>
 								updateFilters({
@@ -115,11 +146,10 @@ export const ReservationFilters = ({ tabId }: { tabId: string }) => {
 						/>
 					</label>
 					<label className='text-ctp-subtext1 block text-sm font-medium'>
-						Table ID
-						<input
+						Table
+						<select
 							className={inputClassName}
-							type='number'
-							min={1}
+							disabled={isMetaLoading || isMetaError}
 							value={filters?.tables?.[0] ?? ''}
 							onChange={(event) =>
 								updateFilters({
@@ -128,11 +158,20 @@ export const ReservationFilters = ({ tabId }: { tabId: string }) => {
 										: undefined,
 								})
 							}
-						/>
+						>
+							<option value=''>All tables</option>
+							{meta?.tables.map((table) => (
+								<option key={table.id} value={table.id}>
+									Table {table.tableNumber}
+								</option>
+							))}
+						</select>
 					</label>
 					<Filter.DateRange
 						from={filters?.timeStart}
 						to={filters?.timeEnd}
+						min={meta?.timeRange.min}
+						max={meta?.timeRange.max}
 						onChange={handleTimeRangeChange}
 					/>
 				</div>

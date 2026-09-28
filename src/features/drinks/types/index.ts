@@ -10,3 +10,5 @@ export type DrinkSearchCriteria = Omit<
 export type DrinkItemsListResult =
 	paths['/api/drink-items']['get']['responses'][200]['content']['application/json'];
 export type DrinkItem = DrinkItemsListResult['items'][number];
+export type DrinksMeta =
+	paths['/api/drink-items/meta']['get']['responses'][200]['content']['application/json'];

@@ -8,4 +8,5 @@ export const useGetReservations = (criteria: ReservationSearchCriteria = {}) =>
 	useApiQuery<ReservationListResult>(reservationsEndpoints.list, criteria, {
 		queryKeyScope: 'reservations',
 		refetchOnWindowFocus: false,
+		enabled: Boolean(criteria.status?.trim()) && Boolean(criteria.tables?.length),
 	});

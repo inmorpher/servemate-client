@@ -87,13 +87,13 @@ export const OrderFilters = () => {
 			)}
 			{/* Status Filter */}
 			<Filter.Group label='Status'>
-				{orderSearchOptions.statuses.map((option) => (
+				{(metaData?.statuses ?? []).map((status) => (
 					<SearchChip
-						key={option.value}
-						isActive={filters?.status === option.value}
-						onClick={() => handleStatusToggle(option.value)}
+						key={status}
+						isActive={filters?.status === status}
+						onClick={() => handleStatusToggle(status)}
 					>
-						{option.label}
+						{status.replaceAll('_', ' ')}
 					</SearchChip>
 				))}
 			</Filter.Group>

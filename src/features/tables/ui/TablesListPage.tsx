@@ -5,16 +5,16 @@ import type { Tab } from '@/shared/components/tabs/types/tabs.type';
 import { useListPageState } from '@/shared/hooks/useListPageState';
 import { ListError } from '@/shared/layouts/Error';
 import { ListPageLayout } from '@/shared/layouts/ListPageLayout';
-import { useGetReservations } from '../hooks/useGetReservations';
-import type { ReservationSearchCriteria } from '../types';
-import { ReservationFilters } from './ReservationFilters';
-import { ReservationsTable } from './ReservationsTable';
+import { useGetTables } from '../hooks/useGetTables';
+import type { TableSearchCriteria } from '../types';
+import { TableFilters } from './TableFilters';
+import { TablesTable } from './TablesTable';
 
-const ReservationsListPage = ({ tabId }: { tabId: Tab['id'] }) => {
+const TablesListPage = ({ tabId }: { tabId: Tab['id'] }) => {
 	const { filters, handleSortChange, handlePageChange, handlePageSizeChange } =
-		useListPageState<ReservationSearchCriteria>({ tabId });
-	const canQuery = Boolean(filters.status?.trim()) && Boolean(filters.tables?.length);
-	const { data, error, isError, isLoading, refetch } = useGetReservations(filters);
+		useListPageState<TableSearchCriteria>({ tabId });
+	const canQuery = Boolean(filters.status?.trim()) && filters.isOccupied !== undefined;
+	const { data, error, isError, isLoading, refetch } = useGetTables(filters);
 
 	if (isError) {
 		return <ListError error={error.message} refetch={refetch} isLoading={isLoading} />;
@@ -22,12 +22,12 @@ const ReservationsListPage = ({ tabId }: { tabId: Tab['id'] }) => {
 
 	return (
 		<ListPageLayout
-			title='Reservations'
-			description='Review and manage guest reservations.'
-			filters={<ReservationFilters tabId={tabId} />}
+			title='Tables'
+			description='Review table occupancy, guest counts, and seating capacity.'
+			filters={<TableFilters tabId={tabId} />}
 			content={
-				<ReservationsTable
-					reservations={data?.list}
+				<TablesTable
+					tables={data?.tables}
 					isLoading={isLoading}
 					canQuery={canQuery}
 					sortBy={filters.sortBy}
@@ -49,4 +49,4 @@ const ReservationsListPage = ({ tabId }: { tabId: Tab['id'] }) => {
 	);
 };
 
-export default ReservationsListPage;
+export default TablesListPage;

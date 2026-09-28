@@ -5,10 +5,10 @@ import type { Tab } from '@/shared/components/tabs/types/tabs.type';
 import { useEffect, useRef, useState } from 'react';
 import type { FoodSearchCriteria } from '../types';
 
-type TextFilterKey = 'name' | 'category' | 'type';
+type TextFilterKey = 'name';
 type DietaryFilterKey = 'isVegan' | 'isGlutenFree' | 'isVegetarian';
 
-const textFilterKeys: TextFilterKey[] = ['name', 'category', 'type'];
+const textFilterKeys: TextFilterKey[] = ['name'];
 
 export const useFoodFilters = (tabId: Tab['id']) => {
 	const currentTab = useTabs((state) => state.getTabById(tabId)) as
@@ -16,8 +16,6 @@ export const useFoodFilters = (tabId: Tab['id']) => {
 		| undefined;
 	const filters = currentTab?.filters;
 	const [nameValue, setNameValue] = useState(filters?.name ?? '');
-	const [categoryValue, setCategoryValue] = useState(filters?.category ?? '');
-	const [typeValue, setTypeValue] = useState(filters?.type ?? '');
 	const textFilterTimers = useRef<Partial<Record<TextFilterKey, ReturnType<typeof setTimeout>>>>(
 		{},
 	);
@@ -54,14 +52,6 @@ export const useFoodFilters = (tabId: Tab['id']) => {
 		setNameValue(filters?.name ?? '');
 	}, [filters?.name, tabId]);
 
-	useEffect(() => {
-		setCategoryValue(filters?.category ?? '');
-	}, [filters?.category, tabId]);
-
-	useEffect(() => {
-		setTypeValue(filters?.type ?? '');
-	}, [filters?.type, tabId]);
-
 	useEffect(
 		() => () => {
 			textFilterKeys.forEach((key) => {
@@ -83,20 +73,20 @@ export const useFoodFilters = (tabId: Tab['id']) => {
 			}
 		});
 		setNameValue('');
-		setCategoryValue('');
-		setTypeValue('');
 		useTabs.getState().clearFilters(tabId);
 	};
 
-	const handleTextFilterChange = (key: TextFilterKey, value: string) => {
-		if (key === 'name') {
-			setNameValue(value);
-		} else if (key === 'category') {
-			setCategoryValue(value);
-		} else {
-			setTypeValue(value);
-		}
-		scheduleTextFilter(key, value);
+	const handleNameChange = (value: string) => {
+		setNameValue(value);
+		scheduleTextFilter('name', value);
+	};
+
+	const handleCategoryChange = (value: string) => {
+		updateFilters({ category: value || undefined });
+	};
+
+	const handleTypeChange = (value: string) => {
+		updateFilters({ type: value || undefined });
 	};
 
 	const handleAvailabilityChange = (value: string) => {
@@ -113,8 +103,8 @@ export const useFoodFilters = (tabId: Tab['id']) => {
 
 	const hasFilters = Boolean(
 		nameValue.trim() ||
-		categoryValue.trim() ||
-		typeValue.trim() ||
+		filters?.category ||
+		filters?.type ||
 		filters?.isAvailable !== undefined ||
 		filters?.price !== undefined ||
 		filters?.isVegan !== undefined ||
@@ -125,9 +115,9 @@ export const useFoodFilters = (tabId: Tab['id']) => {
 	return {
 		filters,
 		nameValue,
-		categoryValue,
-		typeValue,
-		handleTextFilterChange,
+		handleNameChange,
+		handleCategoryChange,
+		handleTypeChange,
 		handleAvailabilityChange,
 		handlePriceChange,
 		handleDietaryChange,

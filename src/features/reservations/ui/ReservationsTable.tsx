@@ -8,6 +8,7 @@ type SortField = NonNullable<ReservationSearchCriteria['sortBy']>;
 interface ReservationsTableProps {
 	reservations: ReservationListItem[] | undefined;
 	isLoading?: boolean;
+	canQuery: boolean;
 	sortBy?: ReservationSearchCriteria['sortBy'];
 	sortOrder?: ReservationSearchCriteria['sortOrder'];
 	onSortChange: (sortBy: SortField) => void;
@@ -32,6 +33,7 @@ const formatReservationTime = (value: string) =>
 export const ReservationsTable = ({
 	reservations,
 	isLoading,
+	canQuery,
 	sortBy,
 	sortOrder,
 	onSortChange,
@@ -82,7 +84,11 @@ export const ReservationsTable = ({
 				<Table.Skeleton rows={8} columns={columns.length} />
 			) : (
 				<Table.Body>
-					{reservations?.length ? (
+					{!canQuery ? (
+						<Table.EmptyState colSpan={columns.length}>
+							Choose a status and table to load reservations.
+						</Table.EmptyState>
+					) : reservations?.length ? (
 						reservations.map((reservation) => (
 							<Table.Row key={reservation.id}>
 								<Table.Cell>#{reservation.id}</Table.Cell>

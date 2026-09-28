@@ -16,6 +16,8 @@ const tabComponentMap: Partial<
 	reservations: React.lazy(() => import('../reservations/ui/ReservationsListPage')),
 	drinks: React.lazy(() => import('../drinks/ui/DrinksListPage')),
 	food: React.lazy(() => import('../food/ui/FoodListPage')),
+	tables: React.lazy(() => import('../tables/ui/TablesListPage')),
+	payments: React.lazy(() => import('../payments/ui/PaymentsListPage')),
 };
 
 const CPanelIndex = () => {

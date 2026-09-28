@@ -5,9 +5,9 @@ import type { Tab } from '@/shared/components/tabs/types/tabs.type';
 import { useEffect, useRef, useState } from 'react';
 import type { DrinkSearchCriteria } from '../types';
 
-type TextFilterKey = 'name' | 'category';
+type TextFilterKey = 'name';
 
-const textFilterKeys: TextFilterKey[] = ['name', 'category'];
+const textFilterKeys: TextFilterKey[] = ['name'];
 
 export const useDrinkFilters = (tabId: Tab['id']) => {
 	const currentTab = useTabs((state) => state.getTabById(tabId)) as
@@ -15,7 +15,6 @@ export const useDrinkFilters = (tabId: Tab['id']) => {
 		| undefined;
 	const filters = currentTab?.filters;
 	const [nameValue, setNameValue] = useState(filters?.name ?? '');
-	const [categoryValue, setCategoryValue] = useState(filters?.category ?? '');
 	const textFilterTimers = useRef<Partial<Record<TextFilterKey, ReturnType<typeof setTimeout>>>>(
 		{},
 	);
@@ -52,10 +51,6 @@ export const useDrinkFilters = (tabId: Tab['id']) => {
 		setNameValue(filters?.name ?? '');
 	}, [filters?.name, tabId]);
 
-	useEffect(() => {
-		setCategoryValue(filters?.category ?? '');
-	}, [filters?.category, tabId]);
-
 	useEffect(
 		() => () => {
 			textFilterKeys.forEach((key) => {
@@ -77,7 +72,6 @@ export const useDrinkFilters = (tabId: Tab['id']) => {
 			}
 		});
 		setNameValue('');
-		setCategoryValue('');
 		useTabs.getState().clearFilters(tabId);
 	};
 
@@ -87,8 +81,7 @@ export const useDrinkFilters = (tabId: Tab['id']) => {
 	};
 
 	const handleCategoryChange = (value: string) => {
-		setCategoryValue(value);
-		scheduleTextFilter('category', value);
+		updateFilters({ category: value || undefined });
 	};
 
 	const handleAvailabilityChange = (value: string) => {
@@ -101,7 +94,7 @@ export const useDrinkFilters = (tabId: Tab['id']) => {
 
 	const hasFilters = Boolean(
 		nameValue.trim() ||
-		categoryValue.trim() ||
+		filters?.category ||
 		filters?.isAvailable !== undefined ||
 		filters?.volume !== undefined,
 	);
@@ -109,7 +102,6 @@ export const useDrinkFilters = (tabId: Tab['id']) => {
 	return {
 		filters,
 		nameValue,
-		categoryValue,
 		handleNameChange,
 		handleCategoryChange,
 		handleAvailabilityChange,

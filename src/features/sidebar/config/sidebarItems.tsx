@@ -2,7 +2,9 @@ import type { TabEntities } from '@/shared/components/tabs/types/tabs.type';
 import {
 	BarChart3,
 	CalendarDays,
+	CreditCard,
 	ShoppingCart,
+	TableProperties,
 	Users,
 	Utensils,
 	Wine,
@@ -57,6 +59,15 @@ export const sidebarItems: SidebarNavigationItem[] = [
 		color: 'bg-ctp-yellow',
 	},
 	{
+		id: 'payments',
+		label: 'Payments',
+		entity: 'payments',
+		icon: CreditCard,
+		href: '/cpanel',
+		openInTab: true,
+		color: 'bg-ctp-green',
+	},
+	{
 		id: 'drinks',
 		label: 'Drinks',
 		entity: 'drinks',
@@ -73,5 +84,14 @@ export const sidebarItems: SidebarNavigationItem[] = [
 		href: '/cpanel',
 		openInTab: true,
 		color: 'bg-ctp-peach',
+	},
+	{
+		id: 'tables',
+		label: 'Tables',
+		entity: 'tables',
+		icon: TableProperties,
+		href: '/cpanel',
+		openInTab: true,
+		color: 'bg-ctp-teal',
 	},
 ];

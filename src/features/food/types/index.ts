@@ -10,3 +10,5 @@ export type FoodSearchCriteria = Omit<
 export type FoodItemsListResult =
 	paths['/api/food-items']['get']['responses'][200]['content']['application/json'];
 export type FoodItem = FoodItemsListResult['items'][number];
+export type FoodMeta =
+	paths['/api/food-items/meta']['get']['responses'][200]['content']['application/json'];

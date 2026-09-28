@@ -9,3 +9,5 @@ export type ReservationSearchCriteria = Omit<
 export type ReservationListResult =
 	paths['/api/reservations']['get']['responses'][200]['content']['application/json'];
 export type ReservationListItem = ReservationListResult['list'][number];
+export type ReservationsMeta =
+	paths['/api/reservations/meta']['get']['responses'][200]['content']['application/json'];

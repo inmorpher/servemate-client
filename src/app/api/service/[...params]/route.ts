@@ -24,7 +24,7 @@ async function forwardResponse(response: Response): Promise<Response> {
 		});
 	}
 
-	return new Response(await response.text(), {
+	return new Response(response.body, {
 		status: response.status,
 		statusText: response.statusText,
 		headers,
@@ -54,18 +54,17 @@ async function handler(
 
 		if (response.status === 401) {
 			const newTokens = await forceRefreshToken();
+			const retryHeaders = new Headers(headers);
+			retryHeaders.set('Authorization', `Bearer ${newTokens.accessToken}`);
 
 			const retryResponse = await fetch(serviceUrl, {
 				method: request.method,
-				headers: {
-					...headers,
-					Authorization: `Bearer ${newTokens.accessToken}`,
-				},
+				headers: retryHeaders,
 				body,
 			});
 
 			if (retryResponse.status === 401) {
-				return NextResponse.redirect(new URL('/login', request.url));
+				return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 			}
 
 			return forwardResponse(retryResponse);
@@ -75,7 +74,7 @@ async function handler(
 	} catch (error) {
 		if (error instanceof ApiError) {
 			if (error.shouldRedirect) {
-				return NextResponse.redirect(new URL('/login', request.url));
+				return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 			}
 
 			return new Response(JSON.stringify({ error: error.message }), {

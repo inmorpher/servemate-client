@@ -1,6 +1,8 @@
 'use server';
 
 import { getSession } from '@/app/lib/session';
+import { API_BASE_URL } from '@/consts';
+import { getSafeInternalPath } from '@/shared/utils/safeInternalPath';
 import { jwtDecode } from 'jwt-decode';
 import { redirect } from 'next/navigation';
 
@@ -20,7 +22,7 @@ export async function loginAction(formData: ILoginFormInputs, callbackUrl: strin
 	try {
 		const { email, password } = formData;
 
-		const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+		const response = await fetch(`${API_BASE_URL}/auth/login`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ email, password }),
@@ -54,11 +56,10 @@ export async function loginAction(formData: ILoginFormInputs, callbackUrl: strin
 
 		// Save session
 		await session.save();
-
 	} catch (error) {
 		console.error('[loginAction] Error:', error);
 		throw error instanceof Error ? error : new Error('Unknown error while logging in');
 	}
 
-	redirect(callbackUrl);
+	redirect(getSafeInternalPath(callbackUrl));
 }

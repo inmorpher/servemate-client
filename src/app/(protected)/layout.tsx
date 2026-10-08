@@ -10,8 +10,9 @@ import ProtectedShell from './ProtectedShell';
 const loadWorkspace = async (): Promise<WorkspaceBootstrap | null> => {
 	try {
 		return await getWorkspaceBootstrapOnServer();
-	} catch {
+	} catch (error) {
 		// The app stays usable without a persisted workspace.
+		console.error('Failed to load workspace bootstrap', error);
 		return null;
 	}
 };

@@ -21,9 +21,12 @@ export const useWorkspaceAutosave = (enabled: boolean) => {
 
 	useEffect(() => {
 		if (!enabled) {
-			return;
+			setStatus('error');
+			setRetry(() => window.location.reload());
+			return () => setRetry(null);
 		}
 
+		markSynced(Date.now());
 		let timeoutId: number | undefined;
 
 		const buildPayload = (): WorkspaceSaveInput => {

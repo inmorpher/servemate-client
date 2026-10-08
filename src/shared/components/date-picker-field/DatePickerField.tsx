@@ -1,10 +1,10 @@
 import { Button } from '@/shared/components/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/components/popover';
 
-import { Calendar, calendarStyles } from '@/shared/components/calendar';
+import { Calendar } from '@/shared/components/calendar';
 import { cn } from '@/shared/utils/classNames';
 import { ChevronDownIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { Matcher } from 'react-day-picker';
 
 interface DatePickerFieldProps {
@@ -13,6 +13,7 @@ interface DatePickerFieldProps {
 	onChange: (date: Date | undefined) => void;
 	disabled?: Matcher | Matcher[] | undefined;
 	placeholder?: string;
+	id?: string;
 }
 
 /**
@@ -45,8 +46,11 @@ export const DatePickerField = ({
 	onChange,
 	disabled,
 	placeholder = 'Select date',
+	id,
 }: DatePickerFieldProps) => {
 	const [open, setOpen] = useState(false);
+	const generatedId = useId();
+	const triggerId = id ?? `date-picker-${generatedId}`;
 
 	const handleSelect = (date: Date | undefined) => {
 		onChange(date);
@@ -55,26 +59,23 @@ export const DatePickerField = ({
 
 	return (
 		<div>
-			<label htmlFor={label} className='text-ctp-subtext1 mb-2 block text-sm font-medium'>
+			<label htmlFor={triggerId} className='text-ctp-subtext1 mb-2 block text-sm font-medium'>
 				{label}
 			</label>
 			<Popover open={open} onOpenChange={setOpen}>
-				<PopoverTrigger asChild className=''>
+				<PopoverTrigger asChild>
 					<Button
+						id={triggerId}
 						variant='outline'
 						className='bg-ctp-mantle border-ctp-surface1 text-ctp-text hover:bg-ctp-surface0 hover:text-ctp-text w-full justify-between font-normal'
+						aria-haspopup='dialog'
+						aria-expanded={open}
 					>
 						{value ? value.toLocaleDateString() : placeholder}
 						<ChevronDownIcon className='h-4 w-4' />
 					</Button>
 				</PopoverTrigger>
-				<PopoverContent
-					className={cn(
-						'w-auto overflow-hidden p-0', // ← твои стили
-						// 'border-ctp-surface1 bg-red-500', // ← твои цвета
-					)}
-					align='center'
-				>
+				<PopoverContent className={cn('w-auto overflow-hidden p-0')} align='center'>
 					<Calendar
 						mode='single'
 						navLayout='after'
@@ -83,7 +84,6 @@ export const DatePickerField = ({
 						showOutsideDays
 						captionLayout='dropdown'
 						className='bg-ctp-mantle/50 border-ctp-surface1 rounded-md border p-3 shadow-lg ring-1 backdrop-blur-md'
-						classNames={calendarStyles}
 						onSelect={handleSelect}
 						disabled={disabled}
 					/>

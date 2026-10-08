@@ -4,6 +4,7 @@ import { orderSearchOptions } from '@/features/search/model/ordersOptions';
 import { SearchChip } from '@/features/search/ui/SearchChip';
 import { Filter } from '@/shared/components/filter/index';
 import FilterReset from '@/shared/components/filter/ui/FilterReset';
+import { normalizeDateInput } from '@/shared/components/filter/ui/date-helpers';
 import { useOrderFilters } from '../hooks/useOrderFilters';
 import { PriceRangeFilter } from './PriceRangeFilter';
 
@@ -21,37 +22,13 @@ export const OrderFilters = () => {
 	return (
 		<Filter>
 			<FilterReset filters={filters} />
-			{/* Date Range Filter */}
-			{/* {metaData?.dates && (
-				<Filter.Group label='Order Date'>
-					<DateRangePicker
-						dates={{
-							startDate: filters?.dateFrom
-								? new Date(filters.dateFrom).toDateString()
-								: metaData.dates.min,
-							endDate: filters?.dateTo
-								? new Date(filters.dateTo).toDateString()
-								: metaData.dates.max,
-						}}
-						onRangeChange={handleRangeChange}
-					/>
-				</Filter.Group>
-			)} */}
 			{metaData?.dates && (
 				<Filter.Group label='Order Date'>
 					<Filter.DateRange
-						from={
-							filters?.dateFrom
-								? new Date(filters.dateFrom).toISOString().split('T')[0]
-								: undefined
-						}
-						to={
-							filters?.dateTo
-								? new Date(filters.dateTo).toISOString().split('T')[0]
-								: undefined
-						}
-						min={new Date(metaData.dates.min).toISOString().split('T')[0]}
-						max={new Date(metaData.dates.max).toISOString().split('T')[0]}
+						from={normalizeDateInput(filters?.dateFrom)}
+						to={normalizeDateInput(filters?.dateTo)}
+						min={normalizeDateInput(metaData.dates.min)}
+						max={normalizeDateInput(metaData.dates.max)}
 						onChange={(range) => handleRangeChange({ from: range.from, to: range.to })}
 					/>
 				</Filter.Group>

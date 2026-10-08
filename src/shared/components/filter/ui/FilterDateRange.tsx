@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/shared/components/button';
-import { Calendar, calendarStyles } from '@/shared/components/calendar';
+import { Calendar } from '@/shared/components/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/components/popover';
 import { cn } from '@/shared/utils/classNames';
 import { isSameDay } from 'date-fns';
@@ -179,7 +179,8 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 		return `${fromLabel} - ${toLabel}`;
 	}, [normalizedFrom, normalizedTo, normalizedMin, normalizedMax]);
 
-	const defaultMonth = selectedRange?.from ?? selectedRange?.to ?? minDate ?? getStartOfToday();
+	const defaultMonth =
+		selectedRange?.from ?? selectedRange?.to ?? maxDate ?? minDate ?? getStartOfToday();
 
 	return (
 		<div className='space-y-3'>
@@ -263,7 +264,6 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 						showOutsideDays
 						captionLayout='dropdown'
 						className='bg-ctp-mantle w-full p-3'
-						classNames={calendarStyles}
 						disabled={disabledDates}
 						onSelect={handleCalendarSelect}
 					/>

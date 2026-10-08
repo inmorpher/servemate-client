@@ -26,8 +26,11 @@ export const toDateInputValue = (date: Date): string => {
 	return `${year}-${month}-${day}`;
 };
 
-export const normalizeDateInput = (value: string | undefined): string | undefined => {
+export const normalizeDateInput = (value: string | Date | undefined): string | undefined => {
 	if (!value) return undefined;
+	if (value instanceof Date) {
+		return Number.isNaN(value.getTime()) ? undefined : toDateInputValue(value);
+	}
 
 	const dateOnly = value.slice(0, 10);
 	if (/^\d{4}-\d{2}-\d{2}/.test(value)) {

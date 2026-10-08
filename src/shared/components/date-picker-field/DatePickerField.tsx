@@ -1,7 +1,7 @@
 import { Button } from '@/shared/components/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/components/popover';
 
-import { Calendar, calendarStyles } from '@/shared/components/calendar';
+import { Calendar } from '@/shared/components/calendar';
 import { cn } from '@/shared/utils/classNames';
 import { ChevronDownIcon } from 'lucide-react';
 import { useId, useState } from 'react';
@@ -84,7 +84,6 @@ export const DatePickerField = ({
 						showOutsideDays
 						captionLayout='dropdown'
 						className='bg-ctp-mantle/50 border-ctp-surface1 rounded-md border p-3 shadow-lg ring-1 backdrop-blur-md'
-						classNames={calendarStyles}
 						onSelect={handleSelect}
 						disabled={disabled}
 					/>

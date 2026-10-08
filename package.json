@@ -7,6 +7,7 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "eslint .",
+		"test": "vitest run",
 		"api:generate": "openapi-typescript http://192.168.2.80:3000/docs/openapi.json -o src/shared/api/api-types.ts"
 	},
 	"dependencies": {
@@ -54,7 +55,8 @@
 		"prettier-plugin-tailwindcss": "^0.8.0",
 		"shadcn": "^4.11.0",
 		"tailwindcss": "^4.3.1",
-		"typescript": "^6.0.3"
+		"typescript": "^6.0.3",
+		"vitest": "^5.0.3"
 	},
 	"pnpm": {
 		"overrides": {

@@ -1,24 +1,45 @@
 import { CONFIG } from '@/app/api/service/[...params]/config';
-import { getSession } from '@/app/lib/session';
-import type { WorkspaceBootstrap } from '../types';
+import {
+	forceRefreshToken,
+	getValidatedTokenFromSession,
+} from '@/app/api/service/[...params]/token-utils';
+import type { Workspace, WorkspaceBootstrap } from '../types';
 
 export const getWorkspaceBootstrapOnServer = async (): Promise<WorkspaceBootstrap> => {
-	const session = await getSession();
+	let { accessToken } = await getValidatedTokenFromSession();
 
-	if (!session.accessToken) {
-		throw new Error('No access token in session');
+	const fetchWorkspaceEndpoint = (token: string, endpoint: 'workspace' | 'workspace/bootstrap') =>
+		fetch(`${CONFIG.API_BASE_URL}/${endpoint}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+			cache: 'no-store',
+		});
+
+	let response = await fetchWorkspaceEndpoint(accessToken, 'workspace/bootstrap');
+
+	if (response.status === 401) {
+		const { accessToken: refreshedAccessToken } = await forceRefreshToken();
+		accessToken = refreshedAccessToken;
+		response = await fetchWorkspaceEndpoint(accessToken, 'workspace/bootstrap');
 	}
 
-	const response = await fetch(`${CONFIG.API_BASE_URL}/workspace/bootstrap`, {
-		headers: {
-			Authorization: `Bearer ${session.accessToken}`,
-		},
-		cache: 'no-store',
-	});
-
-	if (!response.ok) {
-		throw new Error('Failed to fetch workspace bootstrap');
+	if (response.ok) {
+		return response.json() as Promise<WorkspaceBootstrap>;
 	}
 
-	return response.json() as Promise<WorkspaceBootstrap>;
+	if (response.status >= 500) {
+		const workspaceResponse = await fetchWorkspaceEndpoint(accessToken, 'workspace');
+
+		if (workspaceResponse.ok) {
+			const workspace = (await workspaceResponse.json()) as Workspace;
+			return { workspace };
+		}
+
+		throw new Error(
+			`Failed to fetch workspace bootstrap (${response.status}); workspace fallback failed (${workspaceResponse.status})`,
+		);
+	}
+
+	throw new Error(`Failed to fetch workspace bootstrap (${response.status})`);
 };

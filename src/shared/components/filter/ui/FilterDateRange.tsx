@@ -12,6 +12,7 @@ import {
 	clampDate,
 	formatDisplayDate,
 	getStartOfToday,
+	normalizeDateInput,
 	parseDateInput,
 	toDateInputValue,
 } from './date-helpers';
@@ -40,10 +41,23 @@ interface DatePreset {
 
 export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRangeProps) => {
 	const [open, setOpen] = useState(false);
-	const [draftRange, setDraftRange] = useState<DateRangeValue>({ from, to });
+	const normalizedFrom = normalizeDateInput(from);
+	const normalizedTo = normalizeDateInput(to);
+	const normalizedMin = normalizeDateInput(min);
+	const normalizedMax = normalizeDateInput(max);
+	const [draftRange, setDraftRange] = useState<DateRangeValue>({
+		from: normalizedFrom,
+		to: normalizedTo,
+	});
 	const inputId = useId();
-	const minDate = useMemo(() => (min ? parseDateInput(min) : undefined), [min]);
-	const maxDate = useMemo(() => (max ? parseDateInput(max) : undefined), [max]);
+	const minDate = useMemo(
+		() => (normalizedMin ? parseDateInput(normalizedMin) : undefined),
+		[normalizedMin],
+	);
+	const maxDate = useMemo(
+		() => (normalizedMax ? parseDateInput(normalizedMax) : undefined),
+		[normalizedMax],
+	);
 
 	const presets: DatePreset[] = useMemo(
 		() => [
@@ -89,9 +103,9 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 	const activePreset = useMemo(() => {
 		return presets.find((preset) => {
 			const range = preset.getRange();
-			return range.from === from && range.to === to;
+			return range.from === normalizedFrom && range.to === normalizedTo;
 		});
-	}, [presets, from, to]);
+	}, [presets, normalizedFrom, normalizedTo]);
 
 	const selectedRange = useMemo<DateRange | undefined>(() => {
 		if (!draftRange.from && !draftRange.to) return undefined;
@@ -142,20 +156,16 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 	};
 
 	const handleOpenChange = (nextOpen: boolean) => {
-		if (nextOpen) setDraftRange({ from, to });
+		if (nextOpen) setDraftRange({ from: normalizedFrom, to: normalizedTo });
 		setOpen(nextOpen);
 	};
 
-	const handleInputChange = (field: 'from' | 'to', value: string) => {
-		setDraftRange((current) => ({ ...current, [field]: value || undefined }));
-	};
-
 	const displayValue = useMemo(() => {
-		if (!from && !to) return 'All time';
-		if (from === min && to === max) return 'All time';
+		if (!normalizedFrom && !normalizedTo) return 'All time';
+		if (normalizedFrom === normalizedMin && normalizedTo === normalizedMax) return 'All time';
 
-		const fromDate = from ? parseDateInput(from) : undefined;
-		const toDate = to ? parseDateInput(to) : undefined;
+		const fromDate = normalizedFrom ? parseDateInput(normalizedFrom) : undefined;
+		const toDate = normalizedTo ? parseDateInput(normalizedTo) : undefined;
 
 		if (fromDate && toDate && isSameDay(fromDate, toDate)) {
 			return formatDisplayDate(fromDate);
@@ -167,7 +177,7 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 		const toLabel = toDate ? formatDisplayDate(toDate) : 'End';
 
 		return `${fromLabel} - ${toLabel}`;
-	}, [from, to, min, max]);
+	}, [normalizedFrom, normalizedTo, normalizedMin, normalizedMax]);
 
 	const defaultMonth = selectedRange?.from ?? selectedRange?.to ?? minDate ?? getStartOfToday();
 
@@ -215,11 +225,16 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 							From
 							<input
 								id={`${inputId}-from`}
-								type='date'
-								value={draftRange.from ?? ''}
-								min={min}
-								max={draftRange.to ?? max}
-								onChange={(event) => handleInputChange('from', event.target.value)}
+								type='text'
+								value={
+									draftRange.from
+										? formatDisplayDate(parseDateInput(draftRange.from))
+										: ''
+								}
+								placeholder='DD.MM.YYYY'
+								readOnly
+								inputMode='none'
+								aria-label='From date'
 								className='bg-ctp-base border-ctp-surface1 text-ctp-text focus:border-ctp-blue mt-1 block w-full rounded-md border px-2 py-1.5 text-xs font-normal focus:outline-none'
 							/>
 						</label>
@@ -227,11 +242,16 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 							To
 							<input
 								id={`${inputId}-to`}
-								type='date'
-								value={draftRange.to ?? ''}
-								min={draftRange.from ?? min}
-								max={max}
-								onChange={(event) => handleInputChange('to', event.target.value)}
+								type='text'
+								value={
+									draftRange.to
+										? formatDisplayDate(parseDateInput(draftRange.to))
+										: ''
+								}
+								placeholder='DD.MM.YYYY'
+								readOnly
+								inputMode='none'
+								aria-label='To date'
 								className='bg-ctp-base border-ctp-surface1 text-ctp-text focus:border-ctp-blue mt-1 block w-full rounded-md border px-2 py-1.5 text-xs font-normal focus:outline-none'
 							/>
 						</label>

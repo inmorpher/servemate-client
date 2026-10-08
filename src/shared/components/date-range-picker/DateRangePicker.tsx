@@ -1,5 +1,5 @@
 import { FilterDateRange } from '../filter/ui/FilterDateRange';
-import { parseDateInput, toDateInputValue } from '../filter/ui/date-helpers';
+import { normalizeDateInput, parseDateInput } from '../filter/ui/date-helpers';
 
 interface DateRangePickerProps {
 	dates?: {
@@ -10,11 +10,7 @@ interface DateRangePickerProps {
 }
 
 const toDateValue = (value: string | undefined) => {
-	if (!value) return undefined;
-	if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
-
-	const date = new Date(value);
-	return Number.isNaN(date.getTime()) ? undefined : toDateInputValue(date);
+	return normalizeDateInput(value);
 };
 
 export const DateRangePicker = ({ dates, onRangeChange }: DateRangePickerProps) => {

@@ -25,7 +25,7 @@ function Calendar({
 		<DayPicker
 			showOutsideDays={showOutsideDays}
 			className={cn(
-				'group/calendar p-3 [--cell-size:2rem] in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent',
+				'group/calendar p-3 [--cell-size:2.75rem] in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent sm:[--cell-size:2rem]',
 				String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
 				String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
 				className,
@@ -153,7 +153,6 @@ function Calendar({
 
 function CalendarDayButton({
 	className,
-	day,
 	modifiers,
 	...props
 }: React.ComponentProps<typeof DayButton>) {
@@ -169,7 +168,6 @@ function CalendarDayButton({
 			ref={ref}
 			variant='ghost'
 			size='icon'
-			data-day={day.date.toLocaleDateString()}
 			data-selected-single={
 				modifiers.selected &&
 				!modifiers.range_start &&

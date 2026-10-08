@@ -77,6 +77,7 @@ export const Drawer: FC<DrawerProps> = ({
 					)}
 				>
 					<Dialog.Title className='sr-only'>Filters</Dialog.Title>
+					<Dialog.Description className='sr-only'>Filter controls</Dialog.Description>
 					<div className='h-full overflow-y-auto'>{children}</div>
 				</Dialog.Content>
 			</Dialog.Portal>

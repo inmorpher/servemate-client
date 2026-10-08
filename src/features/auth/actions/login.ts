@@ -20,6 +20,8 @@ interface JwtPayload {
 
 export async function loginAction(formData: ILoginFormInputs, callbackUrl: string) {
 	try {
+		console.log('[loginAction] Form data:', formData);
+		console.log('API_BASE_URL:', API_BASE_URL);
 		const { email, password } = formData;
 
 		const response = await fetch(`${API_BASE_URL}/auth/login`, {

@@ -1,8 +1,13 @@
 'use client';
 
+import { Button } from '@/shared/components/button';
+import { Calendar, calendarStyles } from '@/shared/components/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/shared/components/popover';
 import { cn } from '@/shared/utils/classNames';
 import { isSameDay } from 'date-fns';
-import { useMemo } from 'react';
+import { ChevronDownIcon } from 'lucide-react';
+import { useId, useMemo, useState } from 'react';
+import type { DateRange } from 'react-day-picker';
 import {
 	clampDate,
 	formatDisplayDate,
@@ -11,14 +16,19 @@ import {
 	toDateInputValue,
 } from './date-helpers';
 
-type DateValue = string | undefined;
+export type DateValue = string | undefined;
+
+export interface DateRangeValue {
+	from?: DateValue;
+	to?: DateValue;
+}
 
 interface FilterDateRangeProps {
 	from?: DateValue;
 	to?: DateValue;
 	min?: DateValue;
 	max?: DateValue;
-	onChange: (range: { from?: DateValue; to?: DateValue }) => void;
+	onChange: (range: DateRangeValue) => void;
 }
 
 interface DatePreset {
@@ -29,6 +39,9 @@ interface DatePreset {
 // --- UTC-safe helpers: treat YYYY-MM-DD as literal calendar date ---
 
 export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRangeProps) => {
+	const [open, setOpen] = useState(false);
+	const [draftRange, setDraftRange] = useState<DateRangeValue>({ from, to });
+	const inputId = useId();
 	const minDate = useMemo(() => (min ? parseDateInput(min) : undefined), [min]);
 	const maxDate = useMemo(() => (max ? parseDateInput(max) : undefined), [max]);
 
@@ -36,7 +49,7 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 		() => [
 			{
 				label: 'All time',
-				getRange: () => ({ from: min, to: max }),
+				getRange: () => ({ from: undefined, to: undefined }),
 			},
 			{
 				label: 'Today',
@@ -59,24 +72,10 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 				},
 			},
 			{
-				label: '30 days',
+				label: 'This month',
 				getRange: () => {
 					const to = clampDate(getStartOfToday(), minDate, maxDate);
-					const from = new Date(to);
-					from.setDate(to.getDate() - 29);
-					return {
-						from: toDateInputValue(clampDate(from, minDate, maxDate)),
-						to: toDateInputValue(to),
-					};
-				},
-			},
-			{
-				label: '365 days',
-				getRange: () => {
-					const to = clampDate(getStartOfToday(), minDate, maxDate);
-					const from = new Date(to);
-					from.setFullYear(to.getFullYear() - 1);
-					from.setDate(to.getDate() + 1);
+					const from = new Date(to.getFullYear(), to.getMonth(), 1);
 					return {
 						from: toDateInputValue(clampDate(from, minDate, maxDate)),
 						to: toDateInputValue(to),
@@ -84,7 +83,7 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 				},
 			},
 		],
-		[min, max, minDate, maxDate],
+		[minDate, maxDate],
 	);
 
 	const activePreset = useMemo(() => {
@@ -94,7 +93,23 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 		});
 	}, [presets, from, to]);
 
-	const applyRange = (next: { from?: DateValue; to?: DateValue }) => {
+	const selectedRange = useMemo<DateRange | undefined>(() => {
+		if (!draftRange.from && !draftRange.to) return undefined;
+
+		return {
+			from: draftRange.from ? parseDateInput(draftRange.from) : undefined,
+			to: draftRange.to ? parseDateInput(draftRange.to) : undefined,
+		};
+	}, [draftRange.from, draftRange.to]);
+
+	const disabledDates = useMemo(() => {
+		if (minDate && maxDate) return { before: minDate, after: maxDate };
+		if (minDate) return { before: minDate };
+		if (maxDate) return { after: maxDate };
+		return undefined;
+	}, [minDate, maxDate]);
+
+	const normalizeRange = (next: DateRangeValue): DateRangeValue => {
 		const fromDate = next.from
 			? clampDate(parseDateInput(next.from), minDate, maxDate)
 			: undefined;
@@ -104,14 +119,35 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 			toDate = fromDate;
 		}
 
-		onChange({
+		return {
 			from: fromDate ? toDateInputValue(fromDate) : undefined,
 			to: toDate ? toDateInputValue(toDate) : undefined,
+		};
+	};
+
+	const commitRange = (next: DateRangeValue) => {
+		onChange(normalizeRange(next));
+		setOpen(false);
+	};
+
+	const handleCalendarSelect = (range: DateRange | undefined) => {
+		setDraftRange({
+			from: range?.from ? toDateInputValue(range.from) : undefined,
+			to: range?.to ? toDateInputValue(range.to) : undefined,
 		});
 	};
 
 	const handlePresetClick = (preset: DatePreset) => {
-		applyRange(preset.getRange());
+		commitRange(preset.getRange());
+	};
+
+	const handleOpenChange = (nextOpen: boolean) => {
+		if (nextOpen) setDraftRange({ from, to });
+		setOpen(nextOpen);
+	};
+
+	const handleInputChange = (field: 'from' | 'to', value: string) => {
+		setDraftRange((current) => ({ ...current, [field]: value || undefined }));
 	};
 
 	const displayValue = useMemo(() => {
@@ -124,12 +160,16 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 		if (fromDate && toDate && isSameDay(fromDate, toDate)) {
 			return formatDisplayDate(fromDate);
 		}
+		if (fromDate && !toDate) return `From ${formatDisplayDate(fromDate)}`;
+		if (!fromDate && toDate) return `To ${formatDisplayDate(toDate)}`;
 
-		const fromLabel = fromDate ? formatDisplayDate(fromDate) : '...';
-		const toLabel = toDate ? formatDisplayDate(toDate) : '...';
+		const fromLabel = fromDate ? formatDisplayDate(fromDate) : 'Start';
+		const toLabel = toDate ? formatDisplayDate(toDate) : 'End';
 
 		return `${fromLabel} - ${toLabel}`;
 	}, [from, to, min, max]);
+
+	const defaultMonth = selectedRange?.from ?? selectedRange?.to ?? minDate ?? getStartOfToday();
 
 	return (
 		<div className='space-y-3'>
@@ -139,11 +179,12 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 						key={preset.label}
 						type='button'
 						onClick={() => handlePresetClick(preset)}
+						aria-pressed={activePreset?.label === preset.label}
 						className={cn(
-							'rounded-md border px-2 py-1 text-xs transition-colors',
+							'rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors',
 							activePreset?.label === preset.label
-								? 'bg-ctp-blue border-ctp-blue text-white'
-								: 'bg-ctp-surface0 border-ctp-surface1 text-ctp-text hover:bg-ctp-surface1',
+								? 'border-ctp-blue bg-ctp-blue text-ctp-crust'
+								: 'border-ctp-surface1 bg-ctp-surface0/70 text-ctp-subtext1 hover:border-ctp-blue/60 hover:bg-ctp-surface1 hover:text-ctp-text',
 						)}
 					>
 						{preset.label}
@@ -151,47 +192,85 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 				))}
 			</div>
 
-			<div className='grid gap-2'>
-				<div className='space-y-1'>
-					<label
-						htmlFor='date-from'
-						className='text-ctp-subtext1 block text-xs font-medium'
+			<Popover modal open={open} onOpenChange={handleOpenChange}>
+				<PopoverTrigger asChild>
+					<Button
+						variant='outline'
+						size='sm'
+						className='w-full justify-between font-normal'
+						aria-haspopup='dialog'
+						aria-expanded={open}
 					>
-						From
-					</label>
-					<input
-						id='date-from'
-						type='date'
-						value={from ?? ''}
-						min={min}
-						max={to ?? max}
-						onChange={(e) => applyRange({ from: e.target.value || undefined, to })}
-						className='bg-ctp-surface0 border-ctp-surface1 text-ctp-text focus:border-ctp-blue focus:ring-ctp-blue/50 w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none'
+						<span className='truncate'>{displayValue}</span>
+						<ChevronDownIcon className='h-4 w-4 shrink-0' />
+					</Button>
+				</PopoverTrigger>
+				<PopoverContent
+					className='border-ctp-surface1 bg-ctp-mantle text-ctp-text z-60 max-h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] max-w-96 overflow-x-hidden overflow-y-auto rounded-lg p-0 shadow-2xl max-sm:top-1/2! max-sm:left-1/2! sm:w-80 sm:max-w-none'
+					align='center'
+					collisionPadding={12}
+				>
+					<div className='border-ctp-surface1 bg-ctp-surface0/60 grid grid-cols-2 gap-2 border-b p-3'>
+						<label className='text-ctp-subtext1 text-xs font-medium'>
+							From
+							<input
+								id={`${inputId}-from`}
+								type='date'
+								value={draftRange.from ?? ''}
+								min={min}
+								max={draftRange.to ?? max}
+								onChange={(event) => handleInputChange('from', event.target.value)}
+								className='bg-ctp-base border-ctp-surface1 text-ctp-text focus:border-ctp-blue mt-1 block w-full rounded-md border px-2 py-1.5 text-xs font-normal focus:outline-none'
+							/>
+						</label>
+						<label className='text-ctp-subtext1 text-xs font-medium'>
+							To
+							<input
+								id={`${inputId}-to`}
+								type='date'
+								value={draftRange.to ?? ''}
+								min={draftRange.from ?? min}
+								max={max}
+								onChange={(event) => handleInputChange('to', event.target.value)}
+								className='bg-ctp-base border-ctp-surface1 text-ctp-text focus:border-ctp-blue mt-1 block w-full rounded-md border px-2 py-1.5 text-xs font-normal focus:outline-none'
+							/>
+						</label>
+					</div>
+					<Calendar
+						mode='range'
+						selected={selectedRange}
+						defaultMonth={defaultMonth}
+						showOutsideDays
+						captionLayout='dropdown'
+						className='bg-ctp-mantle w-full p-3'
+						classNames={calendarStyles}
+						disabled={disabledDates}
+						onSelect={handleCalendarSelect}
 					/>
-				</div>
-
-				<div className='space-y-1'>
-					<label
-						htmlFor='date-to'
-						className='text-ctp-subtext1 block text-xs font-medium'
-					>
-						To
-					</label>
-					<input
-						id='date-to'
-						type='date'
-						value={to ?? ''}
-						min={from ?? min}
-						max={max}
-						onChange={(e) => applyRange({ from, to: e.target.value || undefined })}
-						className='bg-ctp-surface0 border-ctp-surface1 text-ctp-text focus:border-ctp-blue focus:ring-ctp-blue/50 w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none'
-					/>
-				</div>
-			</div>
-
-			<div className='bg-ctp-surface0 border-ctp-surface1 text-ctp-text rounded-md border px-3 py-2 text-sm'>
-				{displayValue}
-			</div>
+					<div className='border-ctp-surface1 bg-ctp-surface0/40 flex items-center justify-between gap-2 border-t p-3'>
+						<Button
+							variant='ghost'
+							size='xs'
+							className='text-ctp-subtext1 hover:bg-ctp-surface1 hover:text-ctp-text'
+							onClick={() => commitRange({ from: undefined, to: undefined })}
+						>
+							Clear
+						</Button>
+						<Button
+							variant='unstyled'
+							size='xs'
+							className='bg-ctp-blue text-ctp-crust hover:bg-ctp-sapphire'
+							disabled={Boolean(
+								(!draftRange.from && draftRange.to) ||
+								(draftRange.from && !draftRange.to),
+							)}
+							onClick={() => commitRange(draftRange)}
+						>
+							Apply
+						</Button>
+					</div>
+				</PopoverContent>
+			</Popover>
 		</div>
 	);
 };

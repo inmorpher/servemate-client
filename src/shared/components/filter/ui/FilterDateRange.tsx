@@ -2,11 +2,8 @@
 
 import { Button } from '@/shared/components/button';
 import { Calendar } from '@/shared/components/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/shared/components/popover';
 import { cn } from '@/shared/utils/classNames';
-import { isSameDay } from 'date-fns';
-import { ChevronDownIcon } from 'lucide-react';
-import { useId, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 import {
 	clampDate,
@@ -40,7 +37,6 @@ interface DatePreset {
 // --- UTC-safe helpers: treat YYYY-MM-DD as literal calendar date ---
 
 export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRangeProps) => {
-	const [open, setOpen] = useState(false);
 	const normalizedFrom = normalizeDateInput(from);
 	const normalizedTo = normalizeDateInput(to);
 	const normalizedMin = normalizeDateInput(min);
@@ -49,6 +45,9 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 		from: normalizedFrom,
 		to: normalizedTo,
 	});
+	useEffect(() => {
+		setDraftRange({ from: normalizedFrom, to: normalizedTo });
+	}, [normalizedFrom, normalizedTo]);
 	const inputId = useId();
 	const minDate = useMemo(
 		() => (normalizedMin ? parseDateInput(normalizedMin) : undefined),
@@ -141,7 +140,6 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 
 	const commitRange = (next: DateRangeValue) => {
 		onChange(normalizeRange(next));
-		setOpen(false);
 	};
 
 	const handleCalendarSelect = (range: DateRange | undefined) => {
@@ -155,32 +153,78 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 		commitRange(preset.getRange());
 	};
 
-	const handleOpenChange = (nextOpen: boolean) => {
-		if (nextOpen) setDraftRange({ from: normalizedFrom, to: normalizedTo });
-		setOpen(nextOpen);
-	};
-
-	const displayValue = useMemo(() => {
-		if (!normalizedFrom && !normalizedTo) return 'All time';
-		if (normalizedFrom === normalizedMin && normalizedTo === normalizedMax) return 'All time';
-
-		const fromDate = normalizedFrom ? parseDateInput(normalizedFrom) : undefined;
-		const toDate = normalizedTo ? parseDateInput(normalizedTo) : undefined;
-
-		if (fromDate && toDate && isSameDay(fromDate, toDate)) {
-			return formatDisplayDate(fromDate);
-		}
-		if (fromDate && !toDate) return `From ${formatDisplayDate(fromDate)}`;
-		if (!fromDate && toDate) return `To ${formatDisplayDate(toDate)}`;
-
-		const fromLabel = fromDate ? formatDisplayDate(fromDate) : 'Start';
-		const toLabel = toDate ? formatDisplayDate(toDate) : 'End';
-
-		return `${fromLabel} - ${toLabel}`;
-	}, [normalizedFrom, normalizedTo, normalizedMin, normalizedMax]);
-
 	const defaultMonth =
 		selectedRange?.from ?? selectedRange?.to ?? maxDate ?? minDate ?? getStartOfToday();
+
+	const calendarContent = (
+		<>
+			<div className='border-ctp-surface1 bg-ctp-surface0/60 grid grid-cols-2 gap-2 border-b p-3'>
+				<label className='text-ctp-subtext1 text-xs font-medium'>
+					From
+					<input
+						id={`${inputId}-from`}
+						type='text'
+						value={
+							draftRange.from
+								? formatDisplayDate(parseDateInput(draftRange.from))
+								: ''
+						}
+						placeholder='DD.MM.YYYY'
+						readOnly
+						inputMode='none'
+						aria-label='From date'
+						className='bg-ctp-base border-ctp-surface1 text-ctp-text focus:border-ctp-blue mt-1 block w-full rounded-md border px-2 py-1.5 text-xs font-normal focus:outline-none'
+					/>
+				</label>
+				<label className='text-ctp-subtext1 text-xs font-medium'>
+					To
+					<input
+						id={`${inputId}-to`}
+						type='text'
+						value={
+							draftRange.to ? formatDisplayDate(parseDateInput(draftRange.to)) : ''
+						}
+						placeholder='DD.MM.YYYY'
+						readOnly
+						inputMode='none'
+						aria-label='To date'
+						className='bg-ctp-base border-ctp-surface1 text-ctp-text focus:border-ctp-blue mt-1 block w-full rounded-md border px-2 py-1.5 text-xs font-normal focus:outline-none'
+					/>
+				</label>
+			</div>
+			<Calendar
+				mode='range'
+				selected={selectedRange}
+				defaultMonth={defaultMonth}
+				showOutsideDays
+				captionLayout='dropdown'
+				className='bg-ctp-mantle w-full p-3'
+				disabled={disabledDates}
+				onSelect={handleCalendarSelect}
+			/>
+			<div className='border-ctp-surface1 bg-ctp-surface0/40 flex items-center justify-between gap-2 border-t p-3'>
+				<Button
+					variant='ghost'
+					size='xs'
+					className='text-ctp-subtext1 hover:bg-ctp-surface1 hover:text-ctp-text'
+					onClick={() => commitRange({ from: undefined, to: undefined })}
+				>
+					Clear
+				</Button>
+				<Button
+					variant='unstyled'
+					size='xs'
+					className='bg-ctp-blue text-ctp-crust hover:bg-ctp-sapphire'
+					disabled={Boolean(
+						(!draftRange.from && draftRange.to) || (draftRange.from && !draftRange.to),
+					)}
+					onClick={() => commitRange(draftRange)}
+				>
+					Apply
+				</Button>
+			</div>
+		</>
+	);
 
 	return (
 		<div className='space-y-3'>
@@ -203,94 +247,9 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 				))}
 			</div>
 
-			<Popover modal open={open} onOpenChange={handleOpenChange}>
-				<PopoverTrigger asChild>
-					<Button
-						variant='outline'
-						size='sm'
-						className='w-full justify-between font-normal'
-						aria-haspopup='dialog'
-						aria-expanded={open}
-					>
-						<span className='truncate'>{displayValue}</span>
-						<ChevronDownIcon className='h-4 w-4 shrink-0' />
-					</Button>
-				</PopoverTrigger>
-				<PopoverContent
-					className='border-ctp-surface1 bg-ctp-mantle text-ctp-text z-60 max-h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] max-w-96 overflow-x-hidden overflow-y-auto rounded-lg p-0 shadow-2xl max-sm:top-1/2! max-sm:left-1/2! sm:w-80 sm:max-w-none'
-					align='center'
-					collisionPadding={12}
-				>
-					<div className='border-ctp-surface1 bg-ctp-surface0/60 grid grid-cols-2 gap-2 border-b p-3'>
-						<label className='text-ctp-subtext1 text-xs font-medium'>
-							From
-							<input
-								id={`${inputId}-from`}
-								type='text'
-								value={
-									draftRange.from
-										? formatDisplayDate(parseDateInput(draftRange.from))
-										: ''
-								}
-								placeholder='DD.MM.YYYY'
-								readOnly
-								inputMode='none'
-								aria-label='From date'
-								className='bg-ctp-base border-ctp-surface1 text-ctp-text focus:border-ctp-blue mt-1 block w-full rounded-md border px-2 py-1.5 text-xs font-normal focus:outline-none'
-							/>
-						</label>
-						<label className='text-ctp-subtext1 text-xs font-medium'>
-							To
-							<input
-								id={`${inputId}-to`}
-								type='text'
-								value={
-									draftRange.to
-										? formatDisplayDate(parseDateInput(draftRange.to))
-										: ''
-								}
-								placeholder='DD.MM.YYYY'
-								readOnly
-								inputMode='none'
-								aria-label='To date'
-								className='bg-ctp-base border-ctp-surface1 text-ctp-text focus:border-ctp-blue mt-1 block w-full rounded-md border px-2 py-1.5 text-xs font-normal focus:outline-none'
-							/>
-						</label>
-					</div>
-					<Calendar
-						mode='range'
-						selected={selectedRange}
-						defaultMonth={defaultMonth}
-						showOutsideDays
-						captionLayout='dropdown'
-						className='bg-ctp-mantle w-full p-3'
-						disabled={disabledDates}
-						onSelect={handleCalendarSelect}
-					/>
-					<div className='border-ctp-surface1 bg-ctp-surface0/40 flex items-center justify-between gap-2 border-t p-3'>
-						<Button
-							variant='ghost'
-							size='xs'
-							className='text-ctp-subtext1 hover:bg-ctp-surface1 hover:text-ctp-text'
-							onClick={() => commitRange({ from: undefined, to: undefined })}
-						>
-							Clear
-						</Button>
-						<Button
-							variant='unstyled'
-							size='xs'
-							className='bg-ctp-blue text-ctp-crust hover:bg-ctp-sapphire'
-							disabled={Boolean(
-								(!draftRange.from && draftRange.to) ||
-								(draftRange.from && !draftRange.to),
-							)}
-							onClick={() => commitRange(draftRange)}
-						>
-							Apply
-						</Button>
-					</div>
-				</PopoverContent>
-			</Popover>
+			<div className='border-ctp-surface1 bg-ctp-mantle overflow-hidden rounded-lg border shadow-xl'>
+				{calendarContent}
+			</div>
 		</div>
 	);
 };

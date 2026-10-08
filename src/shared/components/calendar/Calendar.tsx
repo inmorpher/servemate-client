@@ -86,10 +86,7 @@ function Calendar({
 					'has-focus:border-ctp-blue has-focus:ring-ctp-blue/30 relative rounded-md border border-ctp-surface1 bg-ctp-surface0 shadow-none has-focus:ring-[3px]',
 					defaultClassNames.dropdown_root,
 				),
-				dropdown: mergeClassNames(
-					'dropdown',
-					defaultClassNames.dropdown,
-				),
+				dropdown: mergeClassNames('dropdown', defaultClassNames.dropdown),
 				caption_label: mergeClassNames(
 					'caption_label',
 					'select-none font-medium text-ctp-text',
@@ -179,6 +176,7 @@ function Calendar({
 					return <ChevronDownIcon className={cn('size-4', className)} {...props} />;
 				},
 				DayButton: CalendarDayButton,
+				Select: CalendarSelect,
 				WeekNumber: ({ children, ...props }) => {
 					return (
 						<td {...props}>
@@ -191,6 +189,53 @@ function Calendar({
 				...components,
 			}}
 			{...props}
+		/>
+	);
+}
+
+function CalendarSelect({
+	onChange,
+	onClick,
+	onFocus,
+	onPointerDown,
+	onTouchStart,
+	...props
+}: React.ComponentProps<'select'>) {
+	const logSelectorEvent = (
+		eventName: string,
+		event: React.SyntheticEvent<HTMLSelectElement>,
+	) => {
+		console.log('[Calendar] selector event', {
+			event: eventName,
+			label: event.currentTarget.getAttribute('aria-label'),
+			value: event.currentTarget.value,
+			userAgent: navigator.userAgent,
+		});
+	};
+
+	return (
+		<select
+			{...props}
+			onPointerDown={(event) => {
+				logSelectorEvent('pointerdown', event);
+				onPointerDown?.(event);
+			}}
+			onTouchStart={(event) => {
+				logSelectorEvent('touchstart', event);
+				onTouchStart?.(event);
+			}}
+			onFocus={(event) => {
+				logSelectorEvent('focus', event);
+				onFocus?.(event);
+			}}
+			onClick={(event) => {
+				logSelectorEvent('click', event);
+				onClick?.(event);
+			}}
+			onChange={(event) => {
+				logSelectorEvent('change', event);
+				onChange?.(event);
+			}}
 		/>
 	);
 }

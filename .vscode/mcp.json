@@ -1,16 +1,4 @@
 {
 	"servers": {
-		"shadcn": {
-			"command": "npx",
-			"args": ["shadcn@latest", "mcp"]
-		},
-		"servemate": {
-			"type": "stdio",
-			"command": "ssh",
-			"args": [
-				"inmo@192.168.2.80",
-				"bash -lc 'cd /home/inmo/ServeMate-service && exec docker compose exec -T mcp npm run mcp'"
-			]
-		}
 	}
 }

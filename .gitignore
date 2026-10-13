@@ -41,3 +41,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# logs
+*.log
+
+# local MCP configs (machine-specific hosts/credentials)
+.vscode/mcp.json
+.mcp.local.json
+
+# editors & OS
+.idea/
+*.swp
+Thumbs.db

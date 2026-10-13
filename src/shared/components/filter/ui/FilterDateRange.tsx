@@ -85,10 +85,46 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 				},
 			},
 			{
+				label: 'This week',
+				getRange: () => {
+					const to = clampDate(getStartOfToday(), minDate, maxDate);
+					const mondayOffset = (to.getDay() + 6) % 7;
+					const from = new Date(to);
+					from.setDate(to.getDate() - mondayOffset);
+					return {
+						from: toDateInputValue(clampDate(from, minDate, maxDate)),
+						to: toDateInputValue(to),
+					};
+				},
+			},
+			{
+				label: '30 days',
+				getRange: () => {
+					const to = clampDate(getStartOfToday(), minDate, maxDate);
+					const from = new Date(to);
+					from.setDate(to.getDate() - 29);
+					return {
+						from: toDateInputValue(clampDate(from, minDate, maxDate)),
+						to: toDateInputValue(to),
+					};
+				},
+			},
+			{
 				label: 'This month',
 				getRange: () => {
 					const to = clampDate(getStartOfToday(), minDate, maxDate);
 					const from = new Date(to.getFullYear(), to.getMonth(), 1);
+					return {
+						from: toDateInputValue(clampDate(from, minDate, maxDate)),
+						to: toDateInputValue(to),
+					};
+				},
+			},
+			{
+				label: 'This year',
+				getRange: () => {
+					const to = clampDate(getStartOfToday(), minDate, maxDate);
+					const from = new Date(to.getFullYear(), 0, 1);
 					return {
 						from: toDateInputValue(clampDate(from, minDate, maxDate)),
 						to: toDateInputValue(to),
@@ -143,10 +179,14 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 	};
 
 	const handleCalendarSelect = (range: DateRange | undefined) => {
-		setDraftRange({
+		const next: DateRangeValue = {
 			from: range?.from ? toDateInputValue(range.from) : undefined,
 			to: range?.to ? toDateInputValue(range.to) : undefined,
-		});
+		};
+		setDraftRange(next);
+		if (next.from && next.to) {
+			commitRange(next);
+		}
 	};
 
 	const handlePresetClick = (preset: DatePreset) => {
@@ -158,6 +198,24 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 
 	const calendarContent = (
 		<>
+			<div className='border-ctp-surface1 flex flex-wrap gap-2 border-b p-3'>
+				{presets.map((preset) => (
+					<button
+						key={preset.label}
+						type='button'
+						onClick={() => handlePresetClick(preset)}
+						aria-pressed={activePreset?.label === preset.label}
+						className={cn(
+							'rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors',
+							activePreset?.label === preset.label
+								? 'border-ctp-blue bg-ctp-blue text-ctp-crust'
+								: 'border-ctp-surface1 bg-ctp-surface0/70 text-ctp-subtext1 hover:border-ctp-blue/60 hover:bg-ctp-surface1 hover:text-ctp-text',
+						)}
+					>
+						{preset.label}
+					</button>
+				))}
+			</div>
 			<div className='border-ctp-surface1 bg-ctp-surface0/60 grid grid-cols-2 gap-2 border-b p-3'>
 				<label className='text-ctp-subtext1 text-xs font-medium'>
 					From
@@ -194,15 +252,16 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 			</div>
 			<Calendar
 				mode='range'
+				min={1}
 				selected={selectedRange}
 				defaultMonth={defaultMonth}
 				showOutsideDays
 				captionLayout='dropdown'
-				className='bg-ctp-mantle w-full p-3'
+				className='bg-ctp-mantle w-full px-0.5 py-3'
 				disabled={disabledDates}
 				onSelect={handleCalendarSelect}
 			/>
-			<div className='border-ctp-surface1 bg-ctp-surface0/40 flex items-center justify-between gap-2 border-t p-3'>
+			<div className='border-ctp-surface1 bg-ctp-surface0/40 flex items-center justify-end gap-2 border-t p-3'>
 				<Button
 					variant='ghost'
 					size='xs'
@@ -211,45 +270,13 @@ export const FilterDateRange = ({ from, to, min, max, onChange }: FilterDateRang
 				>
 					Clear
 				</Button>
-				<Button
-					variant='unstyled'
-					size='xs'
-					className='bg-ctp-blue text-ctp-crust hover:bg-ctp-sapphire'
-					disabled={Boolean(
-						(!draftRange.from && draftRange.to) || (draftRange.from && !draftRange.to),
-					)}
-					onClick={() => commitRange(draftRange)}
-				>
-					Apply
-				</Button>
 			</div>
 		</>
 	);
 
 	return (
-		<div className='space-y-3'>
-			<div className='flex flex-wrap gap-2'>
-				{presets.map((preset) => (
-					<button
-						key={preset.label}
-						type='button'
-						onClick={() => handlePresetClick(preset)}
-						aria-pressed={activePreset?.label === preset.label}
-						className={cn(
-							'rounded-md border px-2.5 py-1.5 text-xs font-medium transition-colors',
-							activePreset?.label === preset.label
-								? 'border-ctp-blue bg-ctp-blue text-ctp-crust'
-								: 'border-ctp-surface1 bg-ctp-surface0/70 text-ctp-subtext1 hover:border-ctp-blue/60 hover:bg-ctp-surface1 hover:text-ctp-text',
-						)}
-					>
-						{preset.label}
-					</button>
-				))}
-			</div>
-
-			<div className='border-ctp-surface1 bg-ctp-mantle overflow-hidden rounded-lg border shadow-xl'>
-				{calendarContent}
-			</div>
+		<div className='border-ctp-surface1 bg-ctp-mantle w-full overflow-hidden rounded-lg border shadow-xl'>
+			{calendarContent}
 		</div>
 	);
 };

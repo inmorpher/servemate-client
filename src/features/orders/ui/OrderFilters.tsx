@@ -23,7 +23,7 @@ export const OrderFilters = () => {
 		<Filter>
 			<FilterReset filters={filters} />
 			{metaData?.dates && (
-				<Filter.Group label='Order Date'>
+				<Filter.Group label='Order Date' plain>
 					<Filter.DateRange
 						from={normalizeDateInput(filters?.dateFrom)}
 						to={normalizeDateInput(filters?.dateTo)}
@@ -85,9 +85,6 @@ export const OrderFilters = () => {
 					</SearchChip>
 				))}
 			</Filter.Group>
-			{
-				/////// Additional filters can be added here in the future
-			}
 		</Filter>
 	);
 };

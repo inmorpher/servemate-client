@@ -10,7 +10,7 @@ export async function refreshSessionAction() {
 	} catch (error: unknown) {
 		return {
 			success: false,
-			retryable: !(error instanceof ApiError) || !error.shouldRedirect,
+			retryable: !(error instanceof ApiError) || !error.requiresLogin,
 		};
 	}
 }

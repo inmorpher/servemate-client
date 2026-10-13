@@ -73,7 +73,7 @@ async function handler(
 		return forwardResponse(response);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			if (error.shouldRedirect) {
+			if (error.requiresLogin) {
 				return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 			}
 

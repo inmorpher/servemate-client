@@ -13,7 +13,12 @@ export async function getValidatedTokenFromSession(): Promise<TokenResponse> {
 	}
 
 	const now = Math.floor(Date.now() / 1000);
-	const decoded = jwtDecode<DecodedToken>(session.accessToken);
+	let decoded: DecodedToken;
+	try {
+		decoded = jwtDecode<DecodedToken>(session.accessToken);
+	} catch {
+		throw new ApiError('Invalid token format', 401, true);
+	}
 
 	if (!decoded.exp || !decoded.iat) {
 		throw new ApiError('Invalid token format', 401, true);
